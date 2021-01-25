@@ -29,7 +29,15 @@
     - CreateNotificationsTable
         - 현 알림을 받은 사용자 정보
         - 알림 유형, 메시지, 이동 페이지 주소, 확인 유무 정보
+     
+    - CreateBadgesTable
+        - 배지 보유자의 통계 정보
+        - 배지 유형, 배지 이름 정보
     
+    - CreateIpNumbersTable
+        - ip 사용자 정보
+        - 전방 휴대폰 ip, 후방 휴대폰 ip, 포트 정보
+        
 #### 2. Mock Data 삽입
 - Seeds Class
     - UserTableSeeder
