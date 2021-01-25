@@ -46,6 +46,9 @@
     - RouteLikeTableSeeder
     - RecordTableSeeder
     - NotificationTableSeeder
+    - BadgeTableSeeder
+    - IpNumberTableSeeder
+    
     
     
     

@@ -7,11 +7,6 @@ use Illuminate\Support\Str;
 
 class RecordTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
         $faker = Factory::create('ko_kr');
