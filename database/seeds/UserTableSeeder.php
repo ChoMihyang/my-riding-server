@@ -9,11 +9,11 @@ class UserTableSeeder extends Seeder
 {
     public function run()
     {
-        // users 테이블 내 생성할 레코드 수
+        // users 테이블 내 생성할 사용자 레코드 수
         $num_of_user = 20;
 
         // 임의 경로 설정
-        $picture_paths = 'C:\user\profile\myPicture_';
+        $user_picture_paths = 'C:\user\profile\myPicture_';
 
         // Fake 객체 생성
         $faker = Factory::create('ko_kr');
@@ -24,7 +24,7 @@ class UserTableSeeder extends Seeder
                 'user_account' => $faker->name,
                 'user_password' => Hash::make('user_password'),
                 'user_nickname' => 'Rider_' . $count,
-                'user_picture' => $picture_paths . $count,
+                'user_picture' => $user_picture_paths . $count,
                 'user_num_of_riding' => $faker->numberBetween(0, 100),
                 'user_score_of_riding' => $faker->numberBetween(0, 30000),
                 'date_of_latest_riding' => $faker->dateTimeBetween($startDate = '-2 year', $endDate = 'now'),

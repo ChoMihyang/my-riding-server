@@ -14,7 +14,7 @@ class StatsTableSeeder extends Seeder
     {
         $faker = Factory::create('ko_kr');
 
-        // stats 테이블 내 생성할 레코드 수
+        // 사용자 한 명당 내 생성할 통계 레코드 수
         $num_of_stats = 10;
 
         // 번호가 1 ~ 10 인 회원의 수만큼 반복

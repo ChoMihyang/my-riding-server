@@ -14,10 +14,10 @@ class Controller extends BaseController
 
     protected $member;
 
-    public function __construct()
-    {
-        $this->member = new Member();
-    }
+//    public function __construct()
+//    {
+//        $this->member = new Member();
+//    }
 
     public static function makeResponseJson($msg, $statusCode, $data = null)
     {
