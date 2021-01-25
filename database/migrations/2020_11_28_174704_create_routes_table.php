@@ -31,6 +31,7 @@ class CreateRoutesTable extends Migration
             $table->unsignedBigInteger('route_user_id');
             $table->foreign('route_user_id')->references('id')->on('users');
             $table->string('route_title');
+            $table->string('route_image');
             $table->unsignedDouble('route_distance');
             $table->unsignedBigInteger('route_time');
             $table->unsignedBigInteger('route_like');

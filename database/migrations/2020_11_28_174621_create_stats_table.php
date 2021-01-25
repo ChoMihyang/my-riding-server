@@ -30,7 +30,7 @@ class CreateStatsTable extends Migration
             $table->foreign('stat_user_id')->references('id')->on('users');
             $table->dateTime('stat_date');
             $table->unsignedBigInteger('stat_week');
-            $table->unsignedInteger('stat_day');
+            $table->unsignedBigInteger('stat_day');
             $table->unsignedDouble('stat_distance');
             $table->unsignedBigInteger('stat_time');
             $table->unsignedDouble('stat_avg_speed');
