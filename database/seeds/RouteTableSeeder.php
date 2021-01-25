@@ -12,8 +12,10 @@ class RouteTableSeeder extends Seeder
     {
         $faker = Factory::create('ko_kr');
 
-        // routes 테이블 내 생성할 레코드 수
+        // 사용자 한 명당 생성할 경로 레코드 수
         $num_of_route = 10;
+        // 경로 이미지 저장 경로
+        $route_picture_paths = 'C:\user\route\myPicture_';
 
         $temp_riding_title = "번째 라이딩";
 
@@ -25,6 +27,7 @@ class RouteTableSeeder extends Seeder
                 DB::table('routes')->insert([
                     'route_user_id' => $user_count + 1,
                     'route_title' => $route_count . $temp_riding_title,
+                    'route_image' => $route_picture_paths . $route_count,
                     'route_distance' => $faker->numberBetween(1, 50),
                     'route_time' => $faker->numberBetween(1, 250),
                     'route_like' => $faker->numberBetween(0, 10),

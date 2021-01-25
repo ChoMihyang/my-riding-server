@@ -11,7 +11,7 @@ class NotificationTableSeeder extends Seeder
     {
         $faker = Factory::create('ko_kr');
 
-        // notifications 테이블 내 생성할 레코드 수
+        // 사용자 한 명당 생성할 알림 레코드 수
         $num_of_record = 5;
 
         // 알림 유형
@@ -21,7 +21,7 @@ class NotificationTableSeeder extends Seeder
         for ($count_user = 0; $count_user < 10; $count_user++) {
             // 회원마다 10개씩 알림 레코드 생성
             for ($count_noti = 0; $count_noti < $num_of_record; $count_noti++) {
-                // 날짜 랜덤 생성
+                // 랜덤 날짜 생성
                 $temp_date = $faker->date('Y-m-d');
                 // 랜덤 키값 생성
                 $tempNum = random_int(1001, 1003);
