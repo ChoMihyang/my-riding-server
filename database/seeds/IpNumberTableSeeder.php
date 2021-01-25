@@ -13,8 +13,10 @@ class IpNumberTableSeeder extends Seeder
      */
     public function run()
     {
-        $num_of_ip = 20;
         $faker = Factory::create('ko_kr');
+
+        // ip_numbers 테이블 내 생성할 ip 레코드 수
+        $num_of_ip = 20;
 
         for ($count = 0; $count < $num_of_ip; $count++) {
             DB::table('ip_numbers')->insert([

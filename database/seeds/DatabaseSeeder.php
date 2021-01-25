@@ -17,5 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call('RouteLikeTableSeeder');
         $this->call('RecordTableSeeder');
         $this->call('NotificationTableSeeder');
+        $this->call('IpNumberTableSeeder');
+        $this->call('BadgeTableSeeder');
     }
 }
