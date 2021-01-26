@@ -18,6 +18,10 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //});
 
+Route::group(['middleware' => ['cors', 'json.response']], function () {
+    // ...
+});
+
 // <<-- 회원 관리 -->>
 Route::prefix("member")->group(function () {
     /*
