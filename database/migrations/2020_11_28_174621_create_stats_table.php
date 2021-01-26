@@ -34,6 +34,7 @@ class CreateStatsTable extends Migration
             $table->unsignedDouble('stat_distance');
             $table->unsignedBigInteger('stat_time');
             $table->unsignedDouble('stat_avg_speed');
+            $table->unsignedDouble('stat_max_speed');
             $table->unsignedBigInteger('stat_count');
             $table->unsignedBigInteger('stat_year');
             $table->timestamps();
