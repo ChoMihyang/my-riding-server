@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "005e7295fd640cfc12c8ea8b61344909",
+    "content-hash": "5b416ec557b51aa51258059900e2e567",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1242,16 +1242,16 @@
         },
         {
             "name": "laravel/passport",
-            "version": "9.x-dev",
+            "version": "v9.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/passport.git",
-                "reference": "8d9e2e385da0a05c524b0b63655f537eebfe6fd1"
+                "reference": "011bd500e8ae3d459b692467880a49ff1ecd60c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/passport/zipball/8d9e2e385da0a05c524b0b63655f537eebfe6fd1",
-                "reference": "8d9e2e385da0a05c524b0b63655f537eebfe6fd1",
+                "url": "https://api.github.com/repos/laravel/passport/zipball/011bd500e8ae3d459b692467880a49ff1ecd60c0",
+                "reference": "011bd500e8ae3d459b692467880a49ff1ecd60c0",
                 "shasum": ""
             },
             "require": {
@@ -1315,7 +1315,7 @@
                 "issues": "https://github.com/laravel/passport/issues",
                 "source": "https://github.com/laravel/passport"
             },
-            "time": "2020-12-24T13:55:11+00:00"
+            "time": "2020-12-04T09:37:12+00:00"
         },
         {
             "name": "laravel/tinker",
@@ -7956,9 +7956,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "laravel/passport": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
