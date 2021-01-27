@@ -14,7 +14,7 @@ class ApiAuthController extends Controller
     // login/logout test
 
     // 회원가입
-    public function register (Request $request) {
+    public function register(Request $request) {
         // 유효성 검사
         $validator = Validator::make($request->all(), [
             'user_account'  => 'required|string|max:255',
@@ -54,7 +54,7 @@ class ApiAuthController extends Controller
         }
 
         // 입력받은 user_account 정보와 저장된 user_account 정보 일치여부 확인
-        $user = User::where('user_account', $request->user_account);
+        $user = User::where('user_account', $request->user_account)->first();
 
         // 유효성 검사 성공, user_account 정보 일치
         if ($user) {
@@ -82,4 +82,12 @@ class ApiAuthController extends Controller
         }
     }
 
+    // 로그아웃
+    public function logout(Request $request) {
+        $token = $request->user()->token();
+        $token->revoke(); // 토큰 제거
+        $response = ['message'=>'You have been successfully logged out!'];
+
+        return response($response, 200);
+    }
 }

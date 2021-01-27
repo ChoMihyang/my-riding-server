@@ -18,9 +18,20 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //});
 
-Route::group(['middleware' => ['cors', 'json.response']], function () {
-    // ...
+Route::middleware(['cors','json.response','auth:api'])->get('/user', function (Request $request) {
+    return $request->user();
 });
+
+Route::group(['middleware' => ['cors', 'json.response']], function () {
+    Route::post('/login', 'Auth\ApiAuthController@login')->name('login.api');
+    Route::post('/register', 'Auth\ApiAuthController@register')->name('register.api');
+    Route::post('/logout', 'Auth\ApiAuthController@logout')->name('logout.api');
+});
+
+Route::middleware('auth:api')->group(function () {
+    Route::get('/articles', 'ArticleController@index')->middleware('api.admin')->name('articles');
+});
+
 
 // <<-- 회원 관리 -->>
 Route::prefix("member")->group(function () {
