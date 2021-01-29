@@ -3,19 +3,38 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use phpDocumentor\Reflection\Types\Self_;
 
 class ApiAuthController extends Controller
 {
-    // login/logout test
+    private $user;
+    private const SIGNUP_FAIL    = '회원가입에 실패하셨습니다.';
+    private const SIGNUP_SUCCESS = '회원가입에 성공하셨습니다.';
+    private const LOGIN_FAIL_AC  = '유저 아이디가 일치하지 않습니다.';
+    private const LOGIN_FAIL_PW  = '유저 패스워드가 일치하지 않습니다.';
+    private const LOGIN_FAIL     = '로그인에 실패하셨습니다.';
+    private const LOGIN_SUCCESS  = '로그인에 성공하셨습니다.';
+    private const LOGOUT         = '로그아웃 되었습니다.';
 
-    // 회원가입
-    public function register(Request $request) {
-        // 유효성 검사
+    public function __construct()
+    {
+        $this->user = new User();
+    }
+
+    /**
+     * 회원가입
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function register(Request $request):JsonResponse
+    {
         $validator = Validator::make($request->all(), [
             'user_account'  => 'required|string|max:255',
             'user_password' => 'required|string|min:6|confirmed',
@@ -23,71 +42,125 @@ class ApiAuthController extends Controller
             'user_picture'  => 'required|string|max:255',
         ]);
 
-        // 유효성 검사 실패시
-        if ($validator->fails())
-        {
-            return response(['errors'=>$validator->errors()->all()], 422);
+        if ($validator->fails()) {
+            $response_data = [
+                'error' => $validator->errors(),
+            ];
+
+            return $this->responseJson(
+                self::SIGNUP_FAIL,
+                $response_data,
+                422
+            );
         }
 
-        // 유효성 검사 성공시
         $request['user_password']  = Hash::make($request['user_password']);
         $request['remember_token'] = Str::random(10);
-        $user  = User::create($request->toArray());
-        $token = $user->createToken('Laravel Password Grant Client')->accessToken;
+
+        // TODO 사진 입력 부분 추가 해야됨
+
+        $user_account  = $request->input('user_account');
+        $user_password = $request->input('user_password');
+        $user_nickname = $request->input('user_nickname');
+        $user_picture  = $request->input('user_picture');
+
+        $newUser = $this->user->createUserInfo($user_account,$user_password,$user_nickname,$user_picture);
+        $response_data = [
+            'userInfo' => $newUser
+        ];
+
+        $token = $newUser->createToken('Laravel Password Grant Client')->accessToken;
         $response = ['token'=>$token];
 
-        return response($response, 200);
+
+        return $this->responseJson(
+            self::SIGNUP_SUCCESS,
+            [
+                $response,
+                $response_data,
+            ],
+            201
+        );
     }
 
-    // 로그인
-    public function login(Request $request) {
-        // 유효성 검사
+    /**
+     * 로그인
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function login(Request $request):JsonResponse
+    {
         $validator = Validator::make($request->all(), [
             'user_account'  => 'required|string|max:255',
             'user_password' => 'required|string|min:6|confirmed',
         ]);
 
-        // 유효성 검사 실패시
-        if ($validator->fails())
-        {
-            return response(['errors'=>$validator->errors()->all()], 422);
+        if ($validator->fails()) {
+            $response_data = [
+              'error' => $validator->errors(),
+            ];
+
+            return $this->responseJson(
+              self::LOGIN_FAIL,
+              $response_data,
+              422
+            );
         }
 
-        // 입력받은 user_account 정보와 저장된 user_account 정보 일치여부 확인
-        $user = User::where('user_account', $request->user_account)->first();
+        // 입력 받은 user_account 정보와 저장된 user_account 정보 일치 여부 확인
+        $account = User::where('user_account', $request->user_account)->first();
 
         // 유효성 검사 성공, user_account 정보 일치
-        if ($user) {
-            // 입력받은 user_password, 저장된 user_password 일치여부 확인
-            if (Hash::check($request->user_password, $user->user_password)){
+        if ($account) {
+            // 입력 받은 user_password, 저장된 user_password 일치 여부 확인
+            if (Hash::check($request->user_password, $account->user_password)){
 
-                // 입력받은 user_password, 저장된 user_password 일치하는 경우
-                $token    = $user->createToken('Laravel Password Grant Client')->accessToken;
+                // 입력 받은 user_password, 저장된 user_password 일치 하는 경우
+                $token    = $account->createToken('Laravel Password Grant Client')->accessToken;
                 $response = ['token'=>$token];
 
-                return response($response, 200);
-            } else {
-
-                // 입력받은 user_password, 저장된 user_password 일치하지 않는 경우
-                $response = ["message" => "Password mismatch"];
-
-                return response($response, 422);
+                // 로그인 성공
+                return $this->responseJson(
+                    self::LOGIN_SUCCESS,
+                    $response,
+                    200
+                );
             }
-        }
-        else {
-            // 유효성 검사 성공, user_account 정보 불일치
-            $response = ["message" => "User does not exist"];
 
-            return response($response, 422);
+            $response_data = ["message"=>"Password mismatch"];
+            // 패스워드 불일치
+            return $this->responseJson(
+                self::LOGIN_FAIL_PW,
+                $response_data,
+                422
+            );
         }
+        $response_data = ["message"=>"User does not exist"];
+        // 아이디 불일치
+        return $this->responseJson(
+            self::LOGIN_FAIL_AC,
+            $response_data,
+            422
+        );
     }
 
-    // 로그아웃
-    public function logout(Request $request) {
+    /**
+     * 로그아웃
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function logout(Request $request):JsonResponse
+    {
         $token = $request->user()->token();
         $token->revoke(); // 토큰 제거
-        $response = ['message'=>'You have been successfully logged out!'];
+        $response_data = ['message'=>'You have been successfully logged out!'];
 
-        return response($response, 200);
+        return $this->responseJson(
+            self::LOGOUT,
+            $response_data,
+            200
+        );
     }
 }
