@@ -59,5 +59,4 @@ class BadgeTableSeeder extends Seeder
             ]);
         }
     }
-
 }

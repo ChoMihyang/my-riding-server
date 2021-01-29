@@ -27,20 +27,20 @@ Route::prefix("member")->group(function () {
      *  회원 정보 인증
      *  -> MemberController
      */
-    Route::post("login", "MemberController@login")->name("[사용자] 로그인");
-    Route::post("logout", "MemberController@logout")->name("[사용자] 로그아웃");
-    Route::post("signup", "MemberController@signUp")->name("[사용자] 회원가입");
-    Route::get("profile", "MemberController@profile")->name("[사용자] 프로필 조회");
+    Route::post("login", "UserController@login")->name("[사용자] 로그인");
+    Route::post("logout", "UserController@logout")->name("[사용자] 로그아웃");
+    Route::post("signup", "UserController@signUp")->name("[사용자] 회원가입");
+    Route::get("profile", "UserController@profile")->name("[사용자] 프로필 조회");
 //    Route::get("auth", "MemberController@auth")->name("[사용자] 회원정보 인증");
 });
 
 // <<-- 대시 보드 관리 -->>
 Route::prefix("dashboard")->group(function () {
     /**
-     * 회원 정보, 통계, 알림 조회 -> memberController
+     * 회원 정보, 통계, 알림 조회 -> UserController
      * 라이딩 알림 확인(X버튼) -> Notification
      */
-    Route::get("/", "MemberController@dashboard")->name("[대시보드] 통계 조회");
+    Route::get("/", "UserController@dashboard")->name("[대시보드] 통계 조회");
     Route::patch("noti/{id}", "NotificationController@notiCheck")->name("[대시보드] 알림 확인");
     Route::get("/noti/{id}", "NotificationController@notiPageMove")->name("[대시보드] 해당 알림 페이지 이동");
 });

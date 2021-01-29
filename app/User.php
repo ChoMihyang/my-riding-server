@@ -3,8 +3,10 @@
 namespace App;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use phpDocumentor\Reflection\Types\This;
 
 class User extends Authenticatable
 {
@@ -39,4 +41,29 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * 대시보드 사용자 정보(UserController - dashboard)
+     *
+     * @param int $user_id
+     * @return Collection
+     */
+
+    public function getDashboardUserInfo(
+        int $user_id
+    ): Collection
+    {
+        $user_info = self::select(
+            [
+                'user_nickname as nickname',
+                'user_picture as picture',
+                'user_score_of_riding as score',
+                'user_num_of_riding as count',
+                'date_of_latest_riding as last_riding'
+            ])
+            ->where('id', $user_id)
+            ->get();
+
+        return $user_info;
+    }
 }
