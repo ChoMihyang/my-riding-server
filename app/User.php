@@ -65,4 +65,14 @@ class User extends Authenticatable
             'user_picture'  => $user_picture
         ]);
     }
+
+    /**
+     * 사용자 목록 전부 가지고 오기
+     *
+     * @return User[]|\Illuminate\Database\Eloquent\Collection
+     */
+    public function indexUserList()
+    {
+        return self::all();
+    }
 }
