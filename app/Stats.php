@@ -9,9 +9,7 @@ class Stats extends Model
 {
     protected $table = 'stats';
 
-    protected $hidden = [
-        'created_at', 'updated_at'
-    ];
+    protected $hidden = ['created_at', 'updated_at'];
 
     /**
      * 대시보드 통계 정보
@@ -26,12 +24,17 @@ class Stats extends Model
         int $today_week
     ): Collection
     {
-
-        return self::where('stat_user_id', '=', $user_id)
+        $user_stats = self::select([
+            'stat_week as week',
+            'stat_distance as distance',
+            'stat_time as time',
+            'stat_avg_speed as avg_speed'
+        ])
+            ->where('stat_user_id', $user_id)
             ->where('stat_year', $today_year)
             ->where('stat_week', $today_week)
             ->get();
 
+        return $user_stats;
     }
 }
-

@@ -12,7 +12,7 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    protected $TEST_USER_ID = 6;
+    protected $TEST_USER_ID = 1;
     protected $member;
 
 //    public function __construct()
