@@ -21,6 +21,7 @@ class ApiAuthController extends Controller
     private const LOGIN_FAIL     = '로그인에 실패하셨습니다.';
     private const LOGIN_SUCCESS  = '로그인에 성공하셨습니다.';
     private const LOGOUT         = '로그아웃 되었습니다.';
+    private const USER_PROFILE   = '프로필 정보 조회에 성공하셨습니다.';
 
     public function __construct()
     {
@@ -160,6 +161,53 @@ class ApiAuthController extends Controller
         return $this->responseJson(
             self::LOGOUT,
             $response_data,
+            200
+        );
+    }
+
+    /**
+     * 프로필 정보
+     *
+     * @param User $id
+     * @return JsonResponse
+     */
+    public function profile(User $id):JsonResponse
+    {
+        $user_account    = $id->getAttribute('user_account');
+        $user_nickname   = $id->getAttribute('user_nickname');
+        $user_picture    = $id->getAttribute('user_picture');
+        $user_created_at = $id->getAttribute('created_at');
+
+        return $this->responseJson(
+            self::USER_PROFILE,
+            [
+                $user_account,
+                $user_nickname,
+                $user_picture,
+                $user_created_at
+            ],
+            200
+        );
+    }
+
+    // 사용자 인증
+    public function auth(User $id)
+    {
+        // 수정해야함
+        $kkk = $id->getAttribute('user_account');
+        dd($kkk);
+        // return response()->json($kkk);
+    }
+
+    public function showAllList()
+    {
+        $userList = $this->user->indexUserList();
+        $responseData = [
+            'users' => $userList
+        ];
+        return $this->responseJson(
+            '회원 목록을 반환합니다.',
+            $responseData,
             200
         );
     }
