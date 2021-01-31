@@ -19,7 +19,9 @@ class User extends Authenticatable
     protected $table = 'users';
 
     protected $fillable = [
-        'name', 'email', 'password',
+        'user_account', 'user_password',
+        'user_nickname', 'user_picture',
+        'user_num_of_riding', 'user_score_of_riding',
     ];
 
     /**
@@ -28,7 +30,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'user_password', 'remember_token',
     ];
 
     /**
@@ -39,4 +41,38 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * 유저 생성
+     *
+     * @param string $user_account
+     * @param string $user_password
+     * @param string $user_nickname
+     * @param string $user_picture
+     * @return mixed
+     */
+    public function createUserInfo(
+        string $user_account,
+        string $user_password,
+        string $user_nickname,
+        string $user_picture
+    )
+    {
+        return self::create([
+            'user_account'  => $user_account,
+            'user_password' => $user_password,
+            'user_nickname' => $user_nickname,
+            'user_picture'  => $user_picture
+        ]);
+    }
+
+    /**
+     * 사용자 목록 전부 가지고 오기
+     *
+     * @return User[]|\Illuminate\Database\Eloquent\Collection
+     */
+    public function indexUserList()
+    {
+        return self::all();
+    }
 }

@@ -27,10 +27,10 @@ class CreateUsersTable extends Migration
             $table->string('user_account');
             $table->string('user_password');
             $table->string('user_nickname');
-            $table->string('user_picture');
-            $table->unsignedBigInteger('user_num_of_riding');
-            $table->unsignedBigInteger('user_score_of_riding');
-            $table->dateTime('date_of_latest_riding');
+            $table->string('user_picture')->nullable();
+            $table->unsignedBigInteger('user_num_of_riding')->default(0);
+            $table->unsignedBigInteger('user_score_of_riding')->default(0);
+            $table->dateTime('date_of_latest_riding')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

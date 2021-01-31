@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Member;
+use App\Members;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
+use \Illuminate\Http\JsonResponse;
 
 class Controller extends BaseController
 {
@@ -25,6 +26,26 @@ class Controller extends BaseController
             "message" => $msg,
             "data" => $data
         ], $statusCode);
+    }
+
+    /**
+     * json response 생성
+     *
+     * @param string $message
+     * @param array $data
+     * @param int $http_code
+     * @return JsonResponse
+     */
+    public function responseJson(
+        string $message,
+        array $data,
+        int $http_code
+    ):JsonResponse
+    {
+        return response()->json([
+           'message'=>$message,
+           'data'=>$data
+        ], $http_code);
     }
 
 
