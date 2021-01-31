@@ -109,6 +109,7 @@ class ApiAuthController extends Controller
             );
         }
 
+
         // 입력 받은 user_account 정보와 저장된 user_account 정보 일치 여부 확인
         $account = User::where('user_account', $request->user_account)->first();
 
@@ -186,28 +187,6 @@ class ApiAuthController extends Controller
                 $user_picture,
                 $user_created_at
             ],
-            200
-        );
-    }
-
-    // 사용자 인증
-    public function auth(User $id)
-    {
-        // 수정해야함
-        $kkk = $id->getAttribute('user_account');
-        dd($kkk);
-        // return response()->json($kkk);
-    }
-
-    public function showAllList()
-    {
-        $userList = $this->user->indexUserList();
-        $responseData = [
-            'users' => $userList
-        ];
-        return $this->responseJson(
-            '회원 목록을 반환합니다.',
-            $responseData,
             200
         );
     }
