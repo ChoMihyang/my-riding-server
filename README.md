@@ -1,4 +1,10 @@
 # my-riding-server
+
+## 2021-01-31(일)
+#### 1. 회원가입, 로그인, 로그아웃, 프로필 정보 기능 추가
+- dash board 완성 후 ApiAuthController.php , api.php 수정해야함
+
+
 ## 2021-01-24(일)
 
 #### 1. 모의 DB를 위한 Table Schema 생성
