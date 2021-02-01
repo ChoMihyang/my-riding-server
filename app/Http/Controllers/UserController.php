@@ -78,5 +78,5 @@ class UserController extends Controller
                 'notifications' => $user_noti
             ]
         ], 200);
-    
+    }
 }

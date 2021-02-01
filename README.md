@@ -50,6 +50,18 @@
     - IpNumberTableSeeder
     
     
+## 2021-01-31(일)
+### 대시보드 페이지 출력 (UserController@dashboard)
+1. 사용자 프로필(User.php)
+    - getDashboardUserInfo(사용자 번호) 
+    - Return : 사진, 닉네임, 점수, 최근 라이딩, 라이딩 총 횟수 
     
+2. 통계 요약(Stats.php)
+    - getDashboardStats(사용자 번호, 연도, 주차)
+    - Return : 요일, 거리, 시간, 평균 속도
+    
+3. 읽지 않은 알림(Notification.php) 
+    - getDashboardNoti(사용자 번호)
+    - Return : 알림 유형, 메시지, 주소, 알림 발생일
     
     
