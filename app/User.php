@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
@@ -43,6 +44,30 @@ class User extends Authenticatable
     ];
 
     /**
+     * 대시보드 사용자 정보(UserController - dashboard)
+     * @param int $user_id
+     * @return Collection
+     */
+    public function getDashboardUserInfo(
+        int $user_id
+    ): Collection
+    {
+        $param = [
+            'user_nickname as nickname',
+            'user_score_of_riding as score',
+            'user_num_of_riding as count',
+            'date_of_latest_riding as last_riding',
+            'user_picture as picture'
+        ];
+
+        $user_info = self::select($param)
+            ->where('id', $user_id)
+            ->get();
+
+        return $user_info;
+    }
+
+    /**
      * 유저 생성
      *
      * @param string $user_account
@@ -59,20 +84,10 @@ class User extends Authenticatable
     )
     {
         return self::create([
-            'user_account'  => $user_account,
+            'user_account' => $user_account,
             'user_password' => $user_password,
             'user_nickname' => $user_nickname,
-            'user_picture'  => $user_picture
+            'user_picture' => $user_picture
         ]);
-    }
-
-    /**
-     * 사용자 목록 전부 가지고 오기
-     *
-     * @return User[]|\Illuminate\Database\Eloquent\Collection
-     */
-    public function indexUserList()
-    {
-        return self::all();
     }
 }
