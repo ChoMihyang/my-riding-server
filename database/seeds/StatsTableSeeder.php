@@ -41,6 +41,7 @@ class StatsTableSeeder extends Seeder
                     'stat_distance' => $faker->numberBetween(5, 50),
                     'stat_time' => $faker->numberBetween(0, 250),
                     'stat_avg_speed' => $faker->numberBetween(10, 40),
+                    'stat_max_speed' => $faker->numberBetween(10, 40),
                     'stat_count' => $faker->numberBetween(1, 20),
                     'stat_year' => $date_y,
                     'created_at' => $temp_date,

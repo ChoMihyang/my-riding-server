@@ -17,6 +17,7 @@ class CreateStatsTable extends Migration
      * stat_distance - 현 통계에 해당하는 주행 거리
      * stat_time - 현 통계에 해당하는 주행 시간
      * stat_avg_speed - 현 통계에 해당하는 주행 기록 중 평균 속도
+     * stat_max_speed - 현 통계에 해당하는 주행 기록 중 최고 속도
      * stat_count - 현 사용자의 주행 통계 수
      * stat_year - 현 통계에 해당하는 날짜의 연도
      *
@@ -34,6 +35,7 @@ class CreateStatsTable extends Migration
             $table->unsignedDouble('stat_distance');
             $table->unsignedBigInteger('stat_time');
             $table->unsignedDouble('stat_avg_speed');
+            $table->unsignedDouble('stat_max_speed');
             $table->unsignedBigInteger('stat_count');
             $table->unsignedBigInteger('stat_year');
             $table->timestamps();
