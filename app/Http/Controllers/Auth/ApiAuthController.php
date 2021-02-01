@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -22,6 +23,7 @@ class ApiAuthController extends Controller
     private const LOGIN_SUCCESS  = '로그인에 성공하셨습니다.';
     private const LOGOUT         = '로그아웃 되었습니다.';
     private const USER_PROFILE   = '프로필 정보 조회에 성공하셨습니다.';
+    private const TOKEN_CHECK    = '유효한 토큰입니다.';
 
     public function __construct()
     {
@@ -187,6 +189,20 @@ class ApiAuthController extends Controller
                 $user_picture,
                 $user_created_at
             ],
+            200
+        );
+    }
+
+    /**
+     * 회원정보 인증
+     *
+     * @return JsonResponse
+     */
+    public function auth():JsonResponse
+    {
+        return $this->responseJson(
+            self::TOKEN_CHECK,
+            [Auth::guard('api')->user()],
             200
         );
     }
