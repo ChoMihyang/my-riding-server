@@ -23,7 +23,8 @@ class ApiAuthController extends Controller
     private const LOGIN_SUCCESS  = '로그인에 성공하셨습니다.';
     private const LOGOUT         = '로그아웃 되었습니다.';
     private const USER_PROFILE   = '프로필 정보 조회에 성공하셨습니다.';
-    private const TOKEN_CHECK    = '유효한 토큰입니다.';
+    private const TOKEN_SUCCESS  = '유효한 토큰입니다.';
+    private const TOKEN_FAIL     = '잘못된 접근입니다.';
 
     public function __construct()
     {
@@ -200,8 +201,16 @@ class ApiAuthController extends Controller
      */
     public function auth():JsonResponse
     {
+        if ((Auth::guard('api')->user()) == null) {
+            return $this->responseJson(
+                self::TOKEN_FAIL,
+                [Auth::guard('api')->user()],
+                401
+            );
+        }
+
         return $this->responseJson(
-            self::TOKEN_CHECK,
+            self::TOKEN_SUCCESS,
             [Auth::guard('api')->user()],
             200
         );
