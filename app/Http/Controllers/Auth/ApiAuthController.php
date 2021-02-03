@@ -39,8 +39,9 @@ class ApiAuthController extends Controller
      */
     public function register(Request $request):JsonResponse
     {
+        // TODO 공백 체크...
         $validator = Validator::make($request->all(), [
-            'user_account'  => 'required|string|max:255',
+            'user_account'  => 'required|string|max:255|unique:users',
             'user_password' => 'required|string|min:6|confirmed',
             'user_nickname' => 'required|String|min:12',
             'user_picture'  => 'required|string|max:255',
@@ -53,7 +54,9 @@ class ApiAuthController extends Controller
 
             return $this->responseJson(
                 self::SIGNUP_FAIL,
-                $response_data,
+                [
+                    $response_data
+                ],
                 422
             );
         }
@@ -199,7 +202,7 @@ class ApiAuthController extends Controller
      *
      * @return JsonResponse
      */
-    public function auth():JsonResponse
+    public function user():JsonResponse
     {
         if ((Auth::guard('api')->user()) == null) {
             return $this->responseJson(
