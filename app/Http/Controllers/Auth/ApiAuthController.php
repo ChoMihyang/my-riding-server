@@ -100,7 +100,7 @@ class ApiAuthController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'user_account'  => 'required|string|max:255',
-            'user_password' => 'required|string|min:6|confirmed',
+            'user_password' => 'required|string|min:6',
         ]);
 
         if ($validator->fails()) {
@@ -136,7 +136,7 @@ class ApiAuthController extends Controller
                 );
             }
 
-            $response_data = ["message"=>"Password mismatch"];
+            $response_data = ["message"=>"비밀번호가 일치하지 않습니다."];
             // 패스워드 불일치
             return $this->responseJson(
                 self::LOGIN_FAIL_PW,
@@ -144,7 +144,7 @@ class ApiAuthController extends Controller
                 422
             );
         }
-        $response_data = ["message"=>"User does not exist"];
+        $response_data = ["message"=>"아이디가 존재하지 않습니다."];
         // 아이디 불일치
         return $this->responseJson(
             self::LOGIN_FAIL_AC,
@@ -163,7 +163,7 @@ class ApiAuthController extends Controller
     {
         $token = $request->user()->token();
         $token->revoke(); // 토큰 제거
-        $response_data = ['message'=>'You have been successfully logged out!'];
+        $response_data = ['message'=>'로그아웃 되었습니다.'];
 
         return $this->responseJson(
             self::LOGOUT,
