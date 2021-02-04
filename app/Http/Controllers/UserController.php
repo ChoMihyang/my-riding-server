@@ -40,7 +40,7 @@ class UserController extends Controller
         // TODO 날짜 테스트 용 -> 현재 날짜로 변경
         // 현재 연도 및 주차 계산
         // $today_date = date('Y-m-d');
-        $today_date = '2020-01-03';
+        $today_date = '2021-01-04';
 
         // 연도, 월, 일 추출
         $today_year = date("Y", strtotime($today_date));
@@ -57,10 +57,13 @@ class UserController extends Controller
         $end_date = date('Y-m-d', strtotime($start_date . '+6days'));
 
         $user_stats = $this->stats->getDashboardStats($user_id, $today_year, $today_week);
+
         // 통계 -->>
 
         // <<-- 알림 : 읽지 않은 알림-->>
         // TODO created_at 포맷 변경
+        // TODO 알림 확인 API
+        // TODO 알림 페이지 URL 전송 API
         $user_noti = $this->notifications->getDashboardNoti($user_id);
 
 
