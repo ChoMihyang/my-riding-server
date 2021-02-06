@@ -39,15 +39,14 @@ class ApiAuthController extends Controller
      */
     public function register(Request $request):JsonResponse
     {
-        // TODO 공백 체크...
         $validator = Validator::make($request->all(), [
             'user_account'  => 'required|string|max:255|unique:users',
             'user_password' => 'required|string|min:6|confirmed',
-            'user_nickname' => 'required|String|min:12',
+            'user_nickname' => 'required|String|min:12|unique:users',
             'user_picture'  => 'required|string|max:255',
         ]);
 
-        if ($validator->fails()) {
+        if ($validator->fails() || strpos($request['user_account'], ' ')) {
             $response_data = [
                 'error' => $validator->errors(),
             ];
@@ -71,12 +70,9 @@ class ApiAuthController extends Controller
         $user_nickname = $request->input('user_nickname');
         $user_picture  = $request->input('user_picture');
 
-        $newUser = $this->user->createUserInfo($user_account,$user_password,$user_nickname,$user_picture);
-        $response_data = [
-            'userInfo' => $newUser
-        ];
+        $token = $this->user->createToken('Laravel Password Grant Client')->accessToken;
+        $data  = $this->user->createUserInfo($user_account,$user_password,$user_nickname,$user_picture);
 
-        $token = $newUser->createToken('Laravel Password Grant Client')->accessToken;
         $response = ['token'=>$token];
 
 
@@ -84,7 +80,6 @@ class ApiAuthController extends Controller
             self::SIGNUP_SUCCESS,
             [
                 $response,
-                $response_data,
             ],
             201
         );

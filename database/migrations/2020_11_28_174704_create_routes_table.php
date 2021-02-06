@@ -34,9 +34,9 @@ class CreateRoutesTable extends Migration
             $table->string('route_image');
             $table->unsignedDouble('route_distance');
             $table->unsignedBigInteger('route_time');
-            $table->unsignedBigInteger('route_like');
-            $table->unsignedBigInteger('route_num_of_try_count');
-            $table->unsignedBigInteger('route_num_of_try_user');
+            $table->unsignedBigInteger('route_like')->default(0);
+            $table->unsignedBigInteger('route_num_of_try_count')->default(0);;
+            $table->unsignedBigInteger('route_num_of_try_user')->default(0);;
             $table->string('route_start_point_address');
             $table->string('route_end_point_address');
             $table->unsignedDouble('route_avg_degree');
