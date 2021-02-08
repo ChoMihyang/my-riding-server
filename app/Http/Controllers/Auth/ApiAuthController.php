@@ -17,23 +17,14 @@ class ApiAuthController extends Controller
     private $user;
     private const SIGNUP_FAIL = '회원가입에 실패하셨습니다.';
     private const SIGNUP_SUCCESS = '회원가입에 성공하셨습니다.';
-<<<<<<< HEAD
-    private const LOGIN_FAIL_AC  = '유저 아이디가 일치하지 않습니다.';
-    private const LOGIN_FAIL_PW  = '유저 패스워드가 일치하지 않습니다.';
-    private const LOGIN_FAIL     = '로그인에 실패하셨습니다.';
-    private const LOGIN_SUCCESS  = '로그인에 성공하셨습니다.';
-    private const LOGOUT         = '로그아웃 되었습니다.';
-    private const USER_PROFILE   = '프로필 정보 조회에 성공하셨습니다.';
-    private const TOKEN_SUCCESS  = '유효한 토큰입니다.';
-    private const TOKEN_FAIL     = '잘못된 접근입니다.';
-=======
     private const LOGIN_FAIL_AC = '유저 아이디가 일치하지 않습니다.';
     private const LOGIN_FAIL_PW = '유저 패스워드가 일치하지 않습니다.';
     private const LOGIN_FAIL = '로그인에 실패하셨습니다.';
     private const LOGIN_SUCCESS = '로그인에 성공하셨습니다.';
     private const LOGOUT = '로그아웃 되었습니다.';
     private const USER_PROFILE = '프로필 정보 조회에 성공하셨습니다.';
->>>>>>> dev
+    private const TOKEN_SUCCESS = '유효한 토큰입니다.';
+    private const TOKEN_FAIL = '잘못된 접근입니다.';
 
     public function __construct()
     {
@@ -49,17 +40,10 @@ class ApiAuthController extends Controller
     public function register(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-<<<<<<< HEAD
-            'user_account'  => 'required|string|max:255|unique:users',
+            'user_account' => 'required|string|max:255|unique:users',
             'user_password' => 'required|string|min:6|confirmed',
             'user_nickname' => 'required|String|min:12|unique:users',
-            'user_picture'  => 'required|string|max:255',
-=======
-            'user_account' => 'required|string|max:255',
-            'user_password' => 'required|string|min:6|confirmed',
-            'user_nickname' => 'required|string|min:12',
             'user_picture' => 'required|string|max:255',
->>>>>>> dev
         ]);
 
         if ($validator->fails() || strpos($request['user_account'], ' ')) {
@@ -86,21 +70,10 @@ class ApiAuthController extends Controller
         $user_nickname = $request->input('user_nickname');
         $user_picture = $request->input('user_picture');
 
-<<<<<<< HEAD
         $token = $this->user->createToken('Laravel Password Grant Client')->accessToken;
-        $data  = $this->user->createUserInfo($user_account,$user_password,$user_nickname,$user_picture);
+        $data = $this->user->createUserInfo($user_account, $user_password, $user_nickname, $user_picture);
 
-        $response = ['token'=>$token];
-=======
-        $newUser = $this->user->createUserInfo($user_account, $user_password, $user_nickname, $user_picture);
-        $response_data = [
-            'userInfo' => $newUser
-        ];
-
-        $token = $newUser->createToken('Laravel Password Grant Client')->accessToken;
         $response = ['token' => $token];
->>>>>>> dev
-
 
         return $this->responseJson(
             self::SIGNUP_SUCCESS,
@@ -120,13 +93,8 @@ class ApiAuthController extends Controller
     public function login(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-<<<<<<< HEAD
-            'user_account'  => 'required|string|max:255',
-            'user_password' => 'required|string|min:6',
-=======
             'user_account' => 'required|string|max:255',
-            'user_password' => 'required|string|min:6|confirmed',
->>>>>>> dev
+            'user_password' => 'required|string|min:6',
         ]);
 
         if ($validator->fails()) {
@@ -162,11 +130,8 @@ class ApiAuthController extends Controller
                 );
             }
 
-<<<<<<< HEAD
-            $response_data = ["message"=>"비밀번호가 일치하지 않습니다."];
-=======
-            $response_data = ["message" => "Password mismatch"];
->>>>>>> dev
+            $response_data = ["message" => "비밀번호가 일치하지 않습니다."];
+
             // 패스워드 불일치
             return $this->responseJson(
                 self::LOGIN_FAIL_PW,
@@ -174,11 +139,9 @@ class ApiAuthController extends Controller
                 422
             );
         }
-<<<<<<< HEAD
-        $response_data = ["message"=>"아이디가 존재하지 않습니다."];
-=======
-        $response_data = ["message" => "User does not exist"];
->>>>>>> dev
+
+        $response_data = ["message" => "아이디가 존재하지 않습니다."];
+
         // 아이디 불일치
         return $this->responseJson(
             self::LOGIN_FAIL_AC,
@@ -197,11 +160,8 @@ class ApiAuthController extends Controller
     {
         $token = $request->user()->token();
         $token->revoke(); // 토큰 제거
-<<<<<<< HEAD
-        $response_data = ['message'=>'로그아웃 되었습니다.'];
-=======
-        $response_data = ['message' => 'You have been successfully logged out!'];
->>>>>>> dev
+
+        $response_data = ['message' => '로그아웃 되었습니다.'];
 
         return $this->responseJson(
             self::LOGOUT,
@@ -240,7 +200,7 @@ class ApiAuthController extends Controller
      *
      * @return JsonResponse
      */
-    public function user():JsonResponse
+    public function user(): JsonResponse
     {
         if ((Auth::guard('api')->user()) == null) {
             return $this->responseJson(
