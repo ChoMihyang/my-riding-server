@@ -41,11 +41,11 @@ class Controller extends BaseController
         string $message,
         array $data,
         int $http_code
-    ):JsonResponse
+    ): JsonResponse
     {
         return response()->json([
-           'message'=>$message,
-           'data'=>$data
+            'message' => $message,
+            'data' => $data
         ], $http_code);
     }
 
