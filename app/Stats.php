@@ -5,6 +5,7 @@ namespace App;
 use http\Env\Request;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Stats extends Model
 {
@@ -13,7 +14,6 @@ class Stats extends Model
     protected $hidden = ['created_at', 'updated_at'];
 
     // TODO 웹에서 주차 선택 시 ,해당 통계 조회
-
 
     /**
      * 대시보드 통계 정보(UserController - dashboard)
@@ -43,5 +43,34 @@ class Stats extends Model
             ->get();
 
         return $user_stats;
+    }
+
+    // 라이딩 일지 페이지 - 연도별 통계기록 보기
+    // 해당 연도, 주차, 시작일, 마지막일, 요일, 거리, 시간, 평균 속도
+    /**
+     * @param int $year
+     * @param int $user_id
+     * @return Collection
+     */
+    public function select_stats_values(
+        int $year,
+        int $user_id
+    ): Collection
+    {
+        $param = [
+//            'stat_week as week',
+            'stat_day as day',
+            'stat_distance as distance',
+            'stat_time as time',
+            'stat_avg_speed as avg_speed'
+        ];
+
+        $record_stats_by_year = Stats::select($param)
+            ->where('stat_user_id', $user_id)
+            ->where('stat_year', $year)
+            ->orderBy('stat_week')
+            ->get();
+
+        return $record_stats_by_year;
     }
 }

@@ -1,0 +1,73 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Stats;
+use Illuminate\Http\Request;
+
+class RecordController extends Controller
+{
+    private $stats;
+    private const SELECT_BY_YEAR_SUCCESS = '연도 통계 조회를 성공하였습니다.';
+    private const SELECT_BY_YEAR_FAIL = '연도 통계 조회를 실패하였습니다.';
+
+    public function __construct()
+    {
+        $this->stats = new Stats();
+    }
+
+    public function recordViewByYear(Request $request)
+    {
+        // TODO 토큰으로 사용자 정보 가져오기
+        $user_id = $this->TEST_USER_ID;
+        // 현재 날짜
+        $today_date = date('Y-m-d');
+        // 현재 연도
+        $today_year = date('Y');
+
+        // 요청받은 연도의 유효 범위
+        $min_year = (int)$today_year - 3;
+        $max_year = (int)$today_year;
+        // 유효성 검사
+        $requestedYear = $request->validate([
+            'stat_year' => 'required | numeric | min:' . $min_year . '|max:' . $max_year
+        ]);
+
+        // 사용자가 요청한 연도 정보
+        $requested_year = (int)$requestedYear['stat_year'];
+        // 해당 연도의 라이딩 통계 조회
+        $record_stats_by_year = $this->stats->select_stats_values($requested_year, $user_id);
+        $temp_stats = $record_stats_by_year->groupBy('week')->toArray();
+
+        // 현재 날짜의 주차
+        $today_week = date('W', strtotime($today_date));
+        // 현재 날짜의 요일
+        $day_array = [0 => 6, 1 => 0, 2 => 1, 3 => 2, 4 => 3, 5 => 4, 6 => 5];
+        $temp_day = date('w', strtotime($today_date));
+        $today_day = $day_array[$temp_day];
+
+        // 현재 주차의 시작일 (월요일 기준)
+        $today_start_date = date('Y-m-d', strtotime($today_date . "-" . $today_day . "days"));
+
+        $resultData = [];
+
+        foreach ($temp_stats as $week => $values) {
+            $date_difference = ($today_week - $week + 1) * 7;
+            $start_date_requested = date('Y-m-d', (strtotime($today_start_date . "-" . $date_difference . "days")));
+            $end_date_requested = date('Y-m-d', strtotime($start_date_requested . "+6days"));
+
+            $resultData[$week] = [
+                'week' => $week,
+                'startDate' => $start_date_requested,
+                'endDate' => $end_date_requested,
+                'values' => $values
+            ];
+        }
+
+        return $this->responseJson(
+            "${today_year}" . self::SELECT_BY_YEAR_SUCCESS,
+            ['stats' => $resultData],
+            200
+        );
+    }
+}

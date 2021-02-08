@@ -16,6 +16,8 @@ class UserController extends Controller
     private $stats;
     private $notifications;
 
+    private const PRINT_USER_PROFILE_SUCCESS = "사용자 정보, 통계, 알림 조회를 성공하였습니다.";
+
     // 모델 객체 생성
     public function __construct()
     {
@@ -40,7 +42,7 @@ class UserController extends Controller
         // TODO 날짜 테스트 용 -> 현재 날짜로 변경
         // 현재 연도 및 주차 계산
         // $today_date = date('Y-m-d');
-        $today_date = '2021-01-04';
+        $today_date = '2021-02-07';
 
         // 연도, 월, 일 추출
         $today_year = date("Y", strtotime($today_date));
@@ -49,10 +51,15 @@ class UserController extends Controller
 
         $make_date = $today_year . "-" . $today_month . "-" . $today_day;
         $today_week = date('W', strtotime($make_date));             // 현재 주차
-        $day_of_week = date('w', strtotime($make_date));            // 현재 요일
+
+        $day_array = [0 => 6, 1 => 0, 2 => 1, 3 => 2, 4 => 3, 5 => 4, 6 => 5];
+        $temp_day = date('w', strtotime($today_date));
+        $day_of_week = $day_array[$temp_day]; // 현재 요일
+
 
         // 해당 주의 시작일
         $start_date = date('Y-m-d', strtotime($today_date . " -" . $day_of_week . "days"));
+
         // 해당 주의 마지막일
         $end_date = date('Y-m-d', strtotime($start_date . '+6days'));
 
@@ -66,20 +73,24 @@ class UserController extends Controller
         // TODO 알림 페이지 URL 전송 API
         $user_noti = $this->notifications->getDashboardNoti($user_id);
 
+        $dateData = ['year' => $today_year, 'week' => $today_week, 'startDate' => $start_date, 'endDate' => $end_date, 'values' => $user_stats];
+        $returnData = ['user' => $user_info, 'stats' => $dateData, 'notifications' => $user_noti];
 
-        return response()->json([
-            'message' => '사용자 정보, 통계, 알림 조회를 성공하였습니다.',
-            'data' => [
-                'user' => $user_info,
-                'stats' => [
-                    'year' => $today_year,
-                    'week' => $today_week,
-                    'start_date' => $start_date,
-                    'end_date' => $end_date,
-                    'values' => $user_stats,
-                ],
-                'notifications' => $user_noti
-            ]
-        ], 200);
+        return $this->responseJson(
+            self::PRINT_USER_PROFILE_SUCCESS,
+            [$returnData],
+            201);
+
+//        return response()->json([
+//            'message' => '사용자 정보, 통계, 알림 조회를 성공하였습니다.',
+//            'data' => [
+//                'user' => $user_info,
+//                'stats' => [
+//                    $dateData
+//                ],
+//                'notifications' => $user_noti
+//            ]
+//        ], 200);
+
     }
 }

@@ -22,13 +22,7 @@ class Record extends Model
      * @return Collection
      */
 
-    // 해당 연도, 주차, 시작일, 마지막일, 요일, 거리, 시간, 평균 속도
-    public function select_stats_values(int $year, int $user_id)
-    {
 
-
-
-    }
 
     public function delete_record()
     {
