@@ -44,7 +44,7 @@ Route::prefix("record")->group(function () {
      *  -> RecordController
      */
     Route::get("/year", "RecordController@recordViewByYear")->name("[라이딩 일지] 연도 기준 조회");
-//    Route::get("/week", "RecordController@recordViewByWeek")->name("[라이딩 일지] 주 기준 조회");
+    Route::get("/week", "RecordController@recordViewByWeek")->name("[라이딩 일지] 주 기준 조회");
 //    Route::get("/{id}", "RecordController@recordDetailView")->name("[라이딩 일지] 상세 조회");
 //    Route::patch("/{id}", "RecordController@recordModify")->name("[라이딩 일지] 이름 수정");
 //    Route::delete("/{id}", "RecordController@recordDelete")->name("[라이딩 일지] 기록 삭제");

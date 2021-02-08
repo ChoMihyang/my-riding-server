@@ -14,15 +14,34 @@ class Record extends Model
     protected $table = 'records';
     protected $fillable = ['rec_title'];
 
-
     /**
-     * @param int $year
+     *  특정 연도 내 하나의 주차 통계 조회
      * @param int $user_id
-     *
+     * @param int $year
+     * @param int $week
      * @return Collection
      */
+    public function select_stats_by_week(
+        int $user_id,
+        int $year,
+        int $week
+    ): Collection
+    {
+        dd('dd');
+        $param = [
+            'created_at as date',
+            'rec_route_id as id',
+            'rec_distance as distance',
+            'rec_time as time',
+            'rec_avg_speed as avg_speed',
+            'rec_score as score',
+            'rec_title as title'
+        ];
 
+//        $record_stats_by_week = Record::select($param)
+//            ->
 
+    }
 
     public function delete_record()
     {

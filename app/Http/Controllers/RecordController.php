@@ -2,20 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Record;
 use App\Stats;
 use Illuminate\Http\Request;
 
 class RecordController extends Controller
 {
     private $stats;
+    private $record;
     private const SELECT_BY_YEAR_SUCCESS = '연도 통계 조회를 성공하였습니다.';
-    private const SELECT_BY_YEAR_FAIL = '연도 통계 조회를 실패하였습니다.';
+    private const SELECT_BY_WEEK_SUCCESS = '연도 통계 조회를 성공하였습니다.';
 
     public function __construct()
     {
         $this->stats = new Stats();
+        $this->record = new Record();
     }
 
+    // 연도별 라이딩 통계
     public function recordViewByYear(Request $request)
     {
         // TODO 토큰으로 사용자 정보 가져오기
@@ -36,7 +40,7 @@ class RecordController extends Controller
         // 사용자가 요청한 연도 정보
         $requested_year = (int)$requestedYear['stat_year'];
         // 해당 연도의 라이딩 통계 조회
-        $record_stats_by_year = $this->stats->select_stats_values($requested_year, $user_id);
+        $record_stats_by_year = $this->stats->select_stats_by_year($requested_year, $user_id);
         $temp_stats = $record_stats_by_year->groupBy('week')->toArray();
 
         // 현재 날짜의 주차
@@ -48,11 +52,10 @@ class RecordController extends Controller
 
         // 현재 주차의 시작일 (월요일 기준)
         $today_start_date = date('Y-m-d', strtotime($today_date . "-" . $today_day . "days"));
-
         $resultData = [];
 
         foreach ($temp_stats as $week => $values) {
-            $date_difference = ($today_week - $week + 1) * 7;
+            $date_difference = ((int)$today_week - (int)$week + 1) * 7;
             $start_date_requested = date('Y-m-d', (strtotime($today_start_date . "-" . $date_difference . "days")));
             $end_date_requested = date('Y-m-d', strtotime($start_date_requested . "+6days"));
 
@@ -69,5 +72,16 @@ class RecordController extends Controller
             ['stats' => $resultData],
             200
         );
+    }
+
+    // 주별 라이딩 통계
+    public function recordViewByWeek(Request $request)
+    {
+        // TODO 사용자 토큰 정보 가져오기
+        $user_id = $this->TEST_USER_ID;
+
+        // 특정 연도 내 하나의 주차 통계 조회
+        $record_stats_by_week = $this->record->select_stats_by_week($user_id, 2021, 1);
+
     }
 }
