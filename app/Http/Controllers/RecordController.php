@@ -11,11 +11,11 @@ class RecordController extends Controller
     private $stats;
     private $record;
     private const SELECT_BY_YEAR_SUCCESS = '연도 통계 조회를 성공하였습니다.';
-    private const SELECT_BY_WEEK_SUCCESS = '연도 통계 조회를 성공하였습니다.';
+    private const SELECT_BY_WEEK_SUCCESS = '주차 통계 조회를 성공하였습니다.';
 
     public function __construct()
     {
-        $this->stats = new Stats();
+        $this->stats  = new Stats();
         $this->record = new Record();
     }
 

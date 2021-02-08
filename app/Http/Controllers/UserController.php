@@ -78,8 +78,9 @@ class UserController extends Controller
 
         return $this->responseJson(
             self::PRINT_USER_PROFILE_SUCCESS,
-            [$returnData],
-            201);
+            $returnData,
+            201
+        );
 
 //        return response()->json([
 //            'message' => '사용자 정보, 통계, 알림 조회를 성공하였습니다.',

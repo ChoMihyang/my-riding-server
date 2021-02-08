@@ -21,22 +21,34 @@ class Route extends Model
      *
      * @return mixed
      */
-    public function routeListValue()
+    public function routeListValue(
+        int $count
+    )
     {
-        // routeLike 테이블 조인 -> 좋아요 숫자 가져오기
-        $routeInfo = self::get(
-            [
-                'id',
-                'created_at',
-                'route_title',
-                'route_distance',
-                'route_time',
-                'route_like',
-                'route_num_of_try_count',
-                'route_end_point_address',
-                'route_image'
-            ]
-        );
+        // TODO 웹이랑 모바일 구분하기 위한 조건 만들기
+        // 좋아요 수 만큼 정렬, 그 중에서 5개만 조회
+        if ($count == 1) {
+            $routeInfo = self::select('id','route_title','route_distance','route_like')
+                ->orderBy('route_like','DESC')
+                ->get()
+                ->take(5);
+        }
+        elseif ($count == 2) {
+            // routeLike 테이블 조인 -> 좋아요 숫자 가져오기
+            $routeInfo = self::get(
+                [
+                    'id',
+                    'created_at',
+                    'route_title',
+                    'route_distance',
+                    'route_time',
+                    'route_like',
+                    'route_num_of_try_count',
+                    'route_end_point_address',
+                    'route_image'
+                ]
+            );
+        }
 
         return $routeInfo;
     }
