@@ -44,15 +44,9 @@ Route::prefix("record")->group(function () {
      *  거리, 시간, 평균 속도 통계 조회
      *  -> RecordController
      */
-<<<<<<< HEAD
 //    Route::get("/year", "RecordController@recordViewByYear")->name("[라이딩 일지] 연도 기준 조회");
 //    Route::get("/week", "RecordController@recordViewByWeek")->name("[라이딩 일지] 주 기준 조회");
-//   Route::get("/{id}", "RecordController@recordDetailView")->name("[라이딩 일지] 상세 조회");
-=======
-    Route::get("/year", "RecordController@recordViewByYear")->name("[라이딩 일지] 연도 기준 조회");
-    Route::get("/week", "RecordController@recordViewByWeek")->name("[라이딩 일지] 주 기준 조회");
 //    Route::get("/{id}", "RecordController@recordDetailView")->name("[라이딩 일지] 상세 조회");
->>>>>>> dev
 //    Route::patch("/{id}", "RecordController@recordModify")->name("[라이딩 일지] 이름 수정");
 //    Route::delete("/{id}", "RecordController@recordDelete")->name("[라이딩 일지] 기록 삭제");
 });
@@ -66,15 +60,8 @@ Route::prefix("route")->group(function () {
      *  경로 생성
      *  -> RouteController
      */
-<<<<<<< HEAD
     Route::get("/", "RouteController@routeListView")->name("[라이딩 경로] 목록 조회");
     Route::delete("/{id}", "RouteController@routeDelete")->name("[라이딩 경로] 경로 삭제");
     Route::post("/{id}", "RouteController@routeDetailView")->name("[라이딩 경로] 상세 조회");
     Route::post("/", "RouteController@routeSave")->name("[라이딩 경로] 새로운 경로 저장");
-=======
-//    Route::get("/", "RouteController@routeListView")->name("[라이딩 경로] 목록 조회");
-//    Route::delete("/{id}", "RouteController@routeDelete")->name("[라이딩 경로] 경로 삭제");
-//    Route::post("/{id}", "RouteController@routeDetailView")->name("[라이딩 경로] 상세 조회");
-//    Route::post("/", "RouteController@routeSave")->name("[라이딩 경로] 새로운 경로 저장");
->>>>>>> dev
 });
