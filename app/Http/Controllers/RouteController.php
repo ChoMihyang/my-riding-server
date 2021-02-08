@@ -52,7 +52,7 @@ class RouteController extends Controller
 
         return $this->responseJson(
             self::ROUTEDELETE_SUCCESS,
-            [ null ],
+            [],
             200
         );
     }

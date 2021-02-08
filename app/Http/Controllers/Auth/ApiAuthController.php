@@ -202,14 +202,14 @@ class ApiAuthController extends Controller
         if ((Auth::guard('api')->user()) == null) {
             return $this->responseJson(
                 self::TOKEN_FAIL,
-                [Auth::guard('api')->user()],
+                [],
                 401
             );
         }
 
         return $this->responseJson(
             self::TOKEN_SUCCESS,
-            [Auth::guard('api')->user()],
+            [],
             200
         );
     }
