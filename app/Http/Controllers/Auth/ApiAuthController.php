@@ -182,10 +182,10 @@ class ApiAuthController extends Controller
         return $this->responseJson(
             self::USER_PROFILE,
             [
-                $user_account,
-                $user_nickname,
-                $user_picture,
-                $user_created_at
+                'user_account'=>$user_account,
+                'user_nickname'=>$user_nickname,
+                'user_picture'=>$user_picture,
+                'created_at'=>$user_created_at
             ],
             200
         );
