@@ -40,22 +40,20 @@ class ApiAuthController extends Controller
     public function register(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'user_account'  => 'required|string|max:255|unique:users',
+            'user_account'  => 'required|string|max:255|alpha_num|unique:users',
             'user_password' => 'required|string|min:6|confirmed',
             'user_nickname' => 'required|String|min:12|unique:users',
             'user_picture'  => 'required|string|max:255',
         ]);
 
-        if ($validator->fails() || strpos($request['user_account'], ' ')) {
+        if ($validator->fails()) {
             $response_data = [
                 'error' => $validator->errors(),
             ];
 
             return $this->responseJson(
                 self::SIGNUP_FAIL,
-                [
-                    $response_data
-                ],
+                $response_data,
                 422
             );
         }
@@ -77,9 +75,7 @@ class ApiAuthController extends Controller
 
         return $this->responseJson(
             self::SIGNUP_SUCCESS,
-            [
-                $response,
-            ],
+            $response,
             201
         );
     }
@@ -215,5 +211,11 @@ class ApiAuthController extends Controller
             [],
             200
         );
+    }
+
+    // 프로필 정보 모바일..
+    public function profile_mb(User $id)
+    {
+
     }
 }
