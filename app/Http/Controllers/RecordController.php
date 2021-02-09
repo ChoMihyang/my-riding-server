@@ -19,7 +19,7 @@ class RecordController extends Controller
         $this->record = new Record();
     }
 
-    // 연도별 라이딩 통계
+    // 연도별 라이딩 통계 (WEB)
     public function recordViewByYear(Request $request)
     {
         // TODO 토큰으로 사용자 정보 가져오기
@@ -33,14 +33,16 @@ class RecordController extends Controller
         $min_year = (int)$today_year - 3;
         $max_year = (int)$today_year;
         // 유효성 검사
-        $requestedYear = $request->validate([
-            'stat_year' => 'required | numeric | min:' . $min_year . '|max:' . $max_year
+        $requestedData = $request->validate([
+            'stat_year' => 'required | numeric | min:' . $min_year . '|max:' . $max_year,
         ]);
 
-        // 사용자가 요청한 연도 정보
-        $requested_year = (int)$requestedYear['stat_year'];
+        // 사용자가 요청한 정보
+        $requested_year = $requestedData['stat_year'];
+
         // 해당 연도의 라이딩 통계 조회
-        $record_stats_by_year = $this->stats->select_stats_by_year($requested_year, $user_id);
+        $record_stats_by_year = $this->stats
+            ->select_stats($user_id, $requested_year);
         $temp_stats = $record_stats_by_year->groupBy('week')->toArray();
 
         // 현재 날짜의 주차
@@ -52,8 +54,8 @@ class RecordController extends Controller
 
         // 현재 주차의 시작일 (월요일 기준)
         $today_start_date = date('Y-m-d', strtotime($today_date . "-" . $today_day . "days"));
-        $resultData = [];
 
+        $resultData = [];
         foreach ($temp_stats as $week => $values) {
             $date_difference = ((int)$today_week - (int)$week + 1) * 7;
             $start_date_requested = date('Y-m-d', (strtotime($today_start_date . "-" . $date_difference . "days")));
@@ -77,11 +79,58 @@ class RecordController extends Controller
     // 주별 라이딩 통계
     public function recordViewByWeek(Request $request)
     {
+        $today_year = date('Y');
+        // 요청받은 연도의 유효 범위
+        $min_year = (int)$today_year - 3;
+        $max_year = (int)$today_year;
+
+        // TODO 올해 주차 범위 함수화
+        $requestedData = $request->validate([
+            'year' => 'required | numeric | min: ' . $min_year . '|max: ' . $max_year,
+            'week' => 'required | numeric | min:0 | max:53'
+        ]);
+
+        $year = $requestedData['year'];
+        $week = $requestedData['week'];
+
         // TODO 사용자 토큰 정보 가져오기
         $user_id = $this->TEST_USER_ID;
 
-        // 특정 연도 내 하나의 주차 통계 조회
-        $record_stats_by_week = $this->record->select_stats_by_week($user_id, 2021, 1);
+        // 연도 + 주차에 해당하는 레코드 조회
+        $stats_by_year_week = $this->stats->get_stats_by_year_week($user_id, $year, $week);
 
+        // TODO 시작일, 종료일 계산(배열)
+        $start_date = date('Y-m-d');
+        $end_date = date('Y-m-d', $start_date . " + 6days");
+        // Records 조회 -> 시작일, 종료일 범위 내 존재하는 필드 조회
+
+        return $this->responseJson("dd", $stats_by_year_week, 201);
+    }
+
+    // [app] 홈 화면 - 연, 월, 일 요청 후 해당 통계 반환
+    public function recordOfHome(Request $request)
+    {
+        // TODO 사용자 토큰 가져오기
+        $user_id = $this->TEST_USER_ID;
+
+        $today_year = date('Y');
+        // 요청받은 연도의 유효 범위
+        $min_year = (int)$today_year - 3;
+        $max_year = (int)$today_year;
+
+        // 요청받은 정보 유효성 검사
+        $requested_data = $request->validate([
+            'year' => 'required | numeric | min:' . $min_year . '|max:' . $max_year,
+            'month' => 'required | numeric | min:0 | max: 12',
+            'day' => 'required | numeric | min:0 | max:31'
+        ]);
+
+        $year = $requested_data['year'];
+        $month = $requested_data['month'];
+        $day = $requested_data['day'];
+
+        $resultData = $this->record->select_records_of_day($user_id, $year, $month, $day);
+
+        return $this->responseJson('성공', $resultData, 201);
     }
 }

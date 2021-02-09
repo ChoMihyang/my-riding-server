@@ -15,32 +15,41 @@ class Record extends Model
     protected $fillable = ['rec_title'];
 
     /**
-     *  특정 연도 내 하나의 주차 통계 조회
+     * 해당 날짜의 통계 반환 (RecordController - recordOfHome)
      * @param int $user_id
      * @param int $year
-     * @param int $week
+     * @param int $month
+     * @param int $day
      * @return Collection
      */
-    public function select_stats_by_week(
+    public function select_records_of_day(
         int $user_id,
         int $year,
-        int $week
+        int $month,
+        int $day
     ): Collection
     {
-        dd('dd');
+        $ridingDate = $year . '-' . $month . '-' . $day;
+        $ridingDate = '1997-01-17';
+
         $param = [
-            'created_at as date',
-            'rec_route_id as id',
-            'rec_distance as distance',
+            'stats.stat_date as date',
+            'rec_title as title',
             'rec_time as time',
+            'rec_distance as distance',
             'rec_avg_speed as avg_speed',
-            'rec_score as score',
-            'rec_title as title'
+            'rec_max_speed as max_speed',
+            'rec_start_point_address as start_point',
+            'rec_end_point_address as end_point'
         ];
 
-//        $record_stats_by_week = Record::select($param)
-//            ->
+        $resultData = Record::select($param)
+            ->join('stats', 'records.created_at', 'stats.id')
+            ->where('rec_user_id', $user_id)
+            ->where('stats.stat_date', $ridingDate)
+            ->get();
 
+        return $resultData;
     }
 
     public function delete_record()

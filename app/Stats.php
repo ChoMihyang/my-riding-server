@@ -47,15 +47,15 @@ class Stats extends Model
 
 
     /**
-     * 특정 연도의 통계 조회
-     *
      * @param int $year
+     * @param int|null $month
+     * @param int|null $day
      * @param int $user_id
      * @return Collection
      */
-    public function select_stats_by_year(
-        int $year,
-        int $user_id
+    public function select_stats(
+        int $user_id,
+        int $year
     ): Collection
     {
         $param = [
@@ -73,5 +73,34 @@ class Stats extends Model
             ->get();
 
         return $record_stats_by_year;
+    }
+
+    // 선택 연도와 주차에 해당하는 통계 조회
+
+    /**
+     * @param int $user_id
+     * @param int $year
+     * @param int $week
+     * @return Collection
+     */
+    public function get_stats_by_year_week(
+        int $user_id,
+        int $year,
+        int $week
+    ): Collection
+    {
+        $param = [
+            'stat_year as year',
+            'stat_week as week',
+            'stat_date as data',
+            'stat_day as day'
+        ];
+        $value = Stats::select($param)
+            ->where('stat_user_id', $user_id)
+            ->where('stat_year', $year)
+            ->where('stat_week', $week)
+            ->get();
+
+        return $value;
     }
 }

@@ -52,9 +52,9 @@ class UserController extends Controller
         $make_date = $today_year . "-" . $today_month . "-" . $today_day;
         $today_week = date('W', strtotime($make_date));             // 현재 주차
 
-        $day_array = [0 => 6, 1 => 0, 2 => 1, 3 => 2, 4 => 3, 5 => 4, 6 => 5];
+//        $day_array = [0 => 6, 1 => 0, 2 => 1, 3 => 2, 4 => 3, 5 => 4, 6 => 5];
         $temp_day = date('w', strtotime($today_date));
-        $day_of_week = $day_array[$temp_day]; // 현재 요일
+        $day_of_week = $temp_day === 0 ? 6 : $temp_day - 1; // 현재 요일
 
 
         // 해당 주의 시작일
@@ -73,12 +73,22 @@ class UserController extends Controller
         // TODO 알림 페이지 URL 전송 API
         $user_noti = $this->notifications->getDashboardNoti($user_id);
 
-        $dateData = ['year' => $today_year, 'week' => $today_week, 'startDate' => $start_date, 'endDate' => $end_date, 'values' => $user_stats];
-        $returnData = ['user' => $user_info, 'stats' => $dateData, 'notifications' => $user_noti];
+        $dateData = [
+            'year' => $today_year,
+            'week' => $today_week,
+            'startDate' => $start_date,
+            'endDate' => $end_date,
+            'values' => $user_stats
+        ];
+        $returnData = [
+            'user' => $user_info,
+            'stats' => $dateData,
+            'notifications' => $user_noti
+        ];
 
         return $this->responseJson(
             self::PRINT_USER_PROFILE_SUCCESS,
-            [$returnData],
+            $returnData,
             201);
 
 //        return response()->json([
@@ -93,4 +103,5 @@ class UserController extends Controller
 //        ], 200);
 
     }
+
 }
