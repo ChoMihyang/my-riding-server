@@ -88,8 +88,8 @@ class ApiAuthController extends Controller
     public function login(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'user_account'  => 'required|string|max:255',
-            'user_password' => 'required|string|min:6',
+            'user_account'  => 'required|string|min:6|max:15|alpha_num|unique:users',
+            'user_password' => 'required|string|min:8|alpha_num',
         ]);
 
         if ($validator->fails()) {
