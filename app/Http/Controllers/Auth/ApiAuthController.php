@@ -41,8 +41,8 @@ class ApiAuthController extends Controller
         $validator = Validator::make($request->all(), [
             'user_account'  => 'required|string|min:6|max:15|alpha_num|unique:users',
             'user_password' => 'required|string|min:8|alpha_num|confirmed',
-            'user_nickname' => 'required|String|min:12|unique:users',
-            'user_picture'  => 'required|string|min:5|max:15',
+            'user_nickname' => 'required|String|min:5|max:15|unique:users',
+            'user_picture'  => 'required|string|max:255',
         ]);
 
         if ($validator->fails()) {
