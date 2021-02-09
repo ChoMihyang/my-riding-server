@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use phpDocumentor\Reflection\Types\Self_;
 
 class ApiAuthController extends Controller
 {
@@ -37,13 +36,13 @@ class ApiAuthController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function register(Request $request): JsonResponse
+    public function signup(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'user_account'  => 'required|string|max:255|alpha_num|unique:users',
-            'user_password' => 'required|string|min:6|confirmed',
+            'user_account'  => 'required|string|min:6|max:15|alpha_num|unique:users',
+            'user_password' => 'required|string|min:8|alpha_num|confirmed',
             'user_nickname' => 'required|String|min:12|unique:users',
-            'user_picture'  => 'required|string|max:255',
+            'user_picture'  => 'required|string|min:5|max:15',
         ]);
 
         if ($validator->fails()) {

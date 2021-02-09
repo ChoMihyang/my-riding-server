@@ -16,13 +16,13 @@ use Illuminate\Support\Facades\Route;
 
 // <<-- 회원 관리 -->>
 Route::group(['middleware' => ['cors', 'json.response']], function () {
-    Route::post('/member/register', 'Auth\ApiAuthController@register')->name('[사용자] 회원가입');
-    Route::post('/member/login', 'Auth\ApiAuthController@login')->name('[사용자] 로그인');
-    Route::get('/member/profile/{id}', 'Auth\ApiAuthController@profile')->name('[사용자] 프로필 조회');
-    Route::get('/user','Auth\ApiAuthController@user')->name('[사용자] 회원정보 인증');
+    Route::post('/signup', 'Auth\ApiAuthController@signup')->name('[사용자] 회원가입');
+    Route::post('/login', 'Auth\ApiAuthController@login')->name('[사용자] 로그인');
+    Route::get('/profile/{id}', 'Auth\ApiAuthController@profile')->name('[사용자] 프로필 조회');
+    Route::get('/','Auth\ApiAuthController@user')->name('[사용자] 회원정보 인증');
 });
 Route::middleware('auth:api')->group(function () {
-    Route::post('/member/logout', 'Auth\ApiAuthController@logout')->name('[사용자] 로그아웃');
+    Route::post('/logout', 'Auth\ApiAuthController@logout')->name('[사용자] 로그아웃');
 });
 
 // <<-- 대시 보드 관리 -->>
