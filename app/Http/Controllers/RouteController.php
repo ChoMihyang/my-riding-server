@@ -130,7 +130,7 @@ class RouteController extends Controller
 
         return $this->responseJson(
             self::ROUTESAVE_SUCCESS,
-            $newRoute,
+            [],
             201
         );
     }
