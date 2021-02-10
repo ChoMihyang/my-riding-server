@@ -68,7 +68,7 @@ class ApiAuthController extends Controller
         $user_picture = $request->input('user_picture');
 
         $token = $this->user->createToken('Laravel Password Grant Client')->accessToken;
-        $data  = $this->user->createUserInfo($user_account,$user_password,$user_nickname,$user_picture);
+        $this->user->createUserInfo($user_account,$user_password,$user_nickname,$user_picture);
 
         $response = ['token'=>$token];
 
@@ -173,14 +173,16 @@ class ApiAuthController extends Controller
      */
     public function profile(User $id): JsonResponse
     {
-        $user_account = $id->getAttribute('user_account');
-        $user_nickname = $id->getAttribute('user_nickname');
-        $user_picture = $id->getAttribute('user_picture');
+        $user_id         = $id->getAttribute('id');
+        $user_account    = $id->getAttribute('user_account');
+        $user_nickname   = $id->getAttribute('user_nickname');
+        $user_picture    = $id->getAttribute('user_picture');
         $user_created_at = $id->getAttribute('created_at');
 
         return $this->responseJson(
             self::USER_PROFILE,
             [
+                'id' =>$user_id,
                 'user_account'=>$user_account,
                 'user_nickname'=>$user_nickname,
                 'user_picture'=>$user_picture,

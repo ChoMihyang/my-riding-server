@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use phpDocumentor\Reflection\Types\Self_;
 
 class Route extends Model
 {
@@ -17,24 +18,20 @@ class Route extends Model
     ];
 
     /**
-     * 모든 라이딩 경로 조회
+     * [라이딩 경로] 라이딩 경로 조회 (조건)
      *
+     * $count = 1 : [web] 모든 경로 조회
+     * $count = 2 : [app] 좋아요 순 정렬, 경로 5개 출력
+     * $count = 3 : [app] 나의 경로 최신순 정렬 경로 5개 출력
      * @return mixed
      */
     public function routeListValue(
-        int $count
+        int $count,
+        int $route_user_id
     )
     {
-        // TODO 웹이랑 모바일 구분하기 위한 조건 만들기
-        // 좋아요 수 만큼 정렬, 그 중에서 5개만 조회
         if ($count == 1) {
-            $routeInfo = self::select('id','route_title','route_distance','route_like')
-                ->orderBy('route_like','DESC')
-                ->get()
-                ->take(5);
-        }
-        elseif ($count == 2) {
-            // routeLike 테이블 조인 -> 좋아요 숫자 가져오기
+            // TODO routeLike 테이블 조인 -> 좋아요 숫자 가져오기
             $routeInfo = self::get(
                 [
                     'id',
@@ -49,12 +46,37 @@ class Route extends Model
                 ]
             );
         }
+        elseif ($count == 2) {
+            $routeInfo = self::select('id','route_title','route_distance','route_like')
+                ->orderBy('route_like','DESC')
+                ->get()
+                ->take(5);
+        }
+        elseif ($count == 3) {
+            $routeInfo = self::select('id','route_user_id','route_title','route_like','route_distance',
+                                      'route_time','route_start_point_address','route_end_point_address','created_at')
+                ->where('route_user_id', $route_user_id)
+                ->orderBy('id','DESC')
+                ->get();
+//            $routeInfo = self::join('route_like_user');
+//            route_like_user
+//            route_user_id
+        }
+        elseif ($count == 4) {
+            // 최신순 정렬, 페이징??
+            $routeInfo = self::all()->sortByDESC('id');
+
+            // TODO 검색 조회
+        }
 
         return $routeInfo;
     }
 
     /**
-     * [라이딩 경로] 상세 조회 - route 정보
+     * [라이딩 경로] 상세 조회
+     *
+     * $count = 1 : [web] 경로 상세 조회
+     * $count = 2 : [app] 경로 상세 조회
      *
      * @param int $route_id
      * @return mixed
@@ -68,14 +90,34 @@ class Route extends Model
         return $routeInfo;
     }
 
+    /**
+     * [라이딩 경로] 경로 삭제
+     *
+     * @param int $id
+     * @return mixed
+     */
     public function routeDelete(
         int $id
     )
     {
-        // 해당 레코드 id 값 조회 후 삭제
         return self::find($id)->delete();
     }
 
+    /**
+     * [라이딩 경로] 경로 저장
+     *
+     * @param int $route_user_id
+     * @param string $route_title
+     * @param string $route_image
+     * @param float $route_distance
+     * @param int $route_time
+     * @param float $route_avg_degree
+     * @param float $route_max_altitude
+     * @param float $route_min_altitude
+     * @param string $route_start_point_address
+     * @param string $route_end_point_address
+     * @return mixed
+     */
     public function routeSave(
         int $route_user_id,
         string $route_title,
@@ -89,8 +131,6 @@ class Route extends Model
         string $route_end_point_address
     )
     {
-        // 경로 정보 전달 받은 후
-        // 새 경로 레코드 생성
         return self::create([
             'route_user_id'=>$route_user_id,
             'route_title'=>$route_title,
@@ -104,4 +144,18 @@ class Route extends Model
             'route_end_point_address'=>$route_end_point_address,
         ]);
     }
+
+    public function user()
+    {
+        // User  <-> Route 모델 다대다 관계 선언
+        return $this->belongsToMany(User::class);
+    }
+
+    public function routelike()
+    {
+        // Route <-> RouteLike 모델 일대다 관계 선언
+        return $this->belongsToMany(RouteLike::class, 'route_like_obj');
+    }
+
+
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Record;
 use App\Route;
+use App\RouteLike;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -11,6 +12,7 @@ class RouteController extends Controller
 {
     private $route;
     private $record;
+    private $routeLike;
 
     private const ROUTELISTVIEW_SUCCESS   = "모든 경로 정보 조회에 성공하셨습니다.";
     private const ROUTEDETAILVIEW_SUCCESS = "선택한 경로 정보 조회에 성공하셨습니다.";
@@ -20,8 +22,9 @@ class RouteController extends Controller
 
     public function __construct()
     {
-        $this->route  = new Route();
-        $this->record = new Record();
+        $this->route     = new Route();
+        $this->record    = new Record();
+        $this->routeLike = new RouteLike();
     }
 
     /**
@@ -31,7 +34,7 @@ class RouteController extends Controller
      */
     public function routeListView()
     {
-        $routeValue = $this->route->routeListValue(2);
+        $routeValue = $this->route->routeListValue(1, null);
         $response_data = [
             'routes' => $routeValue
         ];
@@ -121,7 +124,7 @@ class RouteController extends Controller
         $route_start_point_address = $request->input('route_start_point_address');
         $route_end_point_address   = $request->input('route_end_point_address');
 
-        $newRoute = $this->route->routeSave(
+        $this->route->routeSave(
             $route_user_id, $route_title, $route_image,
             $route_distance,$route_time,
             $route_avg_degree,$route_max_altitude,$route_min_altitude,
@@ -142,7 +145,7 @@ class RouteController extends Controller
      */
     public function routePopularity()
     {
-        $routeValue = $this->route->routeListValue(1);
+        $routeValue = $this->route->routeListValue(2, 0);
         $response_data = [
             'routes' => $routeValue
         ];
@@ -152,5 +155,121 @@ class RouteController extends Controller
             $response_data,
             200
         );
+    }
+
+    /**
+     * APP 나의 경로 최신순 5개 조회
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function routeMyListLatest(Request $request)
+    {
+        $route_user_id = (int)$request->route_user_id;
+        // TODO 수정 join 해야됨
+        $routeValue = $this->route->routeListValue(3, $route_user_id)->take(5);
+//        $routeLikeValue = $this->routeLike->likeSearch($route_user_id);
+
+        $response_data = [
+            'routes' => $routeValue,
+//            'routeLikes' => $routeLikeValue
+        ];
+
+        return $this->responseJson(
+            self::ROUTEDETAILVIEW_SUCCESS,
+            $response_data,
+            200
+        );
+    }
+
+    /**
+     * APP 나의 경로 최신순 모두 조회
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function routeMyListAll(Request $request)
+    {
+        $route_user_id = (int)$request->route_user_id;
+
+        $routeValue     = $this->route->routeListValue(3, $route_user_id);
+
+        $response_data = [
+            'routes' => $routeValue,
+        ];
+
+        return $this->responseJson(
+            self::ROUTEDETAILVIEW_SUCCESS,
+            $response_data,
+            200
+        );
+    }
+
+    // 라이딩 경로 검색 조회 , 일단 최신순...
+    public function routeSearch()
+    {
+        $routeValue = $this->route->routeListValue(4, 0);
+        $response_data = [
+            'routes' => $routeValue
+        ];
+
+        return $this->responseJson(
+            self::ROUTEDETAILVIEW_SUCCESS,
+            $response_data,
+            200
+        );
+    }
+
+    /**
+     * 좋아요 생성
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function likePush(Request $request)
+    {
+        // TODO $route_like_user : 토큰으로 유저 확인 해야함
+        $route_like_user = 1;
+        $route_like_obj  = $request->route_like_obj;
+
+        // RouteLikes 테이블 새로운 레코드 추가
+        $this->routeLike->likeUp($route_like_user, $route_like_obj);
+
+        return $this->responseJson(
+            "좋아요 생성",
+            [],
+            201
+        );
+    }
+
+    /**
+     * 좋아요 삭제
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function likePull(Request $request)
+    {
+        // TODO $route_like_user : 토큰으로 유저 확인 해야함
+        $route_like_user = 1;
+        $route_like_obj  = 108;
+
+        $this->routeLike->likeDown($route_like_user, $route_like_obj);
+
+        return $this->responseJson(
+            "좋아요 삭제",
+            [],
+            200
+        );
+    }
+
+    public function test(Request $request)
+    {
+        // 갯수 업데이트 테스트,,
+        $routeID = $request->id;
+        $routeValue = Route::find($routeID)->routeLike->count();
+        // 좋아요 갯수 긁어 오는 것까지 함
+
+        dd($routeValue);
     }
 }

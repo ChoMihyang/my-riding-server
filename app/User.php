@@ -90,4 +90,17 @@ class User extends Authenticatable
             'user_picture' => $user_picture
         ]);
     }
+
+    public function route()
+    {
+        // User  <-> Route 모델 다대다 관계 선언
+        return $this->belongsToMany(Route::class, 'route_user_id');
+    }
+
+    public function routelike()
+    {
+        // User  <-> RouteLike 모델 다대다 관계 선언
+        return $this->belongsToMany(RouteLike::class, 'route_like_user');
+    }
+
 }
