@@ -162,7 +162,7 @@ class RouteController extends Controller
     }
 
     /**
-     * APP 나의 경로 최신순 5개 조회
+     * APP 나의 경로 최신순 5개 조회... (수정중)
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -211,7 +211,18 @@ class RouteController extends Controller
         );
     }
 
-    // 라이딩 경로 검색 조회 , 일단 최신순...
+    /**
+     * App 라이딩 경로 검색 조회 (default 최신순)
+     *
+     * count = 1 : 최신순 정렬
+     * count = 2 : 좋아요순 정렬
+     * count = 3 : 거리순 정렬
+     * count = 4 : 소요시간순 정렬
+     * count = 5 : 라이딩 횧수순 정렬
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function routeSearch(Request $request)
     {
         // TODO 검색어 입력받기
@@ -224,8 +235,7 @@ class RouteController extends Controller
             $count = 1;
         }
 
-        // 검색 여부 체크..
-        // if 검색할 경우
+        // if 검색할 경우 (검색 여부 체크)
         if ($word) {
             $validator = Validator::make($request->all(), [
                 'word'  => 'required|string|min:1|alpha_num',
@@ -242,25 +252,17 @@ class RouteController extends Controller
                     422
                 );
             }
-            // 검색하면 검색하고 정렬 방법대로 정렬,
+            // 검색 하면 검색어 조회 후 사용자 입력 방법으로 정렬,
             $wordValue = $this->route->search($word);
 
-            $pick = $this->route->sortNotSearchCount($count);
+            $pick = $this->route->sortSearchCount($count);
 
             $routeValue = $wordValue->sortByDesc($pick);
         }
-        // 검색 안하면 바로 정렬 방법대로 정렬
-        // 최신순 정렬 count = 1
-        // 좋아요 순 정렬 count = 2
-        // 거리순 count = 3
-        // 소요시간 순 count = 4
-        // 라이딩 횟수 count = 5
+        // 검색 안하면 바로 사용자 입력 방법으로 정렬
 
-        // 검색 안 했을때...
-        // -> 완료
         if ($wordValue == null) {
-            // default 화면, 검색x, 최신순
-            $pick = $this->route->sortNotSearchCount($count);
+            $pick = $this->route->sortSearchCount($count);
 
             $routeValue = Route::all()->sortByDesc($pick);
         }
@@ -293,7 +295,7 @@ class RouteController extends Controller
 
         // RouteLikes 테이블 새로운 레코드 추가후 갯수 조회함
         $likeCount = $this->routeLike->selectLike($route_like_obj);
-
+        // 레코드 갯수 조회후 갯수 업데이트
         $this->route->likeAlter($route_like_obj, $likeCount);
 
         return $this->responseJson(
@@ -319,8 +321,8 @@ class RouteController extends Controller
         $this->routeLike->likeDown($route_like_user, $route_like_obj);
 
         // RouteLikes 테이블 새로운 레코드 삭제후 갯수 조회함
-        $likeCount = $this->routeLike->selectLike();
-
+        $likeCount = $this->routeLike->selectLike($route_like_obj);
+        // 레코드 갯수 조회후 갯수 업데이트
         $this->route->likeAlter($route_like_obj, $likeCount);
 
         return $this->responseJson(

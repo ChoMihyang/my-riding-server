@@ -157,8 +157,6 @@ class Route extends Model
         return $this->belongsToMany(RouteLike::class, 'route_like_obj');
     }
 
-    //
-
     /**
      * 좋아요 숫자 변동
      *
@@ -178,7 +176,12 @@ class Route extends Model
         return self::find($route_id)->update($param);
     }
 
-    // 코스 검색 체크
+    /**
+     * 코스 검색어 포함여부 체크
+     *
+     * @param string $word
+     * @return mixed
+     */
     public function search(
         string $word
     )
@@ -188,13 +191,13 @@ class Route extends Model
             ->orWhere('route_end_point_address', 'like', '%' . $word . '%')->get();
     }
 
-    public function sortSearchCount(Route $route)
-    {
-        $routeInfo = $route->sortByDesc('id');
-    }
-
-    // 코스 정렬 기준 체크
-    public function sortNotSearchCount(
+    /**
+     * 코스 정렬 기준 체크
+     *
+     * @param int $count
+     * @return string
+     */
+    public function sortSearchCount(
         int $count
     )
     {
