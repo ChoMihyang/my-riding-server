@@ -40,6 +40,21 @@ class RouteLike extends Model
     }
 
     /**
+     * 좋아요 누른 사람 수 조회
+     *
+     * @return mixed
+     */
+    public function selectLike(
+        int $route_like_obj
+    )
+    {
+        return self::select('route_like_obj')
+            ->where('route_like_obj',$route_like_obj)
+            ->get()
+            ->count();
+    }
+
+    /**
      * 좋아요 삭제
      *
      * @param int $route_like_user

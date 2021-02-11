@@ -13,7 +13,7 @@ class Route extends Model
     protected $fillable = [
         'route_user_id', 'route_title', 'route_distance',
         'route_image', 'route_time', 'route_avg_degree',
-        'route_max_altitude', 'route_min_altitude',
+        'route_max_altitude', 'route_min_altitude', 'route_like',
         'route_start_point_address', 'route_end_point_address'
     ];
 
@@ -53,20 +53,12 @@ class Route extends Model
                 ->take(5);
         }
         elseif ($count == 3) {
+            // TODO routes 테이블과 route_likes 테이블 조인하여 가장 최신 날짜 5개 조회, 210211 join 실패..
             $routeInfo = self::select('id','route_user_id','route_title','route_like','route_distance',
                                       'route_time','route_start_point_address','route_end_point_address','created_at')
                 ->where('route_user_id', $route_user_id)
                 ->orderBy('id','DESC')
                 ->get();
-//            $routeInfo = self::join('route_like_user');
-//            route_like_user
-//            route_user_id
-        }
-        elseif ($count == 4) {
-            // 최신순 정렬, 페이징??
-            $routeInfo = self::all()->sortByDESC('id');
-
-            // TODO 검색 조회
         }
 
         return $routeInfo;
@@ -145,17 +137,88 @@ class Route extends Model
         ]);
     }
 
+    /**
+     * User  <-> Route 모델 다대다 관계 선언
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
     public function user()
     {
-        // User  <-> Route 모델 다대다 관계 선언
         return $this->belongsToMany(User::class);
     }
 
+    /**
+     * Route <-> RouteLike 모델 일대다 관계 선언
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
     public function routelike()
     {
-        // Route <-> RouteLike 모델 일대다 관계 선언
         return $this->belongsToMany(RouteLike::class, 'route_like_obj');
     }
 
+    //
 
+    /**
+     * 좋아요 숫자 변동
+     *
+     * @param int $route_id
+     * @param int $likeCount
+     * @return mixed
+     */
+    public function likeAlter(
+        int $route_id,
+        int $likeCount
+    )
+    {
+        $param = [
+            'route_like' => $likeCount
+        ];
+
+        return self::find($route_id)->update($param);
+    }
+
+    // 코스 검색 체크
+    public function search(
+        string $word
+    )
+    {
+        return self::where('route_title', 'like', '%' . $word . '%')
+            ->orWhere('route_start_point_address', 'like', '%' . $word . '%')
+            ->orWhere('route_end_point_address', 'like', '%' . $word . '%')->get();
+    }
+
+    public function sortSearchCount(Route $route)
+    {
+        $routeInfo = $route->sortByDesc('id');
+    }
+
+    // 코스 정렬 기준 체크
+    public function sortNotSearchCount(
+        int $count
+    )
+    {
+        if ($count == 1) {
+            // 최신 순 정렬
+            $routeInfo = 'id';
+        }
+        elseif ($count == 2) {
+            // 좋아요 순 정렬
+            $routeInfo = 'route_like';
+        }
+        elseif ($count == 3) {
+            // 거리 순 정렬
+            $routeInfo = 'route_distance';
+        }
+        elseif ($count == 4) {
+            // 소요 시간 순 정렬
+            $routeInfo = 'route_time';
+        }
+        elseif ($count == 5) {
+            // 라이딩 횟수 순 정렬
+            $routeInfo = 'route_num_of_try_count';
+        }
+
+        return $routeInfo;
+    }
 }

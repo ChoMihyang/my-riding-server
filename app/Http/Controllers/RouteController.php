@@ -19,6 +19,8 @@ class RouteController extends Controller
     private const ROUTESAVE_SUCCESS       = "경로 저장에 성공하셨습니다.";
     private const ROUTESAVE_FAIL          = "경로 저장에 실패하셨습니다.";
     private const ROUTEDELETE_SUCCESS     = "경로 삭제에 성공하셨습니다.";
+    private const ROUTESEARCH_FAIL        = "검색어를 다시 입력하세요";
+    private const ROUTESORT_SUCCESS       = "경로 정렬에 성공하셨습니다.";
 
     public function __construct()
     {
@@ -54,6 +56,7 @@ class RouteController extends Controller
      */
     public function routeDelete(Request $request)
     {
+        // TODO 토큰 값 가져오기
         $route_id = $request->id;
 
         $this->route->routeDelete($route_id);
@@ -73,6 +76,7 @@ class RouteController extends Controller
      */
     public function routeDetailView(Request $request)
     {
+        // TODO 토큰 값 가져오기
         $route_id = (int)$request->id;
 
         // TODO 상세조회 페이지에서 Record 부분 추가 해야됨
@@ -98,10 +102,10 @@ class RouteController extends Controller
     public function routeSave(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'route_title'  => 'required|string|min:3|unique:routes',
+            'route_title'  => 'required|string|min:3|alpha_num|unique:routes',
         ]);
 
-        if ($validator->fails() || strpos($request['route_title'], ' ')) {
+        if ($validator->fails()) {
             $response_data = [
                 'error' => $validator->errors(),
             ];
@@ -165,8 +169,9 @@ class RouteController extends Controller
      */
     public function routeMyListLatest(Request $request)
     {
+        // TODO 토큰 값 가져오기
         $route_user_id = (int)$request->route_user_id;
-        // TODO 수정 join 해야됨
+        // TODO 수정해야함 주석 부분 join 해야됨
         $routeValue = $this->route->routeListValue(3, $route_user_id)->take(5);
 //        $routeLikeValue = $this->routeLike->likeSearch($route_user_id);
 
@@ -190,6 +195,7 @@ class RouteController extends Controller
      */
     public function routeMyListAll(Request $request)
     {
+        // TODO 토큰 값 가져오기
         $route_user_id = (int)$request->route_user_id;
 
         $routeValue     = $this->route->routeListValue(3, $route_user_id);
@@ -206,15 +212,65 @@ class RouteController extends Controller
     }
 
     // 라이딩 경로 검색 조회 , 일단 최신순...
-    public function routeSearch()
+    public function routeSearch(Request $request)
     {
-        $routeValue = $this->route->routeListValue(4, 0);
+        // TODO 검색어 입력받기
+        $wordValue  = "";
+        $word  = (string)$request->word;
+        $count = (int)$request->count;
+
+        // Default 화면, 최신순 정렬
+        if ($count == null) {
+            $count = 1;
+        }
+
+        // 검색 여부 체크..
+        // if 검색할 경우
+        if ($word) {
+            $validator = Validator::make($request->all(), [
+                'word'  => 'required|string|min:1|alpha_num',
+            ]);
+
+            if ($validator->fails()) {
+                $response_data = [
+                    'error' => $validator->errors(),
+                ];
+
+                return $this->responseJson(
+                    self::ROUTESEARCH_FAIL,
+                    $response_data,
+                    422
+                );
+            }
+            // 검색하면 검색하고 정렬 방법대로 정렬,
+            $wordValue = $this->route->search($word);
+
+            $pick = $this->route->sortNotSearchCount($count);
+
+            $routeValue = $wordValue->sortByDesc($pick);
+        }
+        // 검색 안하면 바로 정렬 방법대로 정렬
+        // 최신순 정렬 count = 1
+        // 좋아요 순 정렬 count = 2
+        // 거리순 count = 3
+        // 소요시간 순 count = 4
+        // 라이딩 횟수 count = 5
+
+        // 검색 안 했을때...
+        // -> 완료
+        if ($wordValue == null) {
+            // default 화면, 검색x, 최신순
+            $pick = $this->route->sortNotSearchCount($count);
+
+            $routeValue = Route::all()->sortByDesc($pick);
+        }
+
         $response_data = [
             'routes' => $routeValue
         ];
 
         return $this->responseJson(
-            self::ROUTEDETAILVIEW_SUCCESS,
+            self::ROUTESORT_SUCCESS,
             $response_data,
             200
         );
@@ -229,11 +285,16 @@ class RouteController extends Controller
     public function likePush(Request $request)
     {
         // TODO $route_like_user : 토큰으로 유저 확인 해야함
-        $route_like_user = 1;
-        $route_like_obj  = $request->route_like_obj;
+        $route_like_user = 2;
+        $route_like_obj  = (int)$request->route_like_obj;
 
         // RouteLikes 테이블 새로운 레코드 추가
         $this->routeLike->likeUp($route_like_user, $route_like_obj);
+
+        // RouteLikes 테이블 새로운 레코드 추가후 갯수 조회함
+        $likeCount = $this->routeLike->selectLike($route_like_obj);
+
+        $this->route->likeAlter($route_like_obj, $likeCount);
 
         return $this->responseJson(
             "좋아요 생성",
@@ -252,9 +313,15 @@ class RouteController extends Controller
     {
         // TODO $route_like_user : 토큰으로 유저 확인 해야함
         $route_like_user = 1;
-        $route_like_obj  = 108;
+        $route_like_obj  = $request->route_like_obj;
 
+        // RouteLikes 테이블 레코드 삭제
         $this->routeLike->likeDown($route_like_user, $route_like_obj);
+
+        // RouteLikes 테이블 새로운 레코드 삭제후 갯수 조회함
+        $likeCount = $this->routeLike->selectLike();
+
+        $this->route->likeAlter($route_like_obj, $likeCount);
 
         return $this->responseJson(
             "좋아요 삭제",
