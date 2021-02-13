@@ -15,14 +15,14 @@ class StatsTableSeeder extends Seeder
         $faker = Factory::create('ko_kr');
 
         // 사용자 한 명당 내 생성할 통계 레코드 수
-        $num_of_stats = 10;
+        $num_of_stats = 5;
 
-        // 번호가 1 ~ 10 인 회원의 수만큼 반복
-        for ($count_user = 0; $count_user < 10; $count_user++) {
+        // 번호가 1 ~ 3  인 회원의 수만큼 반복
+        for ($count_user = 0; $count_user < 3; $count_user++) {
             // 회원마다 10개씩 통계 레코드 생성
             for ($count_stats = 0; $count_stats < $num_of_stats; $count_stats++) {
 
-                $temp_date = $faker->date('Y-m-d H:i:s');                // 임의의 날짜 생성
+                $temp_date = $faker->date('Y-m-d');                     // 임의의 날짜 생성
                 $date_y = date('Y', strtotime($temp_date));             // 위 날짜의 '연도' 가져오기
                 $date_m = date('m', strtotime($temp_date));             // 위 날짜의 '월' 가져오기
                 $date_d = date('d', strtotime($temp_date));             // 위 날짜의 '일' 가져오기

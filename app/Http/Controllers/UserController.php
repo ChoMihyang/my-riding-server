@@ -17,6 +17,7 @@ class UserController extends Controller
     private $notifications;
 
     private const PRINT_USER_PROFILE_SUCCESS = "사용자 정보, 통계, 알림 조회를 성공하였습니다.";
+    private const PRINT_USER_RANK = "사용자 랭킹 조회를 성공하였습니다.";
 
     // 모델 객체 생성
     public function __construct()
@@ -41,7 +42,7 @@ class UserController extends Controller
         // <<-- 통계 정보 : 올해 합계, 이번주 합계, 월 ~ 일 통계(거리, 시간, 평균속도)
         // TODO 날짜 테스트 용 -> 현재 날짜로 변경
         // 현재 연도 및 주차 계산
-        // $today_date = date('Y-m-d');
+//        $today_date = date('Y-m-d');
         $today_date = '2021-02-07';
 
         // 연도, 월, 일 추출
@@ -90,18 +91,41 @@ class UserController extends Controller
             self::PRINT_USER_PROFILE_SUCCESS,
             $returnData,
             201);
-
-//        return response()->json([
-//            'message' => '사용자 정보, 통계, 알림 조회를 성공하였습니다.',
-//            'data' => [
-//                'user' => $user_info,
-//                'stats' => [
-//                    $dateData
-//                ],
-//                'notifications' => $user_noti
-//            ]
-//        ], 200);
-
     }
 
+
+    // 전체 랭킹 출력
+    public function viewUserRank()
+    {
+        $rank_of_all_users = $this->user->getUserRank();
+
+        return $this->responseJson(
+            self::PRINT_USER_RANK,
+            $rank_of_all_users,
+            201);
+    }
+
+    // 사용자 랭킹 상세 보기
+    public function viewDetailRank($arg_user_id)
+    {
+        $rank_of_user = $this->stats->getUserDetailRank($arg_user_id);
+
+        $sum_of_time = $rank_of_user->sum('time');
+        $sum_of_distance = $rank_of_user->sum('distance');
+        $avg_of_speed = $rank_of_user->avg('avg_speed');
+        $max_of_speed = $rank_of_user->max('max_speed');
+
+        $result_data = [
+            "sum_of_time" => $sum_of_time,
+            "sum_of_distance" => $sum_of_distance,
+            "avg_of_speed" => $avg_of_speed,
+            "max_of_speed" => $max_of_speed
+        ];
+
+        return $this->responseJson(
+            self::PRINT_USER_RANK,
+            $result_data,
+            201
+        );
+    }
 }

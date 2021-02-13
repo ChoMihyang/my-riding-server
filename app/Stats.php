@@ -78,29 +78,54 @@ class Stats extends Model
     // 선택 연도와 주차에 해당하는 통계 조회
 
     /**
+     *
      * @param int $user_id
      * @param int $year
      * @param int $week
      * @return Collection
      */
-    public function get_stats_by_year_week(
+    public function get_stats_by_week(
         int $user_id,
         int $year,
         int $week
     ): Collection
     {
         $param = [
-            'stat_year as year',
-            'stat_week as week',
-            'stat_date as data',
-            'stat_day as day'
+            'stat_day as day',
+            'stat_distance as distance',
+            'stat_time as time',
+            'stat_avg_speed as avg_speed'
         ];
         $value = Stats::select($param)
+            ->join('records', 'stats.stat_date', 'records.created_at')
+            ->distinct()
             ->where('stat_user_id', $user_id)
             ->where('stat_year', $year)
             ->where('stat_week', $week)
             ->get();
 
         return $value;
+    }
+
+    /**
+     * 사용자 랭킹 기록 상세 보기
+     * @param int $user_id
+     * @return Collection
+     */
+    public function getUserDetailRank(
+        int $user_id
+    ): Collection
+    {
+        $param = [
+            'stat_distance as distance',
+            'stat_time as time',
+            'stat_avg_speed as avg_speed',
+            'stat_max_speed as max_speed'
+        ];
+        $returnData = Stats::select($param)
+            ->where('stat_user_id', $user_id)
+            ->get();
+
+        return $returnData;
     }
 }

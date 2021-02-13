@@ -30,7 +30,6 @@ class Record extends Model
     ): Collection
     {
         $ridingDate = $year . '-' . $month . '-' . $day;
-        $ridingDate = '1997-01-17';
 
         $param = [
             'stats.stat_date as date',
@@ -44,9 +43,9 @@ class Record extends Model
         ];
 
         $resultData = Record::select($param)
-            ->join('stats', 'records.created_at', 'stats.id')
-            ->where('rec_user_id', $user_id)
+            ->join('stats', 'records.created_at', 'stats.stat_date')
             ->where('stats.stat_date', $ridingDate)
+            ->where('rec_user_id', $user_id)
             ->get();
 
         return $resultData;
