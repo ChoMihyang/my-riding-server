@@ -332,13 +332,4 @@ class RouteController extends Controller
         );
     }
 
-    public function test(Request $request)
-    {
-        // 갯수 업데이트 테스트,,
-        $routeID = $request->id;
-        $routeValue = Route::find($routeID)->routeLike->count();
-        // 좋아요 갯수 긁어 오는 것까지 함
-
-        dd($routeValue);
-    }
 }

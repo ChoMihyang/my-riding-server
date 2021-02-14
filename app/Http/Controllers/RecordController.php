@@ -84,4 +84,41 @@ class RecordController extends Controller
         $record_stats_by_week = $this->record->select_stats_by_week($user_id, 2021, 1);
 
     }
+
+    // 경로 저장
+    public function recordSave(Request $request)
+    {
+        // TODO 사용자 토큰 정보 가져오기
+        $rec_user_id  = (int)$request->rec_user_id;
+        $rec_route_id = (int)$request->rec_route_id;
+
+        // TODO 추후 수정...
+        // 경로 지정 안하고 라이딩 하는 경우에 default 경로 DB에 하나 만들고 시작해야될듯..
+        if (empty($rec_route_id)) {
+            $rec_route_id = 0;
+        }
+
+        $rec_title               = $request->input('rec_title');
+        $rec_distance            = $request->input('rec_distance');
+        $rec_time                = $request->input('rec_time');
+        $rec_score               = $request->input('rec_score');
+        $rec_start_point_address = $request->input('rec_start_point_address');
+        $rec_end_point_address   = $request->input('rec_end_point_address');
+        $rec_avg_speed           = $request->input('rec_avg_speed');
+        $rec_max_speed           = $request->input('rec_max_speed');
+
+        // 경로 저장
+        $this->record->createRecord(
+            $rec_user_id,$rec_route_id,$rec_title,
+            $rec_distance,$rec_time,$rec_score,
+            $rec_start_point_address,$rec_end_point_address,
+            $rec_avg_speed,$rec_max_speed
+        );
+
+        return $this->responseJson(
+          "경로 저장 성공",
+            [],
+            201
+        );
+    }
 }

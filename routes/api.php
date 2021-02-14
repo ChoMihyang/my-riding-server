@@ -16,13 +16,14 @@ use Illuminate\Support\Facades\Route;
 
 // <<-- 회원 관리 -->>
 Route::group(['middleware' => ['cors', 'json.response']], function () {
-    Route::post('/signup', 'Auth\ApiAuthController@signup')->name('[사용자] 회원가입');
-    Route::post('/login', 'Auth\ApiAuthController@login')->name('[사용자] 로그인');
-    Route::get('/profile/{id}', 'Auth\ApiAuthController@profile')->name('[사용자] 프로필 조회');
-    Route::get('/','Auth\ApiAuthController@user')->name('[사용자] 회원정보 인증');
+    Route::post('auth/signup', 'Auth\ApiAuthController@signup')->name('[사용자] 회원가입');
+    Route::post('auth/login', 'Auth\ApiAuthController@login')->name('[사용자] 로그인');
+    Route::get('auth/profile/{id}', 'Auth\ApiAuthController@profile')->name('[사용자] 프로필 조회');
+    Route::get('auth/','Auth\ApiAuthController@user')->name('[사용자] 회원정보 인증');
+    Route::get('auth/profilemobile/{id}','Auth\ApiAuthController@profileMobile')->name('모바일 사용자 프로필 테스트');
 });
 Route::middleware('auth:api')->group(function () {
-    Route::post('/logout', 'Auth\ApiAuthController@logout')->name('[사용자] 로그아웃');
+    Route::post('auth/logout', 'Auth\ApiAuthController@logout')->name('[사용자] 로그아웃');
 });
 
 // <<-- 대시 보드 관리 -->>
@@ -69,12 +70,9 @@ Route::prefix("route")->group(function () {
     Route::post("/mylistlatest/{id}","RouteController@routeMyListLatest")->name("[라이딩 경로] 내 라이딩 경로 일부 조회(수정중)");
     Route::post("/mylistall/{id}","RouteController@routeMyListAll")->name("[라이딩 경로] 내 라이딩 경로 모두 조회");
     Route::get("/search", "RouteController@routeSearch")->name("[라이딩 경로] 경로 검색 Default 최신순");
-
-    // 테스트 중, 좋아요 수 증가용
-    Route::get("/test","RouteController@test")->name("테스트 중");
-    //
 });
 Route::prefix("routelike")->group(function () {
     Route::post("/likeup","RouteController@likePush")->name("좋아요 증가");
     Route::delete("/likedown", "RouteController@likePull")->name("좋아요 감소");
 });
+Route::post("/mytest","RecordController@recordSave");
