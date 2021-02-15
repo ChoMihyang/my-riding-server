@@ -72,13 +72,13 @@ class ApiAuthController extends Controller
         $user_picture = $request->input('user_picture');
 
         $data  = $this->user->createUserInfo($user_account,$user_password,$user_nickname,$user_picture);
-        $token = $data->createToken('Laravel Password Grant Client')->accessToken;
-
-        $response = ['token'=>$token];
+//        $token = $data->createToken('Laravel Password Grant Client')->accessToken;
+//
+//        $response = ['token'=>$token];
 
         return $this->responseJson(
             self::SIGNUP_SUCCESS,
-            $response,
+            [],
             201
         );
     }
@@ -175,13 +175,15 @@ class ApiAuthController extends Controller
      * @param User $id
      * @return JsonResponse
      */
-    public function profile(User $id): JsonResponse
+    public function profile(): JsonResponse
     {
-        $user_id         = $id->getAttribute('id');
-        $user_account    = $id->getAttribute('user_account');
-        $user_nickname   = $id->getAttribute('user_nickname');
-        $user_picture    = $id->getAttribute('user_picture');
-        $user_created_at = $id->getAttribute('created_at');
+        $user = Auth::guard('api')->user();
+
+        $user_id         = $user->getAttribute('id');
+        $user_account    = $user->getAttribute('user_account');
+        $user_nickname   = $user->getAttribute('user_nickname');
+        $user_picture    = $user->getAttribute('user_picture');
+        $user_created_at = $user->getAttribute('created_at');
 
         return $this->responseJson(
             self::USER_PROFILE,
@@ -191,7 +193,8 @@ class ApiAuthController extends Controller
                 'user_nickname'=>$user_nickname,
                 'user_picture'=>$user_picture,
                 'created_at'=>$user_created_at
-            ],
+            ]
+            ,
             200
         );
     }
@@ -203,7 +206,8 @@ class ApiAuthController extends Controller
      */
     public function user():JsonResponse
     {
-        if ((Auth::guard('api')->user()) == null) {
+        $user = Auth::guard('api')->user();
+        if (!$user) {
             return $this->responseJson(
                 self::TOKEN_FAIL,
                 [],

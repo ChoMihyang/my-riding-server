@@ -15,12 +15,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 // <<-- 회원 관리 -->>
-Route::group(['middleware' => ['cors', 'json.response']], function () {
-    Route::post('auth/signup', 'Auth\ApiAuthController@signup')->name('[사용자] 회원가입');
-    Route::post('auth/login', 'Auth\ApiAuthController@login')->name('[사용자] 로그인');
-    Route::get('auth/profile/{id}', 'Auth\ApiAuthController@profile')->name('[사용자] 프로필 조회');
-    Route::get('auth/','Auth\ApiAuthController@user')->name('[사용자] 회원정보 인증');
-    Route::get('auth/profilemobile/{id}','Auth\ApiAuthController@profileMobile')->name('모바일 사용자 프로필 테스트');
+Route::group(['middleware' => ['cors', 'usertoken','json.response'],'prefix'=>'auth'], function () {
+    Route::post('/signup', 'Auth\ApiAuthController@signup')->name('[사용자] 회원가입');
+    Route::post('/login', 'Auth\ApiAuthController@login')->name('[사용자] 로그인');
+    Route::get('/profile', 'Auth\ApiAuthController@profile')->name('[사용자] 프로필 조회');
+    Route::get('/','Auth\ApiAuthController@user')->name('[사용자] 회원정보 인증');
+    Route::get('/profilemobile/{id}','Auth\ApiAuthController@profileMobile')->name('모바일 사용자 프로필 테스트');
 });
 Route::middleware('auth:api')->group(function () {
     Route::post('auth/logout', 'Auth\ApiAuthController@logout')->name('[사용자] 로그아웃');
