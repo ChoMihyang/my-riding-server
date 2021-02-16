@@ -95,6 +95,7 @@ class UserController extends Controller
 
 
     // 전체 랭킹 출력
+    // TODO id값 넘겨주기
     public function viewUserRank()
     {
         $rank_of_all_users = $this->user->getUserRank();

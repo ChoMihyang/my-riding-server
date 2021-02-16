@@ -2,7 +2,6 @@
 
 namespace App;
 
-use http\Env\Request;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -19,7 +18,7 @@ class Stats extends Model
      * 대시보드 통계 정보(UserController - dashboard)
      * @param int $user_id
      * @param int $today_year
-     * @param int $today_week
+     * @param int $today_week 
      * @return Collection
      */
     public function getDashboardStats(
@@ -35,14 +34,14 @@ class Stats extends Model
             'stat_avg_speed as avg_speed'
         ];
 
-        $user_stats = self::select($param)
+        $returnData = self::select($param)
             ->where('stat_user_id', $user_id)
             ->where('stat_year', $today_year)
             ->where('stat_week', $today_week)
             ->orderBy('stat_day')
             ->get();
 
-        return $user_stats;
+        return $returnData;
     }
 
 
@@ -66,13 +65,13 @@ class Stats extends Model
             'stat_avg_speed as avg_speed'
         ];
 
-        $record_stats_by_year = Stats::select($param)
+        $returnData = Stats::select($param)
             ->where('stat_user_id', $user_id)
             ->where('stat_year', $year)
             ->orderBy('stat_week')
             ->get();
 
-        return $record_stats_by_year;
+        return $returnData;
     }
 
     // 선택 연도와 주차에 해당하는 통계 조회
@@ -96,15 +95,14 @@ class Stats extends Model
             'stat_time as time',
             'stat_avg_speed as avg_speed'
         ];
-        $value = Stats::select($param)
-            ->join('records', 'stats.stat_date', 'records.created_at')
-            ->distinct()
+
+        $returnData = Stats::select($param)
             ->where('stat_user_id', $user_id)
             ->where('stat_year', $year)
             ->where('stat_week', $week)
             ->get();
 
-        return $value;
+        return $returnData;
     }
 
     /**
