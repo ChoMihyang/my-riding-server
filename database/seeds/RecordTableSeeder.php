@@ -12,11 +12,11 @@ class RecordTableSeeder extends Seeder
         $faker = Factory::create('ko_kr');
 
         // 사용자 한 명당 생성할 기록 레코드 수
-        $num_of_record = 10;
+        $num_of_record = 3;
 
-        // 번호가 1 ~ 10 인 회원의 수만큼 반복
-        for ($count_user = 0; $count_user < 10; $count_user++) {
-            // 회원마다 10개씩 기록 레코드 생성
+        // 번호가 1 ~ 3 인 회원의 수만큼 반복
+        for ($count_user = 0; $count_user < 3; $count_user++) {
+            // 회원마다 3개씩 기록 레코드 생성
             for ($record_count = 0; $record_count < $num_of_record; $record_count++) {
                 DB::table('records')->insert([
                     'id' => 0,

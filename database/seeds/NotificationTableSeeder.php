@@ -15,11 +15,12 @@ class NotificationTableSeeder extends Seeder
         $num_of_record = 5;
 
         // 알림 유형
+        // 1001 - Like, 1002 - Record, 1003 - Badge
         $noti_type = [1001 => '1001', 1002 => '1002', 1003 => '1003'];
 
-        // 번호가 1 ~ 10 인 회원의 수만큼 반복
-        for ($count_user = 0; $count_user < 10; $count_user++) {
-            // 회원마다 10개씩 알림 레코드 생성
+        // 번호가 1 ~ 3 인 회원의 수만큼 반복
+        for ($count_user = 0; $count_user < 3; $count_user++) {
+            // 회원마다 5개씩 알림 레코드 생성
             for ($count_noti = 0; $count_noti < $num_of_record; $count_noti++) {
                 // 랜덤 날짜 생성
                 $temp_date = $faker->date('Y-m-d');
@@ -43,9 +44,9 @@ class NotificationTableSeeder extends Seeder
                 $random_num = random_int(1, 30);
                 // 알림 유형별 이동 페이지 주소
                 $noti_url = [
-                    1001 => 'api/route/' . $random_num,
-                    1002 => 'api/record/' . $random_num,
-                    1003 => 'api/??/'
+                    1001 => '/route/show/' . $random_num,
+                    1002 => '/record/show/' . $random_num,
+                    1003 => '없음'
                 ];
 
                 // 알림 확인 유무(true / false) 랜덤 생성
