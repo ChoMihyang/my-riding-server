@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\DB;
 class Stats extends Model
 {
     protected $table = 'stats';
-
     protected $hidden = ['created_at', 'updated_at'];
 
     // TODO 웹에서 주차 선택 시 ,해당 통계 조회
@@ -18,7 +17,7 @@ class Stats extends Model
      * 대시보드 통계 정보(UserController - dashboard)
      * @param int $user_id
      * @param int $today_year
-     * @param int $today_week 
+     * @param int $today_week
      * @return Collection
      */
     public function getDashboardStats(
