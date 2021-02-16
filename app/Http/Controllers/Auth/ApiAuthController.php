@@ -39,10 +39,14 @@ class ApiAuthController extends Controller
     public function signup(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'user_account'  => 'required|string|min:6|max:15|alpha_num|unique:users',
-            'user_password' => 'required|string|min:8|alpha_num|confirmed',
-            'user_nickname' => 'required|String|min:5|max:15|unique:users',
+            'user_account'  => 'required|string|min:6|max:15|regex:/^[a-z]+[a-z0-9]{5,15}$/|unique:users',
+            'user_password' => 'required|string|min:8|regex:/^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{7,}$/|confirmed',
+            'user_nickname' => 'required|String|min:5|max:15|regex:/^[\w\Wㄱ-ㅎㅏ-ㅣ가-힣]{5,15}$/|unique:users',
             'user_picture'  => 'required|string|max:255',
+        ], [
+            'user_account.regex' => '아이디를 다시 입력해주세요.',
+            'user_password.regex' => '패스워드를 다시 입력해주세요.',
+            'user_nickname.regex' => '닉네임을 다시 입력해주세요.'
         ]);
 
         if ($validator->fails()) {
@@ -67,15 +71,14 @@ class ApiAuthController extends Controller
         $user_nickname = $request->input('user_nickname');
         $user_picture = $request->input('user_picture');
 
-        $token = $this->user->createToken('Laravel Password Grant Client')->accessToken;
-
-        $data = $this->user->createUserInfo($user_account, $user_password, $user_nickname, $user_picture);
-
-        $response = ['token' => $token];
+        $data  = $this->user->createUserInfo($user_account,$user_password,$user_nickname,$user_picture);
+//        $token = $data->createToken('Laravel Password Grant Client')->accessToken;
+//
+//        $response = ['token'=>$token];
 
         return $this->responseJson(
             self::SIGNUP_SUCCESS,
-            $response,
+            [],
             201
         );
     }
@@ -89,8 +92,8 @@ class ApiAuthController extends Controller
     public function login(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'user_account' => 'required|string|max:255',
-            'user_password' => 'required|string|min:6',
+            'user_account'  => 'required|string',
+            'user_password' => 'required|string',
         ]);
 
         if ($validator->fails()) {
@@ -132,7 +135,7 @@ class ApiAuthController extends Controller
             return $this->responseJson(
                 self::LOGIN_FAIL_PW,
                 $response_data,
-                422
+                401
             );
         }
 
@@ -142,7 +145,7 @@ class ApiAuthController extends Controller
         return $this->responseJson(
             self::LOGIN_FAIL_AC,
             $response_data,
-            422
+            401
         );
     }
 
@@ -172,21 +175,26 @@ class ApiAuthController extends Controller
      * @param User $id
      * @return JsonResponse
      */
-    public function profile(User $id): JsonResponse
+    public function profile(): JsonResponse
     {
-        $user_account = $id->getAttribute('user_account');
-        $user_nickname = $id->getAttribute('user_nickname');
-        $user_picture = $id->getAttribute('user_picture');
-        $user_created_at = $id->getAttribute('created_at');
+        $user = Auth::guard('api')->user();
+
+        $user_id         = $user->getAttribute('id');
+        $user_account    = $user->getAttribute('user_account');
+        $user_nickname   = $user->getAttribute('user_nickname');
+        $user_picture    = $user->getAttribute('user_picture');
+        $user_created_at = $user->getAttribute('created_at');
 
         return $this->responseJson(
             self::USER_PROFILE,
             [
+                'id' =>$user_id,
                 'user_account'=>$user_account,
                 'user_nickname'=>$user_nickname,
                 'user_picture'=>$user_picture,
                 'created_at'=>$user_created_at
-            ],
+            ]
+            ,
             200
         );
     }
@@ -198,7 +206,8 @@ class ApiAuthController extends Controller
      */
     public function user(): JsonResponse
     {
-        if ((Auth::guard('api')->user()) == null) {
+        $user = Auth::guard('api')->user();
+        if (!$user) {
             return $this->responseJson(
                 self::TOKEN_FAIL,
                 [],
@@ -213,9 +222,25 @@ class ApiAuthController extends Controller
         );
     }
 
-    // 프로필 정보 모바일..
-    public function profile_mb(User $id)
+    // 프로필 정보 모바일.. (수정중)
+    public function profileMobile(User $id)
     {
+        $user_id              = $id->getAttribute('id');
+        $user_nickname        = $id->getAttribute('user_nickname');
+        $user_picture         = $id->getAttribute('user_picture');
+        $user_score_of_riding = $id->getAttribute('user_score_of_riding');
 
+        // TODO stats 테이블의 통계 들어가야함!!!
+
+        return $this->responseJson(
+            self::USER_PROFILE,
+            [
+                'id' =>$user_id,
+                'user_nickname'=>$user_nickname,
+                'user_picture'=>$user_picture,
+                'user_score_of_riding'=>$user_score_of_riding
+            ],
+            200
+        );
     }
 }

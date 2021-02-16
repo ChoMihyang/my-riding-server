@@ -91,6 +91,27 @@ class User extends Authenticatable
         ]);
     }
 
+    // -->> User  <-> Route 모델 다대다 관계 선언
+    public function route()
+    {
+        // User  <-> Route 모델 다대다 관계 선언
+        return $this->belongsToMany(Route::class, 'route_user_id');
+    }
+
+    // User  <-> RouteLike 모델 다대다 관계 선언
+    public function routelike()
+    {
+        // User  <-> RouteLike 모델 다대다 관계 선언
+        return $this->belongsToMany(RouteLike::class, 'route_like_user');
+    }
+
+    // User  <-> Record 모델 다대다 관계 선언
+    public function record()
+    {
+        // User  <-> Record 모델 다대다 관계 선언
+        return $this->belongsToMany(Record::class, 'rec_user_id');
+    }
+
     /**
      * 사용자 랭킹 10순위
      * @return Collection
