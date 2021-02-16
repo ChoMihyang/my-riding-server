@@ -25,13 +25,13 @@ class RouteController extends Controller
     }
 
     /**
-     * [라이딩 경로] 전체 목록 조회
+     * [라이딩 경로] WEB 전체 목록 조회
      *
      * @return \Illuminate\Http\JsonResponse
      */
     public function routeListView()
     {
-        $routeValue = $this->route->routeListValue();
+        $routeValue = $this->route->routeListValue(2);
         $response_data = [
             'routes' => $routeValue
         ];
@@ -43,7 +43,12 @@ class RouteController extends Controller
         );
     }
 
-    // [라이딩 경로] 경로 삭제
+    /**
+     * [라이딩 경로] WEB 경로 삭제
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function routeDelete(Request $request)
     {
         $route_id = $request->id;
@@ -57,10 +62,15 @@ class RouteController extends Controller
         );
     }
 
-    // [라이딩 경로] 상세 조회
+    /**
+     * [라이딩 경로] WEB 상세 조회
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function routeDetailView(Request $request)
     {
-        $route_id = $request->id;
+        $route_id = (int)$request->id;
 
         // TODO 상세조회 페이지에서 Record 부분 추가 해야됨
         // 요청한 Route 의 ID 값의 데이터 가져옴
@@ -76,7 +86,12 @@ class RouteController extends Controller
         );
     }
 
-    // [라이딩 경로] 새로운 경로 저장
+    /**
+     * [라이딩 경로] WEB 새로운 경로 저장
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function routeSave(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -90,9 +105,7 @@ class RouteController extends Controller
 
             return $this->responseJson(
                 self::ROUTESAVE_FAIL,
-                [
-                    $response_data
-                ],
+                $response_data,
                 422
             );
         }
@@ -117,10 +130,27 @@ class RouteController extends Controller
 
         return $this->responseJson(
             self::ROUTESAVE_SUCCESS,
-            [
-                $newRoute
-            ]
-            ,201
+            [],
+            201
+        );
+    }
+
+    /**
+     * APP 인기 라이딩 경로 조회
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function routePopularity()
+    {
+        $routeValue = $this->route->routeListValue(1);
+        $response_data = [
+            'routes' => $routeValue
+        ];
+
+        return $this->responseJson(
+            self::ROUTELISTVIEW_SUCCESS,
+            $response_data,
+            200
         );
     }
 }

@@ -125,4 +125,12 @@ class Stats extends Model
 
         return $returnData;
     }
+
+    // 특정 주차의 통계 조회
+    public function select_stats_by_week(
+
+    )
+    {
+
+    }
 }

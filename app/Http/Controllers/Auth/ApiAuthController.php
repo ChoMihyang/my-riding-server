@@ -10,21 +10,20 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use phpDocumentor\Reflection\Types\Self_;
 
 class ApiAuthController extends Controller
 {
     private $user;
     private const SIGNUP_FAIL = '회원가입에 실패하셨습니다.';
     private const SIGNUP_SUCCESS = '회원가입에 성공하셨습니다.';
-    private const LOGIN_FAIL_AC = '유저 아이디가 일치하지 않습니다.';
-    private const LOGIN_FAIL_PW = '유저 패스워드가 일치하지 않습니다.';
-    private const LOGIN_FAIL = '로그인에 실패하셨습니다.';
-    private const LOGIN_SUCCESS = '로그인에 성공하셨습니다.';
-    private const LOGOUT = '로그아웃 되었습니다.';
-    private const USER_PROFILE = '프로필 정보 조회에 성공하셨습니다.';
-    private const TOKEN_SUCCESS = '유효한 토큰입니다.';
-    private const TOKEN_FAIL = '잘못된 접근입니다.';
+    private const LOGIN_FAIL_AC  = '유저 아이디가 일치하지 않습니다.';
+    private const LOGIN_FAIL_PW  = '유저 패스워드가 일치하지 않습니다.';
+    private const LOGIN_FAIL     = '로그인에 실패하셨습니다.';
+    private const LOGIN_SUCCESS  = '로그인에 성공하셨습니다.';
+    private const LOGOUT         = '로그아웃 되었습니다.';
+    private const USER_PROFILE   = '프로필 정보 조회에 성공하셨습니다.';
+    private const TOKEN_SUCCESS  = '유효한 토큰입니다.';
+    private const TOKEN_FAIL     = '잘못된 접근입니다.';
 
     public function __construct()
     {
@@ -37,25 +36,23 @@ class ApiAuthController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function register(Request $request): JsonResponse
+    public function signup(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'user_account' => 'required|string|max:255|unique:users',
-            'user_password' => 'required|string|min:6|confirmed',
-            'user_nickname' => 'required|String|min:12|unique:users',
-            'user_picture' => 'required|string|max:255',
+            'user_account'  => 'required|string|min:6|max:15|alpha_num|unique:users',
+            'user_password' => 'required|string|min:8|alpha_num|confirmed',
+            'user_nickname' => 'required|String|min:5|max:15|unique:users',
+            'user_picture'  => 'required|string|max:255',
         ]);
 
-        if ($validator->fails() || strpos($request['user_account'], ' ')) {
+        if ($validator->fails()) {
             $response_data = [
                 'error' => $validator->errors(),
             ];
 
             return $this->responseJson(
                 self::SIGNUP_FAIL,
-                [
-                    $response_data
-                ],
+                $response_data,
                 422
             );
         }
@@ -71,15 +68,14 @@ class ApiAuthController extends Controller
         $user_picture = $request->input('user_picture');
 
         $token = $this->user->createToken('Laravel Password Grant Client')->accessToken;
+
         $data = $this->user->createUserInfo($user_account, $user_password, $user_nickname, $user_picture);
 
         $response = ['token' => $token];
 
         return $this->responseJson(
             self::SIGNUP_SUCCESS,
-            [
-                $response,
-            ],
+            $response,
             201
         );
     }
@@ -186,10 +182,10 @@ class ApiAuthController extends Controller
         return $this->responseJson(
             self::USER_PROFILE,
             [
-                $user_account,
-                $user_nickname,
-                $user_picture,
-                $user_created_at
+                'user_account'=>$user_account,
+                'user_nickname'=>$user_nickname,
+                'user_picture'=>$user_picture,
+                'created_at'=>$user_created_at
             ],
             200
         );
@@ -215,5 +211,11 @@ class ApiAuthController extends Controller
             [],
             200
         );
+    }
+
+    // 프로필 정보 모바일..
+    public function profile_mb(User $id)
+    {
+
     }
 }
