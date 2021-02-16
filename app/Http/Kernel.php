@@ -23,7 +23,7 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\ForceJsonResponse::class,
-        \App\Http\Middleware\TokenCheck::class,
+//        \App\Http\Middleware\TokenCheck::class,
     ];
 
     /**

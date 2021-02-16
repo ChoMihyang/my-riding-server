@@ -27,7 +27,7 @@ class Route extends Model
      */
     public function routeListValue(
         int $count,
-        int $route_user_id
+        ?int $route_user_id
     )
     {
         if ($count == 1) {
@@ -41,6 +41,7 @@ class Route extends Model
                     'route_time',
                     'route_like',
                     'route_num_of_try_count',
+                    'route_start_point_address',
                     'route_end_point_address',
                     'route_image'
                 ]

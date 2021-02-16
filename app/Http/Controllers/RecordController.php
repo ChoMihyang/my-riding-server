@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Record;
 use App\Stats;
 use Illuminate\Http\Request;
+use phpDocumentor\Reflection\Types\Nullable;
 
 class RecordController extends Controller
 {
@@ -85,18 +86,17 @@ class RecordController extends Controller
 
     }
 
-    // 경로 저장
+    /**
+     * 경로 저장
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function recordSave(Request $request)
     {
         // TODO 사용자 토큰 정보 가져오기
-        $rec_user_id  = (int)$request->rec_user_id;
-        $rec_route_id = (int)$request->rec_route_id;
-
-        // TODO 추후 수정...
-        // 경로 지정 안하고 라이딩 하는 경우에 default 경로 DB에 하나 만들고 시작해야될듯..
-        if (empty($rec_route_id)) {
-            $rec_route_id = 0;
-        }
+        $rec_user_id  = $request->rec_user_id;
+        $rec_route_id = $request->rec_route_id;
 
         $rec_title               = $request->input('rec_title');
         $rec_distance            = $request->input('rec_distance');

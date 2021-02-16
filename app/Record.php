@@ -80,7 +80,7 @@ class Record extends Model
      */
     public function createRecord(
         int $rec_user_id,
-        int $rec_route_id,
+        ?int $rec_route_id,
         string $rec_title,
         float $rec_distance,
         int $rec_time,

@@ -29,7 +29,7 @@ class CreateRecordsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('rec_user_id');
             $table->foreign('rec_user_id')->references('id')->on('users');
-            $table->unsignedBigInteger('rec_route_id');
+            $table->unsignedBigInteger('rec_route_id')->nullable();
             $table->foreign('rec_route_id')->references('id')->on('routes');
             $table->string('rec_title');
             $table->unsignedDouble('rec_distance');

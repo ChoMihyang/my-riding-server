@@ -22,9 +22,8 @@ class TokenCheck
         if(!$user) {
             return response()->json([
                 "인증오류",
-            ],404);
+            ],401);
         }
-//        dd($user);
 
         return $next($request);
     }

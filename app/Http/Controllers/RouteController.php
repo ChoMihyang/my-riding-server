@@ -30,7 +30,7 @@ class RouteController extends Controller
     }
 
     /**
-     * [라이딩 경로] WEB 전체 목록 조회
+     * [WEB] 경로 전체 목록 조회
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -49,7 +49,7 @@ class RouteController extends Controller
     }
 
     /**
-     * [라이딩 경로] WEB 경로 삭제
+     * [WEB] 경로 삭제
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -69,7 +69,7 @@ class RouteController extends Controller
     }
 
     /**
-     * [라이딩 경로] WEB 상세 조회
+     * [WEB] 경로 상세 조회... (수정중!!!)
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -94,7 +94,7 @@ class RouteController extends Controller
     }
 
     /**
-     * [라이딩 경로] WEB 새로운 경로 저장
+     * [WEB] 새로운 경로 저장
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -143,7 +143,7 @@ class RouteController extends Controller
     }
 
     /**
-     * APP 인기 라이딩 경로 조회
+     * [APP] 인기 라이딩 경로 조회
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -162,7 +162,7 @@ class RouteController extends Controller
     }
 
     /**
-     * APP 나의 경로 최신순 5개 조회... (수정중)
+     * [APP] 나의 경로 최신순 5개 조회... (수정중!!!)
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -188,7 +188,7 @@ class RouteController extends Controller
     }
 
     /**
-     * APP 나의 경로 최신순 모두 조회
+     * [APP] 나의 경로 최신순 모두 조회
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -212,13 +212,13 @@ class RouteController extends Controller
     }
 
     /**
-     * App 라이딩 경로 검색 조회 (default 최신순)
+     * [App] 라이딩 경로 검색 조회 (default 최신순)
      *
      * count = 1 : 최신순 정렬
      * count = 2 : 좋아요순 정렬
      * count = 3 : 거리순 정렬
      * count = 4 : 소요시간순 정렬
-     * count = 5 : 라이딩 횧수순 정렬
+     * count = 5 : 라이딩 횟수순 정렬
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -279,7 +279,7 @@ class RouteController extends Controller
     }
 
     /**
-     * 좋아요 생성
+     * [WEB, APP] 좋아요 생성
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -306,7 +306,7 @@ class RouteController extends Controller
     }
 
     /**
-     * 좋아요 삭제
+     * [WEB, APP] 좋아요 삭제
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
