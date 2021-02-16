@@ -29,7 +29,7 @@ class CreateStatsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('stat_user_id');
             $table->foreign('stat_user_id')->references('id')->on('users');
-            $table->dateTime('stat_date');
+            $table->date('stat_date');
             $table->unsignedBigInteger('stat_week');
             $table->unsignedBigInteger('stat_day');
             $table->unsignedDouble('stat_distance');

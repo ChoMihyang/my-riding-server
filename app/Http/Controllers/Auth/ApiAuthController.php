@@ -129,7 +129,7 @@ class ApiAuthController extends Controller
                 );
             }
 
-            $response_data = ["message"=>"비밀번호가 일치하지 않습니다."];
+            $response_data = ["message" => "비밀번호가 일치하지 않습니다."];
 
             // 패스워드 불일치
             return $this->responseJson(
@@ -139,7 +139,7 @@ class ApiAuthController extends Controller
             );
         }
 
-        $response_data = ["message"=>"아이디가 존재하지 않습니다."];
+        $response_data = ["message" => "아이디가 존재하지 않습니다."];
 
         // 아이디 불일치
         return $this->responseJson(
@@ -160,7 +160,7 @@ class ApiAuthController extends Controller
         $token = $request->user()->token();
         $token->revoke(); // 토큰 제거
 
-        $response_data = ['message'=>'로그아웃 되었습니다.'];
+        $response_data = ['message' => '로그아웃 되었습니다.'];
 
         return $this->responseJson(
             self::LOGOUT,
@@ -204,7 +204,7 @@ class ApiAuthController extends Controller
      *
      * @return JsonResponse
      */
-    public function user():JsonResponse
+    public function user(): JsonResponse
     {
         $user = Auth::guard('api')->user();
         if (!$user) {
