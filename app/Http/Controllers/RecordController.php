@@ -224,4 +224,10 @@ class RecordController extends Controller
             201
         );
     }
+
+
+    public function recordSort()
+    {
+
+    }
 }
