@@ -39,7 +39,8 @@ class CreateRecordsTable extends Migration
             $table->string('rec_end_point_address');
             $table->unsignedDouble('rec_avg_speed');
             $table->unsignedDouble('rec_max_speed');
-            $table->timestamps();
+            $table->date('created_at');
+            $table->date('updated_at');
         });
     }
 

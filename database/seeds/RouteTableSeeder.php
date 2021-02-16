@@ -13,14 +13,14 @@ class RouteTableSeeder extends Seeder
         $faker = Factory::create('ko_kr');
 
         // 사용자 한 명당 생성할 경로 레코드 수
-        $num_of_route = 10;
+        $num_of_route = 5;
         // 경로 이미지 저장 경로
         $route_picture_paths = 'C:\user\route\myPicture_';
 
         $temp_riding_title = "번째 라이딩";
 
         // id 가 1 ~ 10인 회원의 수만큼 반복
-        for ($user_count = 0; $user_count < 10; $user_count++) {
+        for ($user_count = 0; $user_count < 3; $user_count++) {
             // 사용자마다 10개씩 경로 레코드 생성
             for ($route_count = 1; $route_count <= $num_of_route; $route_count++) {
 

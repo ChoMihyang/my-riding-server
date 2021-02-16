@@ -68,9 +68,10 @@ class ApiAuthController extends Controller
         $user_picture = $request->input('user_picture');
 
         $token = $this->user->createToken('Laravel Password Grant Client')->accessToken;
-        $data  = $this->user->createUserInfo($user_account,$user_password,$user_nickname,$user_picture);
 
-        $response = ['token'=>$token];
+        $data = $this->user->createUserInfo($user_account, $user_password, $user_nickname, $user_picture);
+
+        $response = ['token' => $token];
 
         return $this->responseJson(
             self::SIGNUP_SUCCESS,
@@ -88,8 +89,8 @@ class ApiAuthController extends Controller
     public function login(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'user_account'  => 'required|string|min:6|max:15|alpha_num',
-            'user_password' => 'required|string|min:8|alpha_num',
+            'user_account' => 'required|string|max:255',
+            'user_password' => 'required|string|min:6',
         ]);
 
         if ($validator->fails()) {
@@ -125,7 +126,7 @@ class ApiAuthController extends Controller
                 );
             }
 
-            $response_data = ["message"=>"비밀번호가 일치하지 않습니다."];
+            $response_data = ["message" => "비밀번호가 일치하지 않습니다."];
 
             // 패스워드 불일치
             return $this->responseJson(
@@ -135,7 +136,7 @@ class ApiAuthController extends Controller
             );
         }
 
-        $response_data = ["message"=>"아이디가 존재하지 않습니다."];
+        $response_data = ["message" => "아이디가 존재하지 않습니다."];
 
         // 아이디 불일치
         return $this->responseJson(
@@ -156,7 +157,7 @@ class ApiAuthController extends Controller
         $token = $request->user()->token();
         $token->revoke(); // 토큰 제거
 
-        $response_data = ['message'=>'로그아웃 되었습니다.'];
+        $response_data = ['message' => '로그아웃 되었습니다.'];
 
         return $this->responseJson(
             self::LOGOUT,
@@ -195,7 +196,7 @@ class ApiAuthController extends Controller
      *
      * @return JsonResponse
      */
-    public function user():JsonResponse
+    public function user(): JsonResponse
     {
         if ((Auth::guard('api')->user()) == null) {
             return $this->responseJson(

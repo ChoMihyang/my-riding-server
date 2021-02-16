@@ -12,7 +12,7 @@ class BadgeTableSeeder extends Seeder
         $faker = Factory::create('ko_kr');
 
         // badges 테이블 내 생성할 배지 레코드 수
-        $num_of_badge = 20;
+        $num_of_badge = 9;
 
         // 연속 배지 종류
         $badge_of_continue = ['1주', '2주', '3주', '4주', '1개월', '3개월'];
@@ -43,15 +43,15 @@ class BadgeTableSeeder extends Seeder
             5 => '점 달성'
         ];
 
-        for ($badge_count = 0; $badge_count < $num_of_badge; $badge_count++) {
+        for ($badge_count = 0; $badge_count < 5; $badge_count++) {
 
-            $badge_type = random_int(0, 5);
-            $badge_name = $badge_type == 0 ? '최초 가입' : $badge_name_type[$badge_type][$badge_type];
-            $badge_sen = $badge_type == 0 ? '' : $badge_sen_type[$badge_type];
+            $badge_type = random_int(1, 5);
+            $badge_name = $badge_name_type[$badge_type][$badge_type];
+            $badge_sen = $badge_sen_type[$badge_type];
 
             DB::table('badges')->insert([
                 'id' => 0,
-                'badge_id' => $faker->numberBetween(1, 100),
+                'badge_id' => $faker->numberBetween(1, 15),
                 'badge_type' => $badge_type,
                 'badge_name' => $badge_name . $badge_sen,
                 'created_at' => $faker->dateTimeBetween($startDate = '-3 year', $endDate = '-2 year'),

@@ -90,4 +90,24 @@ class User extends Authenticatable
             'user_picture' => $user_picture
         ]);
     }
+
+    /**
+     * 사용자 랭킹 10순위
+     * @return Collection
+     */
+    public function getUserRank(): Collection
+    {
+        $param = [
+            'user_nickname as nickname',
+            'user_picture as picture',
+            'user_score_of_riding as score'
+        ];
+
+        $returnData = User::select($param)
+            ->orderByDesc('user_score_of_riding')
+            ->take(10)
+            ->get();
+
+        return $returnData;
+    }
 }

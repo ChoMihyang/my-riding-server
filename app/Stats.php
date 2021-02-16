@@ -2,7 +2,6 @@
 
 namespace App;
 
-use http\Env\Request;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -10,7 +9,6 @@ use Illuminate\Support\Facades\DB;
 class Stats extends Model
 {
     protected $table = 'stats';
-
     protected $hidden = ['created_at', 'updated_at'];
 
     // TODO 웹에서 주차 선택 시 ,해당 통계 조회
@@ -35,27 +33,27 @@ class Stats extends Model
             'stat_avg_speed as avg_speed'
         ];
 
-        $user_stats = self::select($param)
+        $returnData = self::select($param)
             ->where('stat_user_id', $user_id)
             ->where('stat_year', $today_year)
             ->where('stat_week', $today_week)
             ->orderBy('stat_day')
             ->get();
 
-        return $user_stats;
+        return $returnData;
     }
 
 
     /**
-     * 특정 연도의 통계 조회
-     *
      * @param int $year
+     * @param int|null $month
+     * @param int|null $day
      * @param int $user_id
      * @return Collection
      */
-    public function select_stats_by_year(
-        int $year,
-        int $user_id
+    public function select_stats(
+        int $user_id,
+        int $year
     ): Collection
     {
         $param = [
@@ -66,13 +64,66 @@ class Stats extends Model
             'stat_avg_speed as avg_speed'
         ];
 
-        $record_stats_by_year = Stats::select($param)
+        $returnData = Stats::select($param)
             ->where('stat_user_id', $user_id)
             ->where('stat_year', $year)
             ->orderBy('stat_week')
             ->get();
 
-        return $record_stats_by_year;
+        return $returnData;
+    }
+
+    // 선택 연도와 주차에 해당하는 통계 조회
+
+    /**
+     *
+     * @param int $user_id
+     * @param int $year
+     * @param int $week
+     * @return Collection
+     */
+    public function get_stats_by_week(
+        int $user_id,
+        int $year,
+        int $week
+    ): Collection
+    {
+        $param = [
+            'stat_day as day',
+            'stat_distance as distance',
+            'stat_time as time',
+            'stat_avg_speed as avg_speed'
+        ];
+
+        $returnData = Stats::select($param)
+            ->where('stat_user_id', $user_id)
+            ->where('stat_year', $year)
+            ->where('stat_week', $week)
+            ->get();
+
+        return $returnData;
+    }
+
+    /**
+     * 사용자 랭킹 기록 상세 보기
+     * @param int $user_id
+     * @return Collection
+     */
+    public function getUserDetailRank(
+        int $user_id
+    ): Collection
+    {
+        $param = [
+            'stat_distance as distance',
+            'stat_time as time',
+            'stat_avg_speed as avg_speed',
+            'stat_max_speed as max_speed'
+        ];
+        $returnData = Stats::select($param)
+            ->where('stat_user_id', $user_id)
+            ->get();
+
+        return $returnData;
     }
 
     // 특정 주차의 통계 조회

@@ -33,13 +33,13 @@ class Controller extends BaseController
      * json response 생성
      *
      * @param string $message
-     * @param array $data
+     * @param $data
      * @param int $http_code
      * @return JsonResponse
      */
     public function responseJson(
         string $message,
-        array $data,
+        $data,
         int $http_code
     ): JsonResponse
     {
