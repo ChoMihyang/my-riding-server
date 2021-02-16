@@ -172,5 +172,10 @@ class Record extends Model
             'created_at' => now(),
         ]);
     }
+
+    public function rankSort()
+    {
+
+    }
 }
 

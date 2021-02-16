@@ -83,4 +83,7 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
         });
         Route::post("/mytest", "RecordController@recordSave");
     });
+
+    Route::get('/rank', 'UserController@viewUserRank')->name("[랭킹] 사용자 랭킹 출력");
+    Route::get('/rank/{id}', 'UserController@viewDetailRank')->name("[랭킹] 사용자 상세 보기");
 });
