@@ -167,7 +167,7 @@ class RouteController extends Controller
 
         return $this->responseAppJson(
             self::ROUTELISTVIEW_SUCCESS,
-            "routePopularity",
+            "routes",
             $response_data,
             200
         );
@@ -189,7 +189,7 @@ class RouteController extends Controller
 
         return $this->responseAppJson(
             self::ROUTEDETAILVIEW_SUCCESS,
-            "routeMyListLatest",
+            "routes",
             $response_data,
             200
         );
@@ -212,7 +212,7 @@ class RouteController extends Controller
 
         return $this->responseAppJson(
             self::ROUTEDETAILVIEW_SUCCESS,
-            "routeMyListAll",
+            "routes",
             $response_data,
             200
         );
@@ -278,7 +278,7 @@ class RouteController extends Controller
 
         return $this->responseAppJson(
             self::ROUTESORT_SUCCESS,
-            "routeSearch",
+            "routes",
             $response_data,
             200
         );

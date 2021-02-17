@@ -199,8 +199,10 @@ class Record extends Model
     )
     {
         // 전제 카운트 가져오고 내순위 나타내야됨..
-        $count = $this->rankSort($route_id)->count();
-        // 통산 최고 기록?
+
+        // 이 경로의 전체 카운트 -> record 대신에, route 에서 num_of_try_count 사용?
+       $count = $this->rankSort($route_id)->count();
+        // 이 경로의 가장 빠른 기록? -> 라이딩 점수로? 시간으로??
         $first_score = $this->rankSort($route_id)->first();
         dd($first_score);
 
