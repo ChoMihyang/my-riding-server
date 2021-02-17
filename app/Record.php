@@ -173,9 +173,45 @@ class Record extends Model
         ]);
     }
 
-    public function rankSort()
+    // 경로 전체 순위
+    public function rankSort(
+        int $route_id // 경로 아이디
+    )
     {
+        // 순위 정렬 해야함
+        $param = [
+            'id',
+            'rec_user_id',
+            'rec_score',
+            'created_at',
+            'rec_max_speed',
+        ];
 
+        return Record::select($param)
+                ->where("rec_route_id",$route_id)
+                ->orderBy("rec_time", "DESC")
+                ->get();
+    }
+
+    // 내 라이딩 기록
+    public function myRecord(
+        int $route_id // 경로 아이디
+    )
+    {
+        // 전제 카운트 가져오고 내순위 나타내야됨..
+        $count = $this->rankSort($route_id)->count();
+        // 통산 최고 기록?
+        $first_score = $this->rankSort($route_id)->first();
+        dd($first_score);
+
+        // 평균 기록
+
+
+//        // 전체 가장 빠른 기록
+//        Record::select($param)
+//            ->where("rec_route_id",$route_id)
+//            ->orderBy("rec_score", "DESC")
+//            ->get();
     }
 }
 

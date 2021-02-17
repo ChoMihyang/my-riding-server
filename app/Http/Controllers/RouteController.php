@@ -79,18 +79,31 @@ class RouteController extends Controller
         // TODO 토큰 값 가져오기
         $route_id = (int)$request->id;
 
+        $routeValue = $this->route->routeDetailRouteValue($route_id);
         // TODO 상세조회 페이지에서 Record 부분 추가 해야됨
         // 요청한 Route 의 ID 값의 데이터 가져옴
-        $routeValue = $this->route->routeDetailRouteValue($route_id);
-        $response_data = [
-            'route' => $routeValue
-        ];
+        $recordValue = $this->record->rankSort($route_id);
+        $count  = $recordValue->count($recordValue);
 
-        return $this->responseJson(
-            self::ROUTEDETAILVIEW_SUCCESS,
-            $response_data,
-            200
-        );
+        $number = [];
+        for ($i = 1; $i <= $count; $i++) {
+            $number[$i] = $i;
+        }
+
+        $kk = $this->record->myRecord($route_id);
+        dd($kk);
+
+//        $response_data = [
+//            'route' => $routeValue,
+//            'rank' => $number,
+//            'record' => $recordValue
+//        ];
+//
+//        return $this->responseJson(
+//            self::ROUTEDETAILVIEW_SUCCESS,
+//            $response_data,
+//            200
+//        );
     }
 
     /**
@@ -150,12 +163,11 @@ class RouteController extends Controller
     public function routePopularity()
     {
         $routeValue = $this->route->routeListValue(2, 0);
-        $response_data = [
-            'routes' => $routeValue
-        ];
+        $response_data = $routeValue;
 
-        return $this->responseJson(
+        return $this->responseAppJson(
             self::ROUTELISTVIEW_SUCCESS,
+            "routePopularity",
             $response_data,
             200
         );
@@ -171,17 +183,13 @@ class RouteController extends Controller
     {
         // TODO 토큰 값 가져오기
         $route_user_id = (int)$request->route_user_id;
-        // TODO 수정해야함 주석 부분 join 해야됨
         $routeValue = $this->route->routeListValue(3, $route_user_id)->take(5);
-//        $routeLikeValue = $this->routeLike->likeSearch($route_user_id);
 
-        $response_data = [
-            'routes' => $routeValue,
-//            'routeLikes' => $routeLikeValue
-        ];
+        $response_data = $routeValue;
 
-        return $this->responseJson(
+        return $this->responseAppJson(
             self::ROUTEDETAILVIEW_SUCCESS,
+            "routeMyListLatest",
             $response_data,
             200
         );
@@ -200,12 +208,11 @@ class RouteController extends Controller
 
         $routeValue     = $this->route->routeListValue(3, $route_user_id);
 
-        $response_data = [
-            'routes' => $routeValue,
-        ];
+        $response_data = $routeValue;
 
-        return $this->responseJson(
+        return $this->responseAppJson(
             self::ROUTEDETAILVIEW_SUCCESS,
+            "routeMyListAll",
             $response_data,
             200
         );
@@ -267,12 +274,11 @@ class RouteController extends Controller
             $routeValue = Route::all()->sortByDesc($pick);
         }
 
-        $response_data = [
-            'routes' => $routeValue
-        ];
+        $response_data = $routeValue;
 
-        return $this->responseJson(
+        return $this->responseAppJson(
             self::ROUTESORT_SUCCESS,
+            "routeSearch",
             $response_data,
             200
         );
