@@ -98,10 +98,12 @@ class UserController extends Controller
     {
         $rank_of_all_users = $this->user->getUserRank();
 
-        return $this->responseJson(
+        return $this->responseAppJson(
             self::PRINT_USER_RANK_SUCCESS,
+            "rankAll",
             $rank_of_all_users,
-            201);
+            201
+        );
     }
 
     // 사용자 랭킹 상세 보기
@@ -121,8 +123,9 @@ class UserController extends Controller
             "max_of_speed" => $max_of_speed
         ];
 
-        return $this->responseJson(
+        return $this->responseAppJson(
             self::PRINT_USER_RANK_SUCCESS,
+            "rankUserDetail",
             $result_data,
             201
         );

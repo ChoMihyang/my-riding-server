@@ -14,18 +14,18 @@ class RouteController extends Controller
     private $record;
     private $routeLike;
 
-    private const ROUTELISTVIEW_SUCCESS   = "모든 경로 정보 조회에 성공하셨습니다.";
+    private const ROUTELISTVIEW_SUCCESS = "모든 경로 정보 조회에 성공하셨습니다.";
     private const ROUTEDETAILVIEW_SUCCESS = "선택한 경로 정보 조회에 성공하셨습니다.";
-    private const ROUTESAVE_SUCCESS       = "경로 저장에 성공하셨습니다.";
-    private const ROUTESAVE_FAIL          = "경로 저장에 실패하셨습니다.";
-    private const ROUTEDELETE_SUCCESS     = "경로 삭제에 성공하셨습니다.";
-    private const ROUTESEARCH_FAIL        = "검색어를 다시 입력하세요";
-    private const ROUTESORT_SUCCESS       = "경로 정렬에 성공하셨습니다.";
+    private const ROUTESAVE_SUCCESS = "경로 저장에 성공하셨습니다.";
+    private const ROUTESAVE_FAIL = "경로 저장에 실패하셨습니다.";
+    private const ROUTEDELETE_SUCCESS = "경로 삭제에 성공하셨습니다.";
+    private const ROUTESEARCH_FAIL = "검색어를 다시 입력하세요";
+    private const ROUTESORT_SUCCESS = "경로 정렬에 성공하셨습니다.";
 
     public function __construct()
     {
-        $this->route     = new Route();
-        $this->record    = new Record();
+        $this->route = new Route();
+        $this->record = new Record();
         $this->routeLike = new RouteLike();
     }
 
@@ -83,7 +83,7 @@ class RouteController extends Controller
         // TODO 상세조회 페이지에서 Record 부분 추가 해야됨
         // 요청한 Route 의 ID 값의 데이터 가져옴
         $recordValue = $this->record->rankSort($route_id);
-        $count  = $recordValue->count($recordValue);
+        $count = $recordValue->count($recordValue);
 
         $number = [];
         for ($i = 1; $i <= $count; $i++) {
@@ -115,7 +115,7 @@ class RouteController extends Controller
     public function routeSave(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'route_title'  => 'required|string|min:3|alpha_num|unique:routes',
+            'route_title' => 'required|string|min:3|alpha_num|unique:routes',
         ]);
 
         if ($validator->fails()) {
@@ -130,22 +130,22 @@ class RouteController extends Controller
             );
         }
 
-        $route_user_id             = $request->input('route_user_id');
-        $route_title               = $request->input('route_title');
-        $route_image               = $request->input('route_image');
-        $route_distance            = $request->input('route_distance');
-        $route_time                = $request->input('route_time');
-        $route_avg_degree          = $request->input('route_avg_degree');
-        $route_max_altitude        = $request->input('route_max_altitude');
-        $route_min_altitude        = $request->input('route_min_altitude');
+        $route_user_id = $request->input('route_user_id');
+        $route_title = $request->input('route_title');
+        $route_image = $request->input('route_image');
+        $route_distance = $request->input('route_distance');
+        $route_time = $request->input('route_time');
+        $route_avg_degree = $request->input('route_avg_degree');
+        $route_max_altitude = $request->input('route_max_altitude');
+        $route_min_altitude = $request->input('route_min_altitude');
         $route_start_point_address = $request->input('route_start_point_address');
-        $route_end_point_address   = $request->input('route_end_point_address');
+        $route_end_point_address = $request->input('route_end_point_address');
 
         $this->route->routeSave(
             $route_user_id, $route_title, $route_image,
-            $route_distance,$route_time,
-            $route_avg_degree,$route_max_altitude,$route_min_altitude,
-            $route_start_point_address,$route_end_point_address
+            $route_distance, $route_time,
+            $route_avg_degree, $route_max_altitude, $route_min_altitude,
+            $route_start_point_address, $route_end_point_address
         );
 
         return $this->responseJson(
@@ -206,7 +206,7 @@ class RouteController extends Controller
         // TODO 토큰 값 가져오기
         $route_user_id = (int)$request->route_user_id;
 
-        $routeValue     = $this->route->routeListValue(3, $route_user_id);
+        $routeValue = $this->route->routeListValue(3, $route_user_id);
 
         $response_data = $routeValue;
 
@@ -233,8 +233,8 @@ class RouteController extends Controller
     public function routeSearch(Request $request)
     {
         // TODO 검색어 입력받기
-        $wordValue  = "";
-        $word  = (string)$request->word;
+        $wordValue = "";
+        $word = (string)$request->word;
         $count = (int)$request->count;
 
         // Default 화면, 최신순 정렬
@@ -245,7 +245,7 @@ class RouteController extends Controller
         // if 검색할 경우 (검색 여부 체크)
         if ($word) {
             $validator = Validator::make($request->all(), [
-                'word'  => 'required|string|min:1|alpha_num',
+                'word' => 'required|string|min:1|alpha_num',
             ]);
 
             if ($validator->fails()) {
@@ -294,7 +294,7 @@ class RouteController extends Controller
     {
         // TODO $route_like_user : 토큰으로 유저 확인 해야함
         $route_like_user = 2;
-        $route_like_obj  = (int)$request->route_like_obj;
+        $route_like_obj = (int)$request->route_like_obj;
 
         // RouteLikes 테이블 새로운 레코드 추가
         $this->routeLike->likeUp($route_like_user, $route_like_obj);
@@ -321,7 +321,7 @@ class RouteController extends Controller
     {
         // TODO $route_like_user : 토큰으로 유저 확인 해야함
         $route_like_user = 1;
-        $route_like_obj  = $request->route_like_obj;
+        $route_like_obj = $request->route_like_obj;
 
         // RouteLikes 테이블 레코드 삭제
         $this->routeLike->likeDown($route_like_user, $route_like_obj);

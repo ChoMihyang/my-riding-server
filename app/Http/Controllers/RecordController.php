@@ -167,7 +167,7 @@ class RecordController extends Controller
             201);
     }
 
-    // [app] 홈 화면 - 연, 월, 일 요청 후 해당 통계 반환
+    // [app] 홈 화면 - 연, 월, 일 요청 후 해당 기록 반환
     public function recordOfHome(Request $request)
     {
         // TODO 사용자 토큰 가져오기
@@ -186,7 +186,11 @@ class RecordController extends Controller
         $resultData = $this->record->select_records_of_day($user_id, $year, $month, $day)->first();
         $date = $resultData['date'];
 
-        return $this->responseJson("${date} " . self::SELECT_BY_DAY_SUCCESS, $resultData, 201);
+        return $this->responseAppJson(
+            "${date} " . self::SELECT_BY_DAY_SUCCESS,
+            "userRecord",
+            $resultData,
+            201);
     }
 
     /**
