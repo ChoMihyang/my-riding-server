@@ -114,9 +114,9 @@ class User extends Authenticatable
 
     /**
      * 사용자 랭킹 10순위
-     * @return Collection
+     *
      */
-    public function getUserRank(): Collection
+    public function getUserRank()
     {
         $param = [
             'user_nickname as nickname',
