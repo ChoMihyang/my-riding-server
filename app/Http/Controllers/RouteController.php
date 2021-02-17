@@ -6,6 +6,7 @@ use App\Record;
 use App\Route;
 use App\RouteLike;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class RouteController extends Controller
@@ -79,23 +80,36 @@ class RouteController extends Controller
         // TODO 토큰 값 가져오기
         $route_id = (int)$request->id;
 
+//        $user = Auth::guard('api')->user();
+//        $route_user_id = $user->getAttribute('id');
+
         $routeValue = $this->route->routeDetailRouteValue($route_id);
         // TODO 상세조회 페이지에서 Record 부분 추가 해야됨
         // 요청한 Route 의 ID 값의 데이터 가져옴
-        $recordValue = $this->record->rankSort($route_id);
-        $count  = $recordValue->count($recordValue);
+        $recordValue = $this->record->rankSort($route_id)->take(3);
 
-        $number = [];
-        for ($i = 1; $i <= $count; $i++) {
-            $number[$i] = $i;
-        }
+        // 랭킹 해결하면 주석풀자..
+        // $kk = $this->record->myRecord($route_id, 1);
 
-        $kk = $this->record->myRecord($route_id);
-        dd($kk);
+        // -->> TODO 랭킹 수정중
+        // 전체 정렬
+        $mm = Record::select('rec_user_id', 'rec_route_id', 'rec_time', 'rec_score')
+            ->where('rec_route_id',$route_id)
+            ->orderBy('rec_time')
+            ->get();
+
+        // 경로 이용 count
+//        $number_of_user = $mm->count();
+
+        $userIndex = $mm->search(function ($mm) {
+           return $mm->id === Auth::id();
+        });
+
+        dd($mm);
+
 
 //        $response_data = [
 //            'route' => $routeValue,
-//            'rank' => $number,
 //            'record' => $recordValue
 //        ];
 //
@@ -176,13 +190,14 @@ class RouteController extends Controller
     /**
      * [APP] 나의 경로 최신순 5개 조회... (수정중!!!)
      *
-     * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function routeMyListLatest(Request $request)
+    public function routeMyListLatest()
     {
-        // TODO 토큰 값 가져오기
-        $route_user_id = (int)$request->route_user_id;
+        $user = Auth::guard('api')->user();
+        $route_user_id = $user->getAttribute('id');
+
         $routeValue = $this->route->routeListValue(3, $route_user_id)->take(5);
 
         $response_data = $routeValue;
@@ -201,10 +216,10 @@ class RouteController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function routeMyListAll(Request $request)
+    public function routeMyListAll()
     {
-        // TODO 토큰 값 가져오기
-        $route_user_id = (int)$request->route_user_id;
+        $user = Auth::guard('api')->user();
+        $route_user_id = $user->getAttribute('id');
 
         $routeValue     = $this->route->routeListValue(3, $route_user_id);
 
@@ -259,6 +274,7 @@ class RouteController extends Controller
                     422
                 );
             }
+            // TODO 검색부분 수정해야됨
             // 검색 하면 검색어 조회 후 사용자 입력 방법으로 정렬,
             $wordValue = $this->route->search($word);
 
@@ -269,6 +285,7 @@ class RouteController extends Controller
         // 검색 안하면 바로 사용자 입력 방법으로 정렬
 
         if ($wordValue == null) {
+            // TODO 검색부분 수정해야됨
             $pick = $this->route->sortSearchCount($count);
 
             $routeValue = Route::all()->sortByDesc($pick);
