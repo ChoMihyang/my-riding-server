@@ -46,8 +46,6 @@ class Stats extends Model
 
     /**
      * @param int $year
-     * @param int|null $month
-     * @param int|null $day
      * @param int $user_id
      * @return Collection
      */
@@ -127,9 +125,7 @@ class Stats extends Model
     }
 
     // 특정 주차의 통계 조회
-    public function select_stats_by_week(
-
-    )
+    public function select_stats_by_week()
     {
 
     }
