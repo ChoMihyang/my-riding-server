@@ -52,10 +52,10 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
              */
             Route::get("/year", "RecordController@recordViewByYear")->name("[라이딩 일지] 연도 기준 조회");
             Route::get("/week", "RecordController@recordViewByWeek")->name("[라이딩 일지] 주 기준 조회");
-            Route::get("/{id}", "RecordController@recordDetailView")->name("[라이딩 일지] 상세 조회");
+//            Route::get("/{id}", "RecordController@recordDetailView")->name("[라이딩 일지] 상세 조회");
 //    Route::patch("/{id}", "RecordController@recordModify")->name("[라이딩 일지] 이름 수정");
 //    Route::delete("/{id}", "RecordController@recordDelete")->name("[라이딩 일지] 기록 삭제");
-            Route::get("/home", "RecordController@recordOfHome")->name("[홈화면] 날짜별 조회");
+            Route::get('/home', 'RecordController@recordOfHome')->name("[홈화면] 날짜별 조회");
         });
 
         // <<-- 라이딩 경로 관리-->>
@@ -83,4 +83,7 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
         });
         Route::post("/mytest", "RecordController@recordSave");
     });
+
+    Route::get('/rank', 'UserController@viewUserRank')->name('[랭킹] 사용자 랭킹 출력');
+    Route::get('/rank/{id}', 'UserController@viewDetailRank')->name('[랭킹] 사용자 상세 보기');
 });

@@ -18,7 +18,7 @@ class RecordController extends Controller
 
     public function __construct()
     {
-        $this->stats  = new Stats();
+        $this->stats = new Stats();
         $this->record = new Record();
     }
 

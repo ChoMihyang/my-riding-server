@@ -99,7 +99,7 @@ class UserController extends Controller
         $rank_of_all_users = $this->user->getUserRank();
 
         return $this->responseJson(
-            self::PRINT_USER_RANK,
+            self::PRINT_USER_RANK_SUCCESS,
             $rank_of_all_users,
             201);
     }
