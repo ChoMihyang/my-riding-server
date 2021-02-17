@@ -73,8 +73,8 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
             Route::post("/", "RouteController@routeSave")->name("[라이딩 경로] 새로운 경로 저장");
 
             Route::get("/popularity", "RouteController@routePopularity")->name("[라이딩 경로] 인기 라이딩 경로 조회");
-            Route::post("/mylistlatest/{id}", "RouteController@routeMyListLatest")->name("[라이딩 경로] 내 라이딩 경로 일부 조회(수정중)");
-            Route::post("/mylistall/{id}", "RouteController@routeMyListAll")->name("[라이딩 경로] 내 라이딩 경로 모두 조회(수정중)");
+            Route::get("/mylistlatest", "RouteController@routeMyListLatest")->name("[라이딩 경로] 내 라이딩 경로 일부 조회(수정중)");
+            Route::get("/mylistall", "RouteController@routeMyListAll")->name("[라이딩 경로] 내 라이딩 경로 모두 조회(수정중)");
             Route::get("/search", "RouteController@routeSearch")->name("[라이딩 경로] 경로 검색 (Default 최신순)");
         });
         Route::prefix("routelike")->group(function () {
