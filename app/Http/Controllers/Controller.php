@@ -8,6 +8,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use \Illuminate\Http\JsonResponse;
+use PhpParser\Node\Scalar\String_;
 
 class Controller extends BaseController
 {
@@ -30,7 +31,7 @@ class Controller extends BaseController
     }
 
     /**
-     * json response 생성
+     * [WEB] json response 생성
      *
      * @param string $message
      * @param $data
@@ -49,5 +50,26 @@ class Controller extends BaseController
         ], $http_code);
     }
 
+    /**
+     * [APP] json response 생성
+     *
+     * @param string $message
+     * @param string $type
+     * @param $data
+     * @param int $http_code
+     * @return JsonResponse
+     */
+    public function responseAppJson(
+        string $message,
+        string $type,
+        $data,
+        int $http_code
+    ): JsonResponse
+    {
+        return response()->json([
+            'message' => $message,
+            $type => $data
+        ], $http_code);
+    }
 
 }
