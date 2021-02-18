@@ -43,6 +43,8 @@ class Route extends Model
                     'route_image'
                 ]
             );
+//            $routeInfo = self::join()
+
         }
         elseif ($count == 2) {
             $routeInfo = self::select('id','route_title','route_distance','route_image','route_like')
