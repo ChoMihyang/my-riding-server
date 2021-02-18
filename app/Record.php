@@ -20,6 +20,7 @@ class Record extends Model
 
     /**
      * 해당 날짜의 통계 반환 (RecordController - recordOfHome)
+     * @param int $user_id
      * @param int $year
      * @param int $month
      * @param int $day
@@ -47,6 +48,7 @@ class Record extends Model
 
         $resultData = Record::select($param)
             ->join('stats', 'records.created_at', 'stats.stat_date')
+            ->distinct()
             ->where('rec_user_id', $user_id)
             ->where('stats.stat_date', $ridingDate)
             ->get();
@@ -188,9 +190,9 @@ class Record extends Model
         ];
 
         return Record::select($param)
-                ->where('rec_route_id',$route_id)
-                ->orderBy('rec_time')
-                ->get();
+            ->where('rec_route_id', $route_id)
+            ->orderBy('rec_time')
+            ->get();
 
     }
 
@@ -214,7 +216,6 @@ class Record extends Model
             ->first(); // controller 에서 first 해주는 걸로 바꾸자.. 내 기록 평균 내는것 떄문에..
 
 
-
 //        $kk = self::select(DB::raw('
 //          SELECT s.*, @rank := @rank + 1 rank FROM (
 //            SELECT rec_user_id, rec_score FROM t
@@ -223,7 +224,6 @@ class Record extends Model
 //          ORDER BY rec_score DESC
 //        ')
 //        );
-
 
 
 //        $kk = self::select('rec_user_id', DB::raw('rec_score'))
