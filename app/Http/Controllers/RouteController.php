@@ -31,12 +31,13 @@ class RouteController extends Controller
     }
 
     /**
-     * [WEB] 경로 전체 목록 조회
+     * [WEB] 경로 전체 목록 조회 (수정중)
      *
      * @return \Illuminate\Http\JsonResponse
      */
     public function routeListView()
     {
+        // TODO 전체목록x -> 내가 만든경로, 좋아요 누른 경로
         $routeValue = $this->route->routeListValue(1, null);
         $response_data = [
             'routes' => $routeValue
@@ -50,14 +51,14 @@ class RouteController extends Controller
     }
 
     /**
-     * [WEB] 경로 삭제
+     * [WEB] 경로 삭제 (수정해야됨)
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function routeDelete(Request $request)
     {
-        // TODO 토큰 값 가져오기
+        // TODO 아이디, 토큰값 값 확인후 삭제로 수정해야됨
         $route_id = $request->id;
 
         $this->route->routeDelete($route_id);
@@ -70,7 +71,7 @@ class RouteController extends Controller
     }
 
     /**
-     * [WEB] 경로 상세 조회... (수정중!!!)
+     * [WEB] 경로 상세 조회
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -84,9 +85,10 @@ class RouteController extends Controller
         // 요청한 Route 의 ID 값의 record 데이터(기록순 정렬) 가져옴
         $recordValue = $this->record->rankSort($route_id)->take(3);
 
-        // TODO 토큰 값 가져오기
-        $userID = 21;
-        $rankValues = $this->record->myRecord($route_id, $userID);
+        $user = Auth::guard('api')->user();
+        $route_user_id = $user->getAttribute('id');
+
+        $rankValues = $this->record->myRecord($route_id, $route_user_id);
 
         $response_data = [
             'route' => $routeValue,
@@ -125,7 +127,9 @@ class RouteController extends Controller
             );
         }
 
-        $route_user_id = $request->input('route_user_id');
+        $user = Auth::guard('api')->user();
+        $route_user_id = $user->getAttribute('id');
+
         $route_title = $request->input('route_title');
         $route_image = $request->input('route_image');
         $route_distance = $request->input('route_distance');
@@ -291,7 +295,9 @@ class RouteController extends Controller
     public function likePush(Request $request)
     {
         // TODO $route_like_user : 토큰으로 유저 확인 해야함
-        $route_like_user = 2;
+        $user = Auth::guard('api')->user();
+        $route_like_user = $user->getAttribute('id');
+
         $route_like_obj = (int)$request->route_like_obj;
 
         // RouteLikes 테이블 새로운 레코드 추가
@@ -318,7 +324,8 @@ class RouteController extends Controller
     public function likePull(Request $request)
     {
         // TODO $route_like_user : 토큰으로 유저 확인 해야함
-        $route_like_user = 1;
+        $user = Auth::guard('api')->user();
+        $route_like_user = $user->getAttribute('id');
         $route_like_obj = $request->route_like_obj;
 
         // RouteLikes 테이블 레코드 삭제
