@@ -174,7 +174,12 @@ class Record extends Model
         ]);
     }
 
-    // 경로 전체 순위
+    /**
+     * 선택 경로 전체 순위
+     *
+     * @param int $route_id
+     * @return mixed
+     */
     public function rankSort(
         int $route_id // 경로 아이디
     )
@@ -195,13 +200,18 @@ class Record extends Model
             ->get();
     }
 
-    // 내 라이딩 기록
+    /**
+     * 내 라이딩 기록
+     *
+     * @param int $rec_route_id
+     * @param int $rec_user_id
+     * @return array
+     */
     public function myRecord(
         int $rec_route_id, // 경로 아이디
         int $rec_user_id
     )
     {
-        $error = array();
         // 선택한 경로의 기록 전체 카운트
         $allRankCount = $this->rankSort($rec_route_id)->count();
 
@@ -211,77 +221,87 @@ class Record extends Model
             ->orderBy('rec_time')
             ->get();
 
-        // 내 기록중 첫번째 값 반환
-        $myRecordFirst = $userRecord->first();
-
-//        // --> 내 기록이 있을 때
-//        if ($myRecordFirst) {
-//
-//        }
-//        // 내 최고 기록 시간
-        $myTopRecord = $myRecordFirst->getAttribute('rec_time'); // 반환할 값
-
-        // 내 기록의 count
-        $userRecordCount = $userRecord->count();
-        // 선택 경로, 나의 모든 기록 시간
-        $userAllRecords = array_column($userRecord->toArray(), 'rec_time');
-        // 나의 모든 기록 총 합계
-        $userRecordSum = array_sum($userAllRecords);
-        // 나의 모든 기록 평균
-        $userRecordAvg = ($userRecordSum/$userRecordCount); // 반환할 값
-
         // 이 경로의 가장 빠른 기록의 사용자
         $first_score = $this->rankSort($rec_route_id)->first();
         $first_score_user_id = $first_score->rec_user_id;  // 반환할 값 아이디
         $first_score_time    = $first_score->rec_time;     // 반환할 값 기록
         $first_score_account = $first_score->user_account; // 반환할 값 계정
 
-        // 순위 카운트 출력
-        $ranks = $this->rankSort($rec_route_id);
 
-        // collection 배열로 변환
-        $rankArrays = $ranks->toArray();
+        // 내 기록중 첫번째 값 반환
+        $myRecordFirst = $userRecord->first();
 
-        $rankValue = array();
-        // 등수 배열 초기화
-        for ($j = 0; $j < $allRankCount; $j++) {
-            $rankValue[$j] = 1;
-        }
-        // 등수 반영, 동점자 포함
-        for ($i = 0; $i < $allRankCount; $i++) {
-            $rankValue[$i] = 1;
+        // 내 기록이 있을 때
+        if ($myRecordFirst) {
+            // 내 최고 기록 시간
+            $myTopRecord = $myRecordFirst->getAttribute('rec_time'); // 반환할 값
 
-            for ($k = 0; $k < $allRankCount; $k++) {
-                if ($rankArrays[$i]["rec_score"] < $rankArrays[$k]["rec_score"]) {
-                    $rankValue[$i]++;
+            // 내 기록의 count
+            $userRecordCount = $userRecord->count();
+            // 선택 경로, 나의 모든 기록 시간
+            $userAllRecords = array_column($userRecord->toArray(), 'rec_time');
+            // 나의 모든 기록 총 합계
+            $userRecordSum = array_sum($userAllRecords);
+            // 나의 모든 기록 평균
+            $userRecordAvg = ($userRecordSum/$userRecordCount); // 반환할 값
+
+
+            // 순위 카운트 출력
+            $ranks = $this->rankSort($rec_route_id);
+
+            // collection 배열로 변환
+            $rankArrays = $ranks->toArray();
+
+            $rankValue = array();
+            // 등수 배열 초기화
+            for ($j = 0; $j < $allRankCount; $j++) {
+                $rankValue[$j] = 1;
+            }
+            // 등수 반영, 동점자 포함
+            for ($i = 0; $i < $allRankCount; $i++) {
+                $rankValue[$i] = 1;
+
+                for ($k = 0; $k < $allRankCount; $k++) {
+                    if ($rankArrays[$i]["rec_score"] < $rankArrays[$k]["rec_score"]) {
+                        $rankValue[$i]++;
+                    }
                 }
             }
-        }
 
-        // 결과 값들 종합한 배열 생성
-        $resultValue = array();
-        for ($m = 0; $m < $allRankCount; $m++) {
-            $resultValue = [
-                'rec_rank' => $rankValue[$m],
-                'user_account' => $rankArrays[$m]["user_account"],
-                'rec_user_id' => $rankArrays[$m]["rec_user_id"],
-                'rec_route_id' => $rankArrays[$m]["rec_route_id"],
-                'rec_time' => $rankArrays[$m]["rec_time"],
-                'rec_score' => $rankArrays[$m]["rec_score"]
+            // 결과 값들 종합한 배열 생성
+            $resultValue = array();
+            for ($m = 0; $m < $allRankCount; $m++) {
+                $resultValue = [
+                    'rec_rank' => $rankValue[$m],
+                    'user_account' => $rankArrays[$m]["user_account"],
+                    'rec_user_id' => $rankArrays[$m]["rec_user_id"],
+                    'rec_route_id' => $rankArrays[$m]["rec_route_id"],
+                    'rec_time' => $rankArrays[$m]["rec_time"],
+                    'rec_score' => $rankArrays[$m]["rec_score"]
+                ];
+                // 사용자 조회만 하면 됨
+                if ($rankArrays[$m]["rec_user_id"] == $rec_user_id)
+                    break;
+            }
+
+            // 유저의 랭킹
+            $userRankValue = $resultValue["rec_rank"];
+
+            return $queryValue = [
+                'record_user_rank'=>$userRankValue,
+                'record_user_account'=>$resultValue["user_account"],
+                'record_all_count'=>$allRankCount,
+                'record_user_top'=>$myTopRecord,
+                'record_user_avg'=>$userRecordAvg,
+                'record_top_score_user_id'=>$first_score_user_id,
+                'record_top_score_user_account'=>$first_score_account,
+                'record_top_score_user_time'=>$first_score_time
             ];
-            if ($rankArrays[$m]["rec_user_id"] == $rec_user_id)
-                break;
+
         }
-
-        // 유저의 랭킹
-        $userRankValue = $resultValue["rec_rank"];
-
+        // 내 기록이 없을 때
         return $queryValue = [
-            'record_user_rank'=>$userRankValue,
-            'record_user_account'=>$resultValue["user_account"],
-            'record_all_count'=>$allRankCount,
-            'record_user_top'=>$myTopRecord,
-            'record_user_avg'=>$userRecordAvg,
+            'record_user_rank'=>"라이딩 기록이 없습니다.",
             'record_top_score_user_id'=>$first_score_user_id,
             'record_top_score_user_account'=>$first_score_account,
             'record_top_score_user_time'=>$first_score_time
