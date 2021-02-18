@@ -20,6 +20,7 @@ class Record extends Model
 
     /**
      * 해당 날짜의 통계 반환 (RecordController - recordOfHome)
+     * @param int $user_id
      * @param int $year
      * @param int $month
      * @param int $day
@@ -47,6 +48,7 @@ class Record extends Model
 
         $resultData = Record::select($param)
             ->join('stats', 'records.created_at', 'stats.stat_date')
+            ->distinct()
             ->where('rec_user_id', $user_id)
             ->where('stats.stat_date', $ridingDate)
             ->get();
