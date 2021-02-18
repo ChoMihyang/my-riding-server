@@ -184,35 +184,64 @@ class Record extends Model
             'rec_score',
             'created_at',
             'rec_max_speed',
+            'rec_time'
         ];
 
         return Record::select($param)
-            ->where("rec_route_id", $route_id)
-            ->orderBy("rec_time", "DESC")
-            ->get();
+                ->where('rec_route_id',$route_id)
+                ->orderBy('rec_time')
+                ->get();
+
     }
 
     // 내 라이딩 기록
     public function myRecord(
-        int $route_id // 경로 아이디
+        int $rec_route_id, // 경로 아이디
+        int $rec_user_id
     )
     {
         // 전제 카운트 가져오고 내순위 나타내야됨..
 
         // 이 경로의 전체 카운트 -> record 대신에, route 에서 num_of_try_count 사용?
-        $count = $this->rankSort($route_id)->count();
-        // 이 경로의 가장 빠른 기록? -> 라이딩 점수로? 시간으로??
-        $first_score = $this->rankSort($route_id)->first();
-        dd($first_score);
+
+        $allRankCount = $this->rankSort($rec_route_id)->count(); // 횟수 유저 중복 ok
+
+
+        // 이 경로의 나의 카운트 -> rec_user_id, rec_route_id 체크하고, 내 기록중 첫번째 값 반환
+        $myRank = self::where('rec_route_id', $rec_route_id)
+            ->where('rec_user_id', $rec_user_id)
+            ->orderBy('rec_time')
+            ->first(); // controller 에서 first 해주는 걸로 바꾸자.. 내 기록 평균 내는것 떄문에..
+
+
+
+//        $kk = self::select(DB::raw('
+//          SELECT s.*, @rank := @rank + 1 rank FROM (
+//            SELECT rec_user_id, rec_score FROM t
+//            GROUP BY rec_user_id
+//          ) s, (SELECT @rank := 0) init
+//          ORDER BY rec_score DESC
+//        ')
+//        );
+
+
+
+//        $kk = self::select('rec_user_id', DB::raw('rec_score'))
+////        ->groupBy('rec_user_id')
+//        ->get();
+//        dd($kk);
+
+//        // 나의 등수?
+//        self::where('rec_route_id', $rec_route_id)
+//            ->where('rec_user_id', $rec_user_id);
+//        self::addSelect([]);
+//
+//        // 이 경로의 가장 빠른 기록 -> 시간
+//        $first_score = $this->rankSort($rec_route_id)->first();
+//        dd($first_score);
 
         // 평균 기록
 
-
-//        // 전체 가장 빠른 기록
-//        Record::select($param)
-//            ->where("rec_route_id",$route_id)
-//            ->orderBy("rec_score", "DESC")
-//            ->get();
     }
 }
 
