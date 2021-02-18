@@ -65,6 +65,7 @@ class Stats extends Model
         $returnData = Stats::select($param)
             ->where('stat_user_id', $user_id)
             ->where('stat_year', $year)
+            ->whereNotIn('stat_week', [53])
             ->orderBy('stat_week')
             ->get();
 

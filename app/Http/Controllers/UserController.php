@@ -103,7 +103,7 @@ class UserController extends Controller
             self::PRINT_USER_RANK_SUCCESS,
             "ranks",
             $rank_of_all_users,
-            201
+            200
         );
     }
 
