@@ -3,8 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
-use phpDocumentor\Reflection\Types\Self_;
 
 class Route extends Model
 {
@@ -31,7 +29,6 @@ class Route extends Model
     )
     {
         if ($count == 1) {
-            // TODO routeLike 테이블 조인 -> 좋아요 숫자 가져오기
             $routeInfo = self::get(
                 [
                     'id',
@@ -48,14 +45,13 @@ class Route extends Model
             );
         }
         elseif ($count == 2) {
-            $routeInfo = self::select('id','route_title','route_distance','route_like')
+            $routeInfo = self::select('id','route_title','route_distance','route_image','route_like')
                 ->orderBy('route_like','DESC')
                 ->get()
                 ->take(5);
         }
         elseif ($count == 3) {
-            // TODO routes 테이블과 route_likes 테이블 조인하여 가장 최신 날짜 5개 조회, 210211 join 실패..
-            $routeInfo = self::select('id','route_user_id','route_title','route_like','route_distance',
+            $routeInfo = self::select('id','route_user_id','route_title','route_like','route_distance','route_image',
                                       'route_time','route_start_point_address','route_end_point_address','created_at')
                 ->where('route_user_id', $route_user_id)
                 ->orderBy('id','DESC')
