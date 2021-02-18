@@ -20,6 +20,7 @@ class Record extends Model
 
     /**
      * 해당 날짜의 통계 반환 (RecordController - recordOfHome)
+     * @param int $user_id
      * @param int $year
      * @param int $month
      * @param int $day
@@ -47,6 +48,7 @@ class Record extends Model
 
         $resultData = Record::select($param)
             ->join('stats', 'records.created_at', 'stats.stat_date')
+            ->distinct()
             ->where('rec_user_id', $user_id)
             ->where('stats.stat_date', $ridingDate)
             ->get();
@@ -177,6 +179,23 @@ class Record extends Model
         int $route_id // 경로 아이디
     )
     {
+<<<<<<< HEAD
+        // 순위 정렬 해야함
+        $param = [
+            'id',
+            'rec_user_id',
+            'rec_score',
+            'created_at',
+            'rec_max_speed',
+            'rec_time'
+        ];
+
+        return Record::select($param)
+            ->where('rec_route_id', $route_id)
+            ->orderBy('rec_time')
+            ->get();
+
+=======
         // users 테이블과 join
         return Record::join('users','users.id','=','records.rec_user_id')
             ->select('users.id',
@@ -191,6 +210,7 @@ class Record extends Model
             ->where('rec_route_id',$route_id)
             ->orderBy('rec_time')
             ->get();
+>>>>>>> dev
     }
 
     // 내 라이딩 기록
@@ -206,7 +226,38 @@ class Record extends Model
         $userRecord = self::where('rec_route_id', $rec_route_id)
             ->where('rec_user_id', $rec_user_id)
             ->orderBy('rec_time')
+<<<<<<< HEAD
+            ->first(); // controller 에서 first 해주는 걸로 바꾸자.. 내 기록 평균 내는것 떄문에..
+
+
+//        $kk = self::select(DB::raw('
+//          SELECT s.*, @rank := @rank + 1 rank FROM (
+//            SELECT rec_user_id, rec_score FROM t
+//            GROUP BY rec_user_id
+//          ) s, (SELECT @rank := 0) init
+//          ORDER BY rec_score DESC
+//        ')
+//        );
+
+
+//        $kk = self::select('rec_user_id', DB::raw('rec_score'))
+////        ->groupBy('rec_user_id')
+//        ->get();
+//        dd($kk);
+
+//        // 나의 등수?
+//        self::where('rec_route_id', $rec_route_id)
+//            ->where('rec_user_id', $rec_user_id);
+//        self::addSelect([]);
+//
+//        // 이 경로의 가장 빠른 기록 -> 시간
+//        $first_score = $this->rankSort($rec_route_id)->first();
+//        dd($first_score);
+
+        // 평균 기록
+=======
             ->get();
+>>>>>>> dev
 
         // 내 기록중 첫번째 값 반환
         $myRecordFirst = $userRecord->first();

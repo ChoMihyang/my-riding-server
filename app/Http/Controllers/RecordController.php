@@ -13,7 +13,7 @@ class RecordController extends Controller
     private $record;
     private const SELECT_BY_YEAR_SUCCESS = '연도 통계 조회를 성공하였습니다.';
     private const SELECT_BY_DAY_DETAIL_SUCCESS = '라이딩 일지 상세 정보 조회를 성공하였습니다.';
-    private const SELECT_BY_DAY_SUCCESS = '기록 조회를 성공하였습니다.';
+    private const SELECT_BY_DAY_SUCCESS = '홈 기록 조회를 성공하였습니다.';
 
     public function __construct()
     {
@@ -171,7 +171,7 @@ class RecordController extends Controller
     public function recordOfHome(Request $request)
     {
         // TODO 사용자 토큰 정보 가져오기
-        $user_id = 41;
+        $user_id = 23;
         // 요청받은 정보 유효성 검사
         $requested_data = $request->validate([
             'year' => 'required | numeric',
@@ -183,14 +183,12 @@ class RecordController extends Controller
         $month = $requested_data['month'];
         $day = $requested_data['day'];
 
-        $resultData = $this->record->select_records_of_day($user_id, $year, $month, $day)->first();
-
-        $date = $resultData['date'];
+        $resultData = $this->record->select_records_of_day($user_id, $year, $month, $day);
 
         return $this->responseAppJson(
-            "${date} " . self::SELECT_BY_DAY_SUCCESS,
+            self::SELECT_BY_DAY_SUCCESS,
             "userRecord",
-            [$resultData],
+            $resultData,
             201);
     }
 
