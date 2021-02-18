@@ -217,7 +217,7 @@ class ApiAuthController extends Controller
 
         return $this->responseJson(
             self::TOKEN_SUCCESS,
-            [],
+            $user,
             200
         );
     }

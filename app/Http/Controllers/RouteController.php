@@ -31,12 +31,13 @@ class RouteController extends Controller
     }
 
     /**
-     * [WEB] 경로 전체 목록 조회
+     * [WEB] 경로 전체 목록 조회 (수정중)
      *
      * @return \Illuminate\Http\JsonResponse
      */
     public function routeListView()
     {
+        // TODO 전체목록x -> 내가 만든경로, 좋아요 누른 경로
         $routeValue = $this->route->routeListValue(1, null);
         $response_data = [
             'routes' => $routeValue
@@ -50,14 +51,14 @@ class RouteController extends Controller
     }
 
     /**
-     * [WEB] 경로 삭제
+     * [WEB] 경로 삭제 (수정해야됨)
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function routeDelete(Request $request)
     {
-        // TODO 토큰 값 가져오기
+        // TODO 아이디, 토큰값 값 확인후 삭제로 수정해야됨
         $route_id = $request->id;
 
         $this->route->routeDelete($route_id);
@@ -70,54 +71,36 @@ class RouteController extends Controller
     }
 
     /**
-     * [WEB] 경로 상세 조회... (수정중!!!)
+     * [WEB] 경로 상세 조회
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function routeDetailView(Request $request)
     {
-        // TODO 토큰 값 가져오기
         $route_id = (int)$request->id;
 
-//        $user = Auth::guard('api')->user();
-//        $route_user_id = $user->getAttribute('id');
-
+        // 경로 정보 조회
         $routeValue = $this->route->routeDetailRouteValue($route_id);
-        // TODO 상세조회 페이지에서 Record 부분 추가 해야됨
-        // 요청한 Route 의 ID 값의 데이터 가져옴
+        // 요청한 Route 의 ID 값의 record 데이터(기록순 정렬) 가져옴
         $recordValue = $this->record->rankSort($route_id)->take(3);
 
-        // 랭킹 해결하면 주석풀자..
-        // $kk = $this->record->myRecord($route_id, 1);
+        $user = Auth::guard('api')->user();
+        $route_user_id = $user->getAttribute('id');
 
-        // -->> TODO 랭킹 수정중
-        // 전체 정렬
-        $mm = Record::select('rec_user_id', 'rec_route_id', 'rec_time', 'rec_score')
-            ->where('rec_route_id',$route_id)
-            ->orderBy('rec_time')
-            ->get();
+        $rankValues = $this->record->myRecord($route_id, $route_user_id);
 
-        // 경로 이용 count
-//        $number_of_user = $mm->count();
+        $response_data = [
+            'route' => $routeValue,
+            'record' => $recordValue,
+            'rankvalue' => $rankValues
+        ];
 
-        $userIndex = $mm->search(function ($mm) {
-           return $mm->id === Auth::id();
-        });
-
-        dd($mm);
-
-
-//        $response_data = [
-//            'route' => $routeValue,
-//            'record' => $recordValue
-//        ];
-//
-//        return $this->responseJson(
-//            self::ROUTEDETAILVIEW_SUCCESS,
-//            $response_data,
-//            200
-//        );
+        return $this->responseJson(
+            self::ROUTEDETAILVIEW_SUCCESS,
+            $response_data,
+            200
+        );
     }
 
     /**
@@ -144,7 +127,9 @@ class RouteController extends Controller
             );
         }
 
-        $route_user_id = $request->input('route_user_id');
+        $user = Auth::guard('api')->user();
+        $route_user_id = $user->getAttribute('id');
+
         $route_title = $request->input('route_title');
         $route_image = $request->input('route_image');
         $route_distance = $request->input('route_distance');
@@ -310,7 +295,9 @@ class RouteController extends Controller
     public function likePush(Request $request)
     {
         // TODO $route_like_user : 토큰으로 유저 확인 해야함
-        $route_like_user = 2;
+        $user = Auth::guard('api')->user();
+        $route_like_user = $user->getAttribute('id');
+
         $route_like_obj = (int)$request->route_like_obj;
 
         // RouteLikes 테이블 새로운 레코드 추가
@@ -337,7 +324,8 @@ class RouteController extends Controller
     public function likePull(Request $request)
     {
         // TODO $route_like_user : 토큰으로 유저 확인 해야함
-        $route_like_user = 1;
+        $user = Auth::guard('api')->user();
+        $route_like_user = $user->getAttribute('id');
         $route_like_obj = $request->route_like_obj;
 
         // RouteLikes 테이블 레코드 삭제
