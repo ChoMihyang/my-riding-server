@@ -69,7 +69,7 @@ class Controller extends BaseController
         return response()->json([
             'message' => $message,
             $type => $data
-        ], $http_code);
+        ], $http_code
+        );
     }
-
 }
