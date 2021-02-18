@@ -147,7 +147,8 @@ class RecordController extends Controller
         return $this->responseJson(
             "${year}년 ${week}주차 라이딩 통계 조회를 성공하였습니다.",
             $result,
-            201);
+            201
+        );
     }
 
     // 라이딩 일지 일별 상세 조회
@@ -170,8 +171,8 @@ class RecordController extends Controller
     // [app] 홈 화면 - 연, 월, 일 요청 후 해당 기록 반환
     public function recordOfHome(Request $request)
     {
-        // TODO 사용자 토큰 가져오기
-        $user_id = $this->TEST_USER_ID;
+        // TODO 사용자 토큰 정보 가져오기
+        $user_id = 41;
         // 요청받은 정보 유효성 검사
         $requested_data = $request->validate([
             'year' => 'required | numeric',
@@ -184,6 +185,7 @@ class RecordController extends Controller
         $day = $requested_data['day'];
 
         $resultData = $this->record->select_records_of_day($user_id, $year, $month, $day)->first();
+
         $date = $resultData['date'];
 
         return $this->responseAppJson(

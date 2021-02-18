@@ -104,6 +104,7 @@ class Stats extends Model
 
     /**
      * 사용자 랭킹 기록 상세 보기
+     * TODO users 테이블 조인 -> 사진, 닉네임, 점수 추가 반환
      * @param int $user_id
      * @return Collection
      */
