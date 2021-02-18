@@ -77,47 +77,28 @@ class RouteController extends Controller
      */
     public function routeDetailView(Request $request)
     {
-        // TODO 토큰 값 가져오기
         $route_id = (int)$request->id;
 
-//        $user = Auth::guard('api')->user();
-//        $route_user_id = $user->getAttribute('id');
-
+        // 경로 정보 조회
         $routeValue = $this->route->routeDetailRouteValue($route_id);
-        // TODO 상세조회 페이지에서 Record 부분 추가 해야됨
-        // 요청한 Route 의 ID 값의 데이터 가져옴
+        // 요청한 Route 의 ID 값의 record 데이터(기록순 정렬) 가져옴
         $recordValue = $this->record->rankSort($route_id)->take(3);
 
-        // 랭킹 해결하면 주석풀자..
-        // $kk = $this->record->myRecord($route_id, 1);
+        // TODO 토큰 값 가져오기
+        $userID = 21;
+        $rankValues = $this->record->myRecord($route_id, $userID);
 
-        // -->> TODO 랭킹 수정중
-        // 전체 정렬
-        $mm = Record::select('rec_user_id', 'rec_route_id', 'rec_time', 'rec_score')
-            ->where('rec_route_id',$route_id)
-            ->orderBy('rec_time')
-            ->get();
+        $response_data = [
+            'route' => $routeValue,
+            'record' => $recordValue,
+            'rankvalue' => $rankValues
+        ];
 
-        // 경로 이용 count
-//        $number_of_user = $mm->count();
-
-        $userIndex = $mm->search(function ($mm) {
-           return $mm->id === Auth::id();
-        });
-
-        dd($mm);
-
-
-//        $response_data = [
-//            'route' => $routeValue,
-//            'record' => $recordValue
-//        ];
-//
-//        return $this->responseJson(
-//            self::ROUTEDETAILVIEW_SUCCESS,
-//            $response_data,
-//            200
-//        );
+        return $this->responseJson(
+            self::ROUTEDETAILVIEW_SUCCESS,
+            $response_data,
+            200
+        );
     }
 
     /**
