@@ -20,7 +20,6 @@ class Record extends Model
 
     /**
      * 해당 날짜의 통계 반환 (RecordController - recordOfHome)
-     * @param int $user_id
      * @param int $year
      * @param int $month
      * @param int $day
@@ -48,8 +47,8 @@ class Record extends Model
 
         $resultData = Record::select($param)
             ->join('stats', 'records.created_at', 'stats.stat_date')
-            ->where('stats.stat_date', $ridingDate)
             ->where('rec_user_id', $user_id)
+            ->where('stats.stat_date', $ridingDate)
             ->get();
 
         return $resultData;
@@ -178,6 +177,7 @@ class Record extends Model
         int $route_id // 경로 아이디
     )
     {
+<<<<<<< HEAD
         // users 테이블과 join
         return Record::join('users','users.id','=','records.rec_user_id')
             ->select('users.id',
@@ -192,6 +192,23 @@ class Record extends Model
             ->where('rec_route_id',$route_id)
             ->orderBy('rec_time')
             ->get();
+=======
+        // 순위 정렬 해야함
+        $param = [
+            'id',
+            'rec_user_id',
+            'rec_score',
+            'created_at',
+            'rec_max_speed',
+            'rec_time'
+        ];
+
+        return Record::select($param)
+                ->where('rec_route_id',$route_id)
+                ->orderBy('rec_time')
+                ->get();
+
+>>>>>>> ea7b0537143f7abbb74d15fb9c07d82db3398393
     }
 
     // 내 라이딩 기록
@@ -200,11 +217,23 @@ class Record extends Model
         int $rec_user_id
     )
     {
+<<<<<<< HEAD
         // 선택한 경로의 기록 전체 카운트
         $allRankCount = $this->rankSort($rec_route_id)->count();
 
         // 선택한 경로의 나의 모든 기록
         $userRecord = self::where('rec_route_id', $rec_route_id)
+=======
+        // 전제 카운트 가져오고 내순위 나타내야됨..
+
+        // 이 경로의 전체 카운트 -> record 대신에, route 에서 num_of_try_count 사용?
+
+        $allRankCount = $this->rankSort($rec_route_id)->count(); // 횟수 유저 중복 ok
+
+
+        // 이 경로의 나의 카운트 -> rec_user_id, rec_route_id 체크하고, 내 기록중 첫번째 값 반환
+        $myRank = self::where('rec_route_id', $rec_route_id)
+>>>>>>> ea7b0537143f7abbb74d15fb9c07d82db3398393
             ->where('rec_user_id', $rec_user_id)
             ->orderBy('rec_time')
             ->get();

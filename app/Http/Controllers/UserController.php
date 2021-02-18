@@ -89,45 +89,48 @@ class UserController extends Controller
         return $this->responseJson(
             self::PRINT_USER_PROFILE_SUCCESS,
             $returnData,
-            201);
+            201
+        );
     }
 
     // 전체 랭킹 출력
-    // TODO id값 넘겨주기
+    // TODO 등수 + 사용자 값 넘겨주기
     public function viewUserRank()
     {
         $rank_of_all_users = $this->user->getUserRank();
 
         return $this->responseAppJson(
             self::PRINT_USER_RANK_SUCCESS,
-            "rankAll",
+            "ranks",
             $rank_of_all_users,
             201
         );
     }
 
     // 사용자 랭킹 상세 보기
-    public function viewDetailRank($arg_user_id)
+    public function viewDetailRank($rank_id)
     {
-        $rank_of_user = $this->stats->getUserDetailRank($arg_user_id);
+        $rank_of_all_users = $this->user->getUserRank();
 
-        $sum_of_time = $rank_of_user->sum('time');
-        $sum_of_distance = $rank_of_user->sum('distance');
-        $avg_of_speed = $rank_of_user->avg('avg_speed');
-        $max_of_speed = $rank_of_user->max('max_speed');
+//        $rank_of_user = $this->stats->getUserDetailRank($rank_id);
+//
+//        $sum_of_time = $rank_of_user->sum('time');
+//        $sum_of_distance = $rank_of_user->sum('distance');
+//        $avg_of_speed = $rank_of_user->avg('avg_speed');
+//        $max_of_speed = $rank_of_user->max('max_speed');
 
-        $result_data = [
-            "sum_of_time" => $sum_of_time,
-            "sum_of_distance" => $sum_of_distance,
-            "avg_of_speed" => $avg_of_speed,
-            "max_of_speed" => $max_of_speed
-        ];
+//        $result_data = [
+//            "sum_of_time" => $sum_of_time,
+//            "sum_of_distance" => $sum_of_distance,
+//            "avg_of_speed" => $avg_of_speed,
+//            "max_of_speed" => $max_of_speed
+//        ];
 
-        return $this->responseAppJson(
-            self::PRINT_USER_RANK_SUCCESS,
-            "rankUserDetail",
-            $result_data,
-            201
-        );
+//        return $this->responseAppJson(
+//            self::PRINT_USER_RANK_SUCCESS,
+//            "ranks",
+//            $result_data,
+//            201
+//        );
     }
 }
