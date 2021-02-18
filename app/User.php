@@ -119,6 +119,7 @@ class User extends Authenticatable
     public function getUserRank()
     {
         $param = [
+            'id',
             'user_nickname as nickname',
             'user_picture as picture',
             'user_score_of_riding as score'

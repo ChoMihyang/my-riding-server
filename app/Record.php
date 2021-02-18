@@ -20,7 +20,6 @@ class Record extends Model
 
     /**
      * 해당 날짜의 통계 반환 (RecordController - recordOfHome)
-     * @param int $user_id
      * @param int $year
      * @param int $month
      * @param int $day
@@ -48,8 +47,8 @@ class Record extends Model
 
         $resultData = Record::select($param)
             ->join('stats', 'records.created_at', 'stats.stat_date')
-            ->where('stats.stat_date', $ridingDate)
             ->where('rec_user_id', $user_id)
+            ->where('stats.stat_date', $ridingDate)
             ->get();
 
         return $resultData;
@@ -188,9 +187,9 @@ class Record extends Model
         ];
 
         return Record::select($param)
-                ->where("rec_route_id",$route_id)
-                ->orderBy("rec_time", "DESC")
-                ->get();
+            ->where("rec_route_id", $route_id)
+            ->orderBy("rec_time", "DESC")
+            ->get();
     }
 
     // 내 라이딩 기록
@@ -201,7 +200,7 @@ class Record extends Model
         // 전제 카운트 가져오고 내순위 나타내야됨..
 
         // 이 경로의 전체 카운트 -> record 대신에, route 에서 num_of_try_count 사용?
-       $count = $this->rankSort($route_id)->count();
+        $count = $this->rankSort($route_id)->count();
         // 이 경로의 가장 빠른 기록? -> 라이딩 점수로? 시간으로??
         $first_score = $this->rankSort($route_id)->first();
         dd($first_score);
