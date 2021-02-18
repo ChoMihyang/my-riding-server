@@ -171,7 +171,7 @@ class RecordController extends Controller
     public function recordOfHome(Request $request)
     {
         // TODO 사용자 토큰 정보 가져오기
-        $user_id = 23;
+        $user_id = 41;
         // 요청받은 정보 유효성 검사
         $requested_data = $request->validate([
             'year' => 'required | numeric',
