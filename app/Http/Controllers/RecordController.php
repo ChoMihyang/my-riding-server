@@ -14,7 +14,6 @@ class RecordController extends Controller
     private const SELECT_BY_YEAR_SUCCESS = '연도 통계 조회를 성공하였습니다.';
     private const SELECT_BY_DAY_DETAIL_SUCCESS = '라이딩 일지 상세 정보 조회를 성공하였습니다.';
     private const SELECT_BY_DAY_SUCCESS = '기록 조회를 성공하였습니다.';
-    private const SELECT_BY_WEEK_SUCCESS = '주차 통계 조회를 성공하였습니다.';
 
     public function __construct()
     {
@@ -60,7 +59,7 @@ class RecordController extends Controller
 
         $resultData = [];
         foreach ($temp_stats as $week => $values) {
-            $date_difference = ($today_week - $week) * 7;
+            $date_difference = ($today_week - $week + 1) * 7;
             $start_date_requested = date('Y-m-d', (strtotime($today_start_date . "-" . $date_difference . "days")));
             $end_date_requested = date('Y-m-d', strtotime($start_date_requested . "+6days"));
 
@@ -79,7 +78,7 @@ class RecordController extends Controller
         );
     }
 
-    // 주별 라이딩 통계
+    // 주차별 라이딩 통계
     public function recordViewByWeek(Request $request)
     {
         $today_year = date('Y');
@@ -136,12 +135,12 @@ class RecordController extends Controller
         $records_of_week = $this->record->getRecordsByWeek($user_id, $start_date_requested, $end_date_requested);
 
         $result = [
-            'stats' => [
+            'stat' => [
                 'startDate' => $start_date_requested,
                 'endDate' => $end_date_requested,
                 'values' => $stats_by_year_week,
-                'records' => $records_of_week
-            ]
+            ],
+            'records' => $records_of_week
         ];
 
         return $this->responseJson(
@@ -191,7 +190,7 @@ class RecordController extends Controller
         return $this->responseAppJson(
             "${date} " . self::SELECT_BY_DAY_SUCCESS,
             "userRecord",
-            $resultData,
+            [$resultData],
             201);
     }
 
