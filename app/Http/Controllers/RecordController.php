@@ -60,7 +60,7 @@ class RecordController extends Controller
 
         $resultData = [];
         foreach ($temp_stats as $week => $values) {
-            $date_difference = ($today_week - $week + 1) * 7;
+            $date_difference = ($today_week - $week) * 7;
             $start_date_requested = date('Y-m-d', (strtotime($today_start_date . "-" . $date_difference . "days")));
             $end_date_requested = date('Y-m-d', strtotime($start_date_requested . "+6days"));
 
