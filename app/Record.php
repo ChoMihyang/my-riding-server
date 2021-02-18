@@ -199,6 +199,7 @@ class Record extends Model
         int $rec_user_id
     )
     {
+        $error = array();
         // 선택한 경로의 기록 전체 카운트
         $allRankCount = $this->rankSort($rec_route_id)->count();
 
@@ -210,7 +211,12 @@ class Record extends Model
 
         // 내 기록중 첫번째 값 반환
         $myRecordFirst = $userRecord->first();
-        // 내 최고 기록 시간
+
+//        // --> 내 기록이 있을 때
+//        if ($myRecordFirst) {
+//
+//        }
+//        // 내 최고 기록 시간
         $myTopRecord = $myRecordFirst->getAttribute('rec_time'); // 반환할 값
 
         // 내 기록의 count
