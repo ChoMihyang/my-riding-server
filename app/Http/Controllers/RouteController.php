@@ -20,6 +20,7 @@ class RouteController extends Controller
     private const ROUTESAVE_SUCCESS = "경로 저장에 성공하셨습니다.";
     private const ROUTESAVE_FAIL = "경로 저장에 실패하셨습니다.";
     private const ROUTEDELETE_SUCCESS = "경로 삭제에 성공하셨습니다.";
+    private const ROUTEDELETE_FAIL = "경로 삭제에 실패하셨습니다.";
     private const ROUTESEARCH_FAIL = "검색어를 다시 입력하세요";
     private const ROUTESORT_SUCCESS = "경로 정렬에 성공하셨습니다.";
 
@@ -31,14 +32,16 @@ class RouteController extends Controller
     }
 
     /**
-     * [WEB] 경로 전체 목록 조회 (수정중)
+     * [WEB] 경로 목록 조회 (생성, 좋아요 누른 경로만)
      *
      * @return \Illuminate\Http\JsonResponse
      */
     public function routeListView()
     {
-        // TODO 전체목록x -> 내가 만든경로, 좋아요 누른 경로
-        $routeValue = $this->route->routeListValue(1, null);
+        $user = Auth::guard('api')->user();
+        $route_user_id = $user->getAttribute('id');
+
+        $routeValue = $this->route->routeListValue(1, $route_user_id);
         $response_data = [
             'routes' => $routeValue
         ];
@@ -51,17 +54,28 @@ class RouteController extends Controller
     }
 
     /**
-     * [WEB] 경로 삭제 (수정해야됨)
+     * [WEB] 경로 삭제
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function routeDelete(Request $request)
     {
-        // TODO 아이디, 토큰값 값 확인후 삭제로 수정해야됨
+        $user = Auth::guard('api')->user();
+        // 유저 아이디 값
+        $route_user_id = $user->getAttribute('id');
+        // 경로 번호
         $route_id = $request->id;
 
-        $this->route->routeDelete($route_id);
+        $deleteValue = $this->route->routeDelete($route_user_id, $route_id);
+
+        if (!$deleteValue) {
+            return $this->responseJson(
+                self::ROUTEDELETE_FAIL,
+                [],
+                422
+            );
+        }
 
         return $this->responseJson(
             self::ROUTEDELETE_SUCCESS,
@@ -173,7 +187,7 @@ class RouteController extends Controller
     }
 
     /**
-     * [APP] 나의 경로 최신순 5개 조회... (수정중!!!)
+     * [APP] 나의 경로 최신순 5개 조회
      *
      *
      * @return \Illuminate\Http\JsonResponse
@@ -294,7 +308,6 @@ class RouteController extends Controller
      */
     public function likePush(Request $request)
     {
-        // TODO $route_like_user : 토큰으로 유저 확인 해야함
         $user = Auth::guard('api')->user();
         $route_like_user = $user->getAttribute('id');
 
@@ -323,7 +336,6 @@ class RouteController extends Controller
      */
     public function likePull(Request $request)
     {
-        // TODO $route_like_user : 토큰으로 유저 확인 해야함
         $user = Auth::guard('api')->user();
         $route_like_user = $user->getAttribute('id');
         $route_like_obj = $request->route_like_obj;
