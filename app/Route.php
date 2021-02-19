@@ -175,7 +175,7 @@ class Route extends Model
     }
 
     /**
-     * 좋아요 숫자 변동
+     * [라이딩 경로] 좋아요 숫자 변동
      *
      * @param int $route_id
      * @param int $likeCount
@@ -194,7 +194,7 @@ class Route extends Model
     }
 
     /**
-     * 코스 검색어 포함여부 체크
+     * [라이딩 경로] 코스 검색어 포함여부 체크
      *
      * @param string $word
      * @return mixed
@@ -209,7 +209,7 @@ class Route extends Model
     }
 
     /**
-     * 코스 정렬 기준 체크
+     * [라이딩 경로] 코스 정렬 기준 체크
      *
      * @param int $count
      * @return string
@@ -242,7 +242,12 @@ class Route extends Model
         return $routeInfo;
     }
 
-    // app 코스 상세 페이지 값 조회
+    /**
+     * [라이딩 경로] 코스 상세 페이지 값 조회
+     *
+     * @param int $route_id
+     * @return mixed
+     */
     public function routeDetailValue(
         int $route_id
     )

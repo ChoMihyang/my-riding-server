@@ -70,7 +70,7 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
              */
             Route::get("/", "RouteController@routeListView")->name("[라이딩 경로] 목록 조회");
             Route::delete("/{id}", "RouteController@routeDelete")->name("[라이딩 경로] 경로 삭제");
-            Route::post("/{id}", "RouteController@routeDetailView")->name("[라이딩 경로] 상세 조회");
+            Route::get("/{id}", "RouteController@routeDetailView")->name("[라이딩 경로] 상세 조회");
             Route::post("/", "RouteController@routeSave")->name("[라이딩 경로] 새로운 경로 저장");
 
             Route::get("/popularity", "RouteController@routePopularity")->name("[라이딩 경로] 인기 라이딩 경로 조회");
@@ -87,5 +87,5 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
 
     Route::get('/rank', 'UserController@viewUserRank')->name('[랭킹] 사용자 랭킹 출력');
     Route::get('/rank/{id}', 'UserController@viewDetailRank')->name('[랭킹] 사용자 상세 보기');
-
+    Route::get('/test', 'RecordController@tryCount');
 });

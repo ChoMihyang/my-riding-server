@@ -307,5 +307,21 @@ class Record extends Model
             'record_top_score_user_time'=>$first_score_time
         ];
     }
+
+    public function tryCountCheck(
+        int $rec_route_id
+    )
+    {
+        // rec_route_id 의 count 계산
+        $tryCount = self::where('rec_route_id', $rec_route_id)
+                        ->get()
+                        ->count();
+        $param = [
+            'route_num_of_try_count' => $tryCount
+        ];
+
+        // 경로 가져옴
+        return Route::find($rec_route_id)->update($param);
+    }
 }
 
