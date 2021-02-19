@@ -29,22 +29,35 @@ class Route extends Model
     )
     {
         if ($count == 1) {
-            $routeInfo = self::get(
-                [
-                    'id',
-                    'created_at',
-                    'route_title',
-                    'route_distance',
-                    'route_time',
-                    'route_like',
-                    'route_num_of_try_count',
-                    'route_start_point_address',
-                    'route_end_point_address',
-                    'route_image'
-                ]
-            );
-//            $routeInfo = self::join()
+            // 두 테이블 union
+            $routeTableInfo = Route::select('id as route_id', 'route_user_id')
+                    ->where('route_user_id',$route_user_id);
+            $routeLikeTableInfo = RouteLike::select('id as route_like_id', 'route_like_user as route_user_id')
+                    ->where('route_like_user',$route_user_id);
+            $calValue = $routeTableInfo->union($routeLikeTableInfo)->get();
 
+            // collection -> array
+            $arrayCalValue = $calValue->toArray();
+            $arr = array();
+            // 경로 번호 뽑아냄
+            for ($i = 0; $i < $calValue->count(); $i++) {
+                $arr[$i] = $arrayCalValue[$i]["route_id"];
+            }
+
+            $routeInfo = Route::select(
+                'id',
+                'route_user_id',
+                'created_at',
+                'route_title',
+                'route_distance',
+                'route_time',
+                'route_like',
+                'route_num_of_try_count',
+                'route_start_point_address',
+                'route_end_point_address',
+                'route_image')
+            ->whereIn('id',$arr)
+            ->get();
         }
         elseif ($count == 2) {
             $routeInfo = self::select('id','route_title','route_distance','route_image','route_like')
@@ -84,14 +97,18 @@ class Route extends Model
     /**
      * [라이딩 경로] 경로 삭제
      *
-     * @param int $id
+     * @param int $route_id
+     * @param int $route_user_id
      * @return mixed
      */
     public function routeDelete(
-        int $id
+        int $route_user_id,
+        int $route_id
     )
     {
-        return self::find($id)->delete();
+        return Route::where('route_user_id',$route_user_id)
+            ->where('id',$route_id)
+            ->delete();
     }
 
     /**
