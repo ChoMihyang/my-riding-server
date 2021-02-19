@@ -36,7 +36,7 @@ class Record extends Model
         $ridingDate = $year . '-' . $month . '-' . $day;
 
         $param = [
-            'stats.stat_date as date',
+            'created_at as date',
             'rec_title as title',
             'rec_time as time',
             'rec_distance as distance',
@@ -47,10 +47,8 @@ class Record extends Model
         ];
 
         $resultData = Record::select($param)
-            ->join('stats', 'records.created_at', 'stats.stat_date')
-            ->distinct()
             ->where('rec_user_id', $user_id)
-            ->where('stats.stat_date', $ridingDate)
+            ->where('created_at', $ridingDate)
             ->get();
 
         return $resultData;
@@ -179,38 +177,20 @@ class Record extends Model
         int $route_id // 경로 아이디
     )
     {
-<<<<<<< HEAD
-        // 순위 정렬 해야함
-        $param = [
-            'id',
-            'rec_user_id',
-            'rec_score',
-            'created_at',
-            'rec_max_speed',
-            'rec_time'
-        ];
-
-        return Record::select($param)
+        // users 테이블과 join
+        return Record::join('users', 'users.id', '=', 'records.rec_user_id')
+            ->select('users.id',
+                'users.user_account',
+                'records.rec_user_id',
+                'records.rec_route_id',
+                'records.rec_score',
+                'records.rec_max_speed',
+                'records.rec_time',
+                'records.rec_title',
+                'records.created_at')
             ->where('rec_route_id', $route_id)
             ->orderBy('rec_time')
             ->get();
-
-=======
-        // users 테이블과 join
-        return Record::join('users','users.id','=','records.rec_user_id')
-            ->select('users.id',
-                     'users.user_account',
-                     'records.rec_user_id',
-                     'records.rec_route_id',
-                     'records.rec_score',
-                     'records.rec_max_speed',
-                     'records.rec_time',
-                     'records.rec_title',
-                     'records.created_at')
-            ->where('rec_route_id',$route_id)
-            ->orderBy('rec_time')
-            ->get();
->>>>>>> dev
     }
 
     // 내 라이딩 기록
@@ -219,6 +199,7 @@ class Record extends Model
         int $rec_user_id
     )
     {
+        $error = array();
         // 선택한 경로의 기록 전체 카운트
         $allRankCount = $this->rankSort($rec_route_id)->count();
 
@@ -226,42 +207,16 @@ class Record extends Model
         $userRecord = self::where('rec_route_id', $rec_route_id)
             ->where('rec_user_id', $rec_user_id)
             ->orderBy('rec_time')
-<<<<<<< HEAD
-            ->first(); // controller 에서 first 해주는 걸로 바꾸자.. 내 기록 평균 내는것 떄문에..
-
-
-//        $kk = self::select(DB::raw('
-//          SELECT s.*, @rank := @rank + 1 rank FROM (
-//            SELECT rec_user_id, rec_score FROM t
-//            GROUP BY rec_user_id
-//          ) s, (SELECT @rank := 0) init
-//          ORDER BY rec_score DESC
-//        ')
-//        );
-
-
-//        $kk = self::select('rec_user_id', DB::raw('rec_score'))
-////        ->groupBy('rec_user_id')
-//        ->get();
-//        dd($kk);
-
-//        // 나의 등수?
-//        self::where('rec_route_id', $rec_route_id)
-//            ->where('rec_user_id', $rec_user_id);
-//        self::addSelect([]);
-//
-//        // 이 경로의 가장 빠른 기록 -> 시간
-//        $first_score = $this->rankSort($rec_route_id)->first();
-//        dd($first_score);
-
-        // 평균 기록
-=======
             ->get();
->>>>>>> dev
 
         // 내 기록중 첫번째 값 반환
         $myRecordFirst = $userRecord->first();
-        // 내 최고 기록 시간
+
+//        // --> 내 기록이 있을 때
+//        if ($myRecordFirst) {
+//
+//        }
+//        // 내 최고 기록 시간
         $myTopRecord = $myRecordFirst->getAttribute('rec_time'); // 반환할 값
 
         // 내 기록의 count
@@ -271,12 +226,12 @@ class Record extends Model
         // 나의 모든 기록 총 합계
         $userRecordSum = array_sum($userAllRecords);
         // 나의 모든 기록 평균
-        $userRecordAvg = ($userRecordSum/$userRecordCount); // 반환할 값
+        $userRecordAvg = ($userRecordSum / $userRecordCount); // 반환할 값
 
         // 이 경로의 가장 빠른 기록의 사용자
         $first_score = $this->rankSort($rec_route_id)->first();
         $first_score_user_id = $first_score->rec_user_id;  // 반환할 값 아이디
-        $first_score_time    = $first_score->rec_time;     // 반환할 값 기록
+        $first_score_time = $first_score->rec_time;     // 반환할 값 기록
         $first_score_account = $first_score->user_account; // 반환할 값 계정
 
         // 순위 카운트 출력
@@ -320,15 +275,14 @@ class Record extends Model
         $userRankValue = $resultValue["rec_rank"];
 
         return $queryValue = [
-            'record_user_rank'=>$userRankValue,
-            'record_user_account'=>$resultValue["user_account"],
-            'record_all_count'=>$allRankCount,
-            'record_user_top'=>$myTopRecord,
-            'record_user_avg'=>$userRecordAvg,
-            'record_top_score_user_id'=>$first_score_user_id,
-            'record_top_score_user_account'=>$first_score_account,
-            'record_top_score_user_time'=>$first_score_time
+            'record_user_rank' => $userRankValue,
+            'record_user_account' => $resultValue["user_account"],
+            'record_all_count' => $allRankCount,
+            'record_user_top' => $myTopRecord,
+            'record_user_avg' => $userRecordAvg,
+            'record_top_score_user_id' => $first_score_user_id,
+            'record_top_score_user_account' => $first_score_account,
+            'record_top_score_user_time' => $first_score_time
         ];
     }
 }
-

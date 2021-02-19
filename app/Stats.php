@@ -47,6 +47,7 @@ class Stats extends Model
     /**
      * @param int $year
      * @param int $user_id
+     * @param int $same_week
      * @return Collection
      */
     public function select_stats(
@@ -54,7 +55,9 @@ class Stats extends Model
         int $year
     ): Collection
     {
+
         $param = [
+            'stat_date as date',
             'stat_week as week',
             'stat_day as day',
             'stat_distance as distance',
@@ -65,14 +68,14 @@ class Stats extends Model
         $returnData = Stats::select($param)
             ->where('stat_user_id', $user_id)
             ->where('stat_year', $year)
-            ->whereNotIn('stat_week', [53])
             ->orderBy('stat_week')
+            ->orderBy('stat_day')
             ->get();
 
         return $returnData;
     }
 
-    // 선택 연도와 주차에 해당하는 통계 조회
+// 선택 연도와 주차에 해당하는 통계 조회
 
     /**
      *
@@ -81,7 +84,8 @@ class Stats extends Model
      * @param int $week
      * @return Collection
      */
-    public function get_stats_by_week(
+    public
+    function get_stats_by_week(
         int $user_id,
         int $year,
         int $week
@@ -98,6 +102,7 @@ class Stats extends Model
             ->where('stat_user_id', $user_id)
             ->where('stat_year', $year)
             ->where('stat_week', $week)
+            ->orderBy('stat_day')
             ->get();
 
         return $returnData;
@@ -109,7 +114,8 @@ class Stats extends Model
      * @param int $user_id
      * @return Collection
      */
-    public function getUserDetailRank(
+    public
+    function getUserDetailRank(
         int $user_id
     ): Collection
     {
@@ -126,8 +132,9 @@ class Stats extends Model
         return $returnData;
     }
 
-    // 특정 주차의 통계 조회
-    public function select_stats_by_week()
+// 특정 주차의 통계 조회
+    public
+    function select_stats_by_week()
     {
 
     }

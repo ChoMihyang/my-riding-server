@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use App\Record;
 use App\Stats;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use phpDocumentor\Reflection\Types\Nullable;
 
 class RecordController extends Controller
 {
     private $stats;
     private $record;
-    private const SELECT_BY_YEAR_SUCCESS = '연도 통계 조회를 성공하였습니다.';
+    private const SELECT_BY_YEAR_SUCCESS = '년도 통계 조회를 성공하였습니다.';
     private const SELECT_BY_DAY_DETAIL_SUCCESS = '라이딩 일지 상세 정보 조회를 성공하였습니다.';
     private const SELECT_BY_DAY_SUCCESS = '홈 기록 조회를 성공하였습니다.';
 
@@ -21,36 +22,39 @@ class RecordController extends Controller
         $this->record = new Record();
     }
 
-    // 연도별 라이딩 통계 (WEB)
+    // [web] 연도별 라이딩 통계
     public function recordViewByYear(Request $request)
     {
-        // TODO 토큰으로 사용자 정보 가져오기
-        $user_id = $this->TEST_USER_ID;
+        // 토큰으로 사용자 정보 가져오기
+        $user_id = Auth::guard('api')->user()->getAttribute('id');
+
         // 현재 날짜
         $today_date = date('Y-m-d');
+
         // 현재 연도
         $today_year = date('Y');
 
         // 요청받은 연도의 유효 범위
         $min_year = (int)$today_year - 3;
         $max_year = (int)$today_year;
+
         // 유효성 검사
         $requestedData = $request->validate([
             'stat_year' => 'required | numeric | min:' . $min_year . '|max:' . $max_year,
         ]);
 
-        // 사용자가 요청한 정보
+        // 사용자가 요청한 연도
         $requested_year = $requestedData['stat_year'];
+
+        // 현재 날짜의 주차
+        $today_week = date('W', strtotime($today_date));
 
         // 해당 연도의 라이딩 통계 조회
         $record_stats_by_year = $this->stats
             ->select_stats($user_id, $requested_year);
         $temp_stats = $record_stats_by_year->groupBy('week')->toArray();
 
-        // 현재 날짜의 주차
-        $today_week = date('W', strtotime($today_date));
         // 현재 날짜의 요일
-//        $day_array = [0 => 6, 1 => 0, 2 => 1, 3 => 2, 4 => 3, 5 => 4, 6 => 5];
         $temp_day = date('w', strtotime($today_date));
         $today_day = $temp_day === 0 ? 6 : $temp_day - 1;
 
@@ -59,11 +63,11 @@ class RecordController extends Controller
 
         $resultData = [];
         foreach ($temp_stats as $week => $values) {
-            $date_difference = ($today_week - $week + 1) * 7;
+            $date_difference = ($today_week - $week) * 7;
             $start_date_requested = date('Y-m-d', (strtotime($today_start_date . "-" . $date_difference . "days")));
             $end_date_requested = date('Y-m-d', strtotime($start_date_requested . "+6days"));
 
-            $resultData[$week] = [
+            $resultData[] = [
                 'week' => $week,
                 'startDate' => $start_date_requested,
                 'endDate' => $end_date_requested,
@@ -72,7 +76,7 @@ class RecordController extends Controller
         }
 
         return $this->responseJson(
-            "${today_year}" . self::SELECT_BY_YEAR_SUCCESS,
+            "${requested_year}" . self::SELECT_BY_YEAR_SUCCESS,
             ['stats' => $resultData],
             200
         );
@@ -125,8 +129,8 @@ class RecordController extends Controller
         // 요청받은 주차의 마지막일
         $end_date_requested = date('Y-m-d', strtotime($start_date_requested . "+6days"));
 
-        // TODO 사용자 토큰 정보 가져오기
-        $user_id = $this->TEST_USER_ID;
+        // 사용자 토큰 정보 가져오기
+        $user_id = Auth::guard('api')->user()->getAttribute('id');
 
         // 연도 + 주차에 해당하는 레코드 조회
         $stats_by_year_week = $this->stats->get_stats_by_week($user_id, $year, $week);
@@ -146,15 +150,19 @@ class RecordController extends Controller
         return $this->responseJson(
             "${year}년 ${week}주차 라이딩 통계 조회를 성공하였습니다.",
             $result,
-            201
+            200
         );
     }
 
     // 라이딩 일지 일별 상세 조회
-    public function recordDetailView($record_id)
+    public function recordDetailView(Request $request)
     {
-        $user_id = $this->TEST_USER_ID;
-        $record_of_date = $this->record->getRecordOfDay($user_id, $record_id);
+        // TODO request validation
+        // 특정 날짜의 기록 레코드의 번호 요청 받기
+        $record_id = $request['id'];
+
+        $user_id = Auth::guard('api')->user()->getAttribute('id');
+        $record_of_date = $this->record->getRecordOfDay($user_id, (int)$record_id);
 
         $result = [
             'records' => $record_of_date,
@@ -164,14 +172,15 @@ class RecordController extends Controller
         return $this->responseJson(
             self::SELECT_BY_DAY_DETAIL_SUCCESS,
             $result,
-            201);
+            201
+        );
     }
 
     // [app] 홈 화면 - 연, 월, 일 요청 후 해당 기록 반환
     public function recordOfHome(Request $request)
     {
-        // TODO 사용자 토큰 정보 가져오기
-        $user_id = 23;
+        // 사용자 토큰 정보 가져오기
+        $user_id = Auth::guard('api')->user()->getAttribute('id');
         // 요청받은 정보 유효성 검사
         $requested_data = $request->validate([
             'year' => 'required | numeric',

@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Members;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use \Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use PhpParser\Node\Scalar\String_;
 
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    protected $TEST_USER_ID = 1;
     protected $member;
 
 //    public function __construct()
