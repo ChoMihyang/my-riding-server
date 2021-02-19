@@ -231,7 +231,7 @@ class RecordController extends Controller
         // TODO -> tryCount() 실행 해서 횟수 맞추기...
         if ($rec_route_id) {
             // 만들어진 경로로 주행 한 경우에만
-
+            $this->tryCount($rec_route_id);
         }
 
         return $this->responseJson(
@@ -242,20 +242,17 @@ class RecordController extends Controller
     }
 
     // routes - record 의 시도 횟수 맞추기
-    public function tryCount(Request $request)
+    public function tryCount(
+        int $rec_route_id
+    )
     {
         // 만들어진 경로로 주행 한 경우에만 실행됨
-        $rec_route_id = (int)$request->rec_route_id;
-
         // 1. route_num_of_try_count 연산
         // -> record 테이블에서 rec_route_id 카운트 하기
-        // 언제 실행? -> 만든 경로에서 라이딩하고 기록 생성될 때
-        $tryCount = $this->record->tryCountCheck($rec_route_id);
+        $this->route->tryCountCheck($rec_route_id);
 
         // 2. route_num_of_try_user 연산
-        // -> record 테이블에서 rec_route_id 카운트 하기, rec_user_id 와 rec_route_id 가 중복되는 경우 제외하기
-        // 언제 실행? -> 만든 경로에서 라이딩하고 기록 생성될 때
-//        $tryUser = $this->record->;
-
+        // -> record 테이블에서 rec_route_id 카운트 하기, rec_user_id 와 rec_route_id 가 중복되는 경우 제외
+        $this->route->tryUserCheck($rec_route_id);
     }
 }

@@ -351,7 +351,7 @@ class RouteController extends Controller
         return $this->responseJson(
             "좋아요 삭제",
             [],
-            200
+            201
         );
     }
 
