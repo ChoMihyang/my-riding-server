@@ -10,8 +10,8 @@ class Route extends Model
 
     protected $fillable = [
         'route_user_id', 'route_title', 'route_distance',
-        'route_image', 'route_time', 'route_avg_degree',
-        'route_max_altitude', 'route_min_altitude', 'route_like',
+        'route_image', 'route_time', 'route_avg_degree', 'route_num_of_try_count',
+        'route_max_altitude', 'route_min_altitude', 'route_like', 'route_num_of_try_user',
         'route_start_point_address', 'route_end_point_address'
     ];
 
@@ -57,6 +57,7 @@ class Route extends Model
                 'route_end_point_address',
                 'route_image')
             ->whereIn('id',$arr)
+            ->orderBy('created_at','DESC')
             ->get();
         }
         elseif ($count == 2) {
@@ -174,7 +175,7 @@ class Route extends Model
     }
 
     /**
-     * 좋아요 숫자 변동
+     * [라이딩 경로] 좋아요 숫자 변동
      *
      * @param int $route_id
      * @param int $likeCount
@@ -193,7 +194,7 @@ class Route extends Model
     }
 
     /**
-     * 코스 검색어 포함여부 체크
+     * [라이딩 경로] 코스 검색어 포함여부 체크
      *
      * @param string $word
      * @return mixed
@@ -208,7 +209,7 @@ class Route extends Model
     }
 
     /**
-     * 코스 정렬 기준 체크
+     * [라이딩 경로] 코스 정렬 기준 체크
      *
      * @param int $count
      * @return string
@@ -239,5 +240,73 @@ class Route extends Model
         }
 
         return $routeInfo;
+    }
+
+    /**
+     * [라이딩 경로] 코스 상세 페이지 값 조회
+     *
+     * @param int $route_id
+     * @return mixed
+     */
+    public function routeDetailValue(
+        int $route_id
+    )
+    {
+        $routeInfo = self::select('id','route_user_id','route_title','route_like','route_distance','route_image',
+            'route_time','route_start_point_address','route_end_point_address','created_at')
+            ->where('id', $route_id)
+            ->first();
+
+        return $routeInfo;
+    }
+
+    /**
+     * 만들어진 경로의 시도 횟수
+     *
+     * @param int $rec_route_id
+     * @return mixed
+     */
+    public function tryCountCheck(
+        int $rec_route_id
+    )
+    {
+        // rec_route_id 의 count 계산
+        $tryCount = Record::where('rec_route_id', $rec_route_id)
+            ->get()
+            ->count();
+        $param = [
+            'route_num_of_try_count' => (int)$tryCount
+        ];
+
+        // 경로 가져옴
+        return self::find($rec_route_id)->update($param);
+    }
+
+    /**
+     * 만들어진 경로의 시도 인원수
+     *
+     * @param int $rec_route_id
+     * @return int
+     */
+    public function tryUserCheck(
+        int $rec_route_id
+    )
+    {
+        // rec_user_id에 대한 값 반환
+        $tryUser = Record::where('rec_route_id', $rec_route_id)
+            ->pluck('rec_user_id');
+
+        $tryUserArray = $tryUser->all();
+
+        // rec_user_id 중복 제거된 값
+
+        $count = count(array_unique($tryUserArray));
+
+        $param = [
+            'route_num_of_try_user' => $count
+        ];
+
+        // 경로 가져옴
+        return self::find($rec_route_id)->update($param);
     }
 }

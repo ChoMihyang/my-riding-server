@@ -56,6 +56,7 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
 //    Route::patch("/{id}", "RecordController@recordModify")->name("[라이딩 일지] 이름 수정");
 //    Route::delete("/{id}", "RecordController@recordDelete")->name("[라이딩 일지] 기록 삭제");
             Route::get('/home', 'RecordController@recordOfHome')->name("[홈화면] 날짜별 조회");
+            Route::post("/", "RecordController@recordSave")->name("[라이딩 일지] 라이딩 기록 저장");
         });
 
         // <<-- 라이딩 경로 관리-->>
@@ -69,22 +70,21 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
              */
             Route::get("/", "RouteController@routeListView")->name("[라이딩 경로] 목록 조회");
             Route::delete("/{id}", "RouteController@routeDelete")->name("[라이딩 경로] 경로 삭제");
-            Route::post("/{id}", "RouteController@routeDetailView")->name("[라이딩 경로] 상세 조회");
+            Route::get("/{id}", "RouteController@routeDetailView")->name("[라이딩 경로] 상세 조회");
             Route::post("/", "RouteController@routeSave")->name("[라이딩 경로] 새로운 경로 저장");
 
             Route::get("/popularity", "RouteController@routePopularity")->name("[라이딩 경로] 인기 라이딩 경로 조회");
-            Route::get("/mylistlatest", "RouteController@routeMyListLatest")->name("[라이딩 경로] 내 라이딩 경로 일부 조회(수정중)");
-            Route::get("/mylistall", "RouteController@routeMyListAll")->name("[라이딩 경로] 내 라이딩 경로 모두 조회(수정중)");
+            Route::get("/mylistlatest", "RouteController@routeMyListLatest")->name("[라이딩 경로] 내 라이딩 경로, 좋아요 한 경로 일부 조회");
+            Route::get("/mylistall", "RouteController@routeMyListAll")->name("[라이딩 경로] 내 라이딩 경로, 좋아요 한 경로 모두 조회");
             Route::get("/search", "RouteController@routeSearch")->name("[라이딩 경로] 경로 검색 (Default 최신순)");
+            Route::get("/mylist/{id}", "RouteController@routeMyListDetail")->name("[라이딩 경로] 앱 경로 상세 페이지 조회");
         });
         Route::prefix("routelike")->group(function () {
             Route::post("/likeup", "RouteController@likePush")->name("좋아요 증가");
             Route::delete("/likedown", "RouteController@likePull")->name("좋아요 감소");
         });
-        Route::post("/mytest", "RecordController@recordSave");
     });
 
     Route::get('/rank', 'UserController@viewUserRank')->name('[랭킹] 사용자 랭킹 출력');
     Route::get('/rank/{id}', 'UserController@viewDetailRank')->name('[랭킹] 사용자 상세 보기');
-
 });

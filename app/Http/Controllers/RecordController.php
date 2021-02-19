@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Record;
+use App\Route;
 use App\Stats;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,6 +13,7 @@ class RecordController extends Controller
 {
     private $stats;
     private $record;
+    private $route;
     private const SELECT_BY_YEAR_SUCCESS = '년도 통계 조회를 성공하였습니다.';
     private const SELECT_BY_DAY_DETAIL_SUCCESS = '라이딩 일지 상세 정보 조회를 성공하였습니다.';
     private const SELECT_BY_DAY_SUCCESS = '홈 기록 조회를 성공하였습니다.';
@@ -20,6 +22,7 @@ class RecordController extends Controller
     {
         $this->stats = new Stats();
         $this->record = new Record();
+        $this->route = new Route();
     }
 
     // [web] 연도별 라이딩 통계
@@ -211,8 +214,11 @@ class RecordController extends Controller
      */
     public function recordSave(Request $request)
     {
-        // TODO 사용자 토큰 정보 가져오기
-        $rec_user_id = $request->rec_user_id;
+        $user = Auth::guard('api')->user();
+        // 유저 아이디 값
+        $rec_user_id = $user->getAttribute('id');
+
+        // 경로 정보 있을 경우 가져오기
         $rec_route_id = $request->rec_route_id;
 
         $rec_title = $request->input('rec_title');
@@ -232,6 +238,12 @@ class RecordController extends Controller
             $rec_avg_speed, $rec_max_speed
         );
 
+        // TODO -> tryCount() 실행 해서 횟수 맞추기...
+        if ($rec_route_id) {
+            // 만들어진 경로로 주행 한 경우에만
+            $this->tryCount($rec_route_id);
+        }
+
         return $this->responseJson(
             "경로 저장 성공",
             [],
@@ -239,9 +251,18 @@ class RecordController extends Controller
         );
     }
 
-
-    public function recordSort()
+    // routes - record 의 시도 횟수 맞추기
+    public function tryCount(
+        int $rec_route_id
+    )
     {
+        // 만들어진 경로로 주행 한 경우에만 실행됨
+        // 1. route_num_of_try_count 연산
+        // -> record 테이블에서 rec_route_id 카운트 하기
+        $this->route->tryCountCheck($rec_route_id);
 
+        // 2. route_num_of_try_user 연산
+        // -> record 테이블에서 rec_route_id 카운트 하기, rec_user_id 와 rec_route_id 가 중복되는 경우 제외
+        $this->route->tryUserCheck($rec_route_id);
     }
 }
