@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Record;
 use App\Stats;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use phpDocumentor\Reflection\Types\Nullable;
 
 class RecordController extends Controller
@@ -200,8 +201,11 @@ class RecordController extends Controller
      */
     public function recordSave(Request $request)
     {
-        // TODO 사용자 토큰 정보 가져오기
-        $rec_user_id = $request->rec_user_id;
+        $user = Auth::guard('api')->user();
+        // 유저 아이디 값
+        $rec_user_id = $user->getAttribute('id');
+
+        // TODO 경로 정보 가져오기
         $rec_route_id = $request->rec_route_id;
 
         $rec_title = $request->input('rec_title');
@@ -229,8 +233,13 @@ class RecordController extends Controller
     }
 
 
-    public function recordSort()
+    // routes - record 의 시도 횟수 맞추기
+    public function tryCount()
     {
+        // route_num_of_try_user 연산
+        // route_num_of_try_count 연산
+
+
 
     }
 }

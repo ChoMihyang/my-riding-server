@@ -57,6 +57,7 @@ class Route extends Model
                 'route_end_point_address',
                 'route_image')
             ->whereIn('id',$arr)
+            ->orderBy('created_at','DESC')
             ->get();
         }
         elseif ($count == 2) {
@@ -237,6 +238,19 @@ class Route extends Model
             // 라이딩 횟수 순 정렬
             $routeInfo = 'route_num_of_try_count';
         }
+
+        return $routeInfo;
+    }
+
+    // app 코스 상세 페이지 값 조회
+    public function routeDetailValue(
+        int $route_id
+    )
+    {
+        $routeInfo = self::select('id','route_user_id','route_title','route_like','route_distance','route_image',
+            'route_time','route_start_point_address','route_end_point_address','created_at')
+            ->where('id', $route_id)
+            ->first();
 
         return $routeInfo;
     }

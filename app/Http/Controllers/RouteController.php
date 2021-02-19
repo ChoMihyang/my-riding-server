@@ -187,7 +187,7 @@ class RouteController extends Controller
     }
 
     /**
-     * [APP] 나의 경로 최신순 5개 조회
+     * [APP] 나의 경로, 좋아요한 경로 최신순 5개 조회
      *
      *
      * @return \Illuminate\Http\JsonResponse
@@ -197,13 +197,13 @@ class RouteController extends Controller
         $user = Auth::guard('api')->user();
         $route_user_id = $user->getAttribute('id');
 
-        $routeValue = $this->route->routeListValue(3, $route_user_id)->take(5);
+        $routeValue = $this->route->routeListValue(1, $route_user_id)->take(5);
+        $response_data = [
+            'routes' => $routeValue
+        ];
 
-        $response_data = $routeValue;
-
-        return $this->responseAppJson(
+        return $this->responseJson(
             self::ROUTEDETAILVIEW_SUCCESS,
-            "routes",
             $response_data,
             200
         );
@@ -220,13 +220,13 @@ class RouteController extends Controller
         $user = Auth::guard('api')->user();
         $route_user_id = $user->getAttribute('id');
 
-        $routeValue = $this->route->routeListValue(3, $route_user_id);
+        $routeValue = $this->route->routeListValue(1, $route_user_id);
+        $response_data = [
+            'routes' => $routeValue
+        ];
 
-        $response_data = $routeValue;
-
-        return $this->responseAppJson(
+        return $this->responseJson(
             self::ROUTEDETAILVIEW_SUCCESS,
-            "routes",
             $response_data,
             200
         );
@@ -355,4 +355,28 @@ class RouteController extends Controller
         );
     }
 
+    /**
+     * 모바일 경로 상세 페이지
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function routeMyListDetail(Request $request)
+    {
+        // 경로 종류 -> 인기 경로, 좋아요 누른 경로, 내가 만든 경로, 검색한 경로
+        // 이전 페이지에서 route 의 id 받음
+        $route_id = $request->id;
+
+        // 경로 종류별로 들어온 route_id
+        $routeValue = $this->route->routeDetailValue($route_id);
+
+        $responseData = $routeValue;
+
+        return $this->responseAppJson(
+            self::ROUTEDETAILVIEW_SUCCESS,
+            "routes",
+            $responseData,
+            200
+        );
+    }
 }
