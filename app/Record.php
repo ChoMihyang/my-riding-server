@@ -61,6 +61,7 @@ class Record extends Model
      * @param int $user_id
      * @param string $start_date
      * @param string $end_date
+     * @return
      */
     public function getRecordsByWeek(
         int $user_id,
@@ -243,7 +244,7 @@ class Record extends Model
             // 나의 모든 기록 총 합계
             $userRecordSum = array_sum($userAllRecords);
             // 나의 모든 기록 평균
-            $userRecordAvg = ($userRecordSum/$userRecordCount); // 반환할 값
+            $userRecordAvg = ($userRecordSum / $userRecordCount); // 반환할 값
 
 
             // 순위 카운트 출력
@@ -287,24 +288,32 @@ class Record extends Model
             // 유저의 랭킹
             $userRankValue = $resultValue["rec_rank"];
 
+
             return $queryValue = [
-                'record_user_rank'=>$userRankValue,
-                'record_user_account'=>$resultValue["user_account"],
-                'record_all_count'=>$allRankCount,
-                'record_user_top'=>$myTopRecord,
-                'record_user_avg'=>$userRecordAvg,
-                'record_top_score_user_id'=>$first_score_user_id,
-                'record_top_score_user_account'=>$first_score_account,
-                'record_top_score_user_time'=>$first_score_time
+                'record_user_rank' => $userRankValue,
+                'record_user_account' => $resultValue["user_account"],
+                'record_all_count' => $allRankCount,
+                'record_user_top' => $myTopRecord,
+                'record_user_avg' => $userRecordAvg,
+                'record_top_score_user_id' => $first_score_user_id,
+                'record_top_score_user_account' => $first_score_account,
+                'record_top_score_user_time' => $first_score_time
             ];
 
         }
         // 내 기록이 없을 때
         return $queryValue = [
+<<<<<<< HEAD
             'record_user_rank'=>"라이딩 기록이 없습니다.",
             'record_top_score_user_id'=>$first_score_user_id,
             'record_top_score_user_account'=>$first_score_account,
             'record_top_score_user_time'=>$first_score_time
+=======
+            'record_user_rank' => "라이딩 기록이 없습니다.",
+            'record_top_score_user_id' => $first_score_user_id,
+            'record_top_score_user_account' => $first_score_account,
+            'record_top_score_user_time' => $first_score_time
+>>>>>>> 71a74f4ad8c2199da3f033c179e470a721a845f7
         ];
     }
 }

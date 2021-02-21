@@ -182,10 +182,8 @@ class RecordController extends Controller
     // [app] 홈 화면 - 연, 월, 일 요청 후 해당 기록 반환
     public function recordOfHome(Request $request)
     {
-
         // 사용자 토큰 정보 가져오기
         $user_id = Auth::guard('api')->user()->getAttribute('id');
-
         // 요청받은 정보 유효성 검사
         $requested_data = $request->validate([
             'year' => 'required | numeric',
