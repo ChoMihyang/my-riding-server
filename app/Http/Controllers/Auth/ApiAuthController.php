@@ -223,12 +223,14 @@ class ApiAuthController extends Controller
     }
 
     // 프로필 정보 모바일.. (수정중)
-    public function profileMobile(User $id)
+    public function profileMobile()
     {
-        $user_id              = $id->getAttribute('id');
-        $user_nickname        = $id->getAttribute('user_nickname');
-        $user_picture         = $id->getAttribute('user_picture');
-        $user_score_of_riding = $id->getAttribute('user_score_of_riding');
+        $user = Auth::guard('api')->user();
+
+        $user_id              = $user->getAttribute('id');
+        $user_nickname        = $user->getAttribute('user_nickname');
+        $user_picture         = $user->getAttribute('user_picture');
+        $user_score_of_riding = $user->getAttribute('user_score_of_riding');
 
         // TODO stats 테이블의 통계 들어가야함!!!
 
