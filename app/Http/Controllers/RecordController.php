@@ -205,7 +205,11 @@ class RecordController extends Controller
     }
 
     /**
+<<<<<<< HEAD
      * 가록 저장
+=======
+     * 기록 저장
+>>>>>>> dev
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -236,7 +240,20 @@ class RecordController extends Controller
             $rec_avg_speed, $rec_max_speed
         );
 
-        // TODO -> tryCount() 실행 해서 횟수 맞추기...
+        // 기록 저장 성공 여부 체크
+        // 성공한 경우
+        // -> 기록에 저장..
+        //      -> 오늘 날짜의 기록 존재 여부 체크
+        //              -> 존재하는 경우 : 기록 update
+        //              -> 존재하지 않는 경우 : 기록 create
+        //          -> 점수 계산 : 점수 이외의 data create 하고 연산 한 뒤에 update
+        //
+        // 실패한 경우 (app 문의)
+        // -> 데이터 전송 실패? (mysql, mongoDB)
+        //    msg 전송
+        //
+
+
         if ($rec_route_id) {
             // 만들어진 경로로 주행 한 경우에만
             $this->tryCount($rec_route_id);

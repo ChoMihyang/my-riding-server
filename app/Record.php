@@ -2,11 +2,8 @@
 
 namespace App;
 
-use Carbon\Traits\Date;
-use Illuminate\Support\Collection;
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 
 
 class Record extends Model
@@ -36,7 +33,7 @@ class Record extends Model
         $ridingDate = $year . '-' . $month . '-' . $day;
 
         $param = [
-            'created_at as date',
+            'stats.stat_date as date',
             'rec_title as title',
             'rec_time as time',
             'rec_distance as distance',
@@ -47,8 +44,10 @@ class Record extends Model
         ];
 
         $resultData = Record::select($param)
+            ->join('stats', 'records.created_at', 'stats.stat_date')
+            ->distinct()
             ->where('rec_user_id', $user_id)
-            ->where('created_at', $ridingDate)
+            ->where('stats.stat_date', $ridingDate)
             ->get();
 
         return $resultData;
@@ -211,7 +210,6 @@ class Record extends Model
         int $rec_user_id
     )
     {
-        $error = array();
         // 선택한 경로의 기록 전체 카운트
         $allRankCount = $this->rankSort($rec_route_id)->count();
 
