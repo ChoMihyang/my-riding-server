@@ -59,6 +59,7 @@ class Record extends Model
      * @param int $user_id
      * @param string $start_date
      * @param string $end_date
+     * @return
      */
     public function getRecordsByWeek(
         int $user_id,
@@ -219,28 +220,6 @@ class Record extends Model
             ->where('rec_user_id', $rec_user_id)
             ->orderBy('rec_time')
             ->get();
-<<<<<<< HEAD
-
-        // 내 기록중 첫번째 값 반환
-        $myRecordFirst = $userRecord->first();
-
-//        // --> 내 기록이 있을 때
-//        if ($myRecordFirst) {
-//
-//        }
-//        // 내 최고 기록 시간
-        $myTopRecord = $myRecordFirst->getAttribute('rec_time'); // 반환할 값
-
-        // 내 기록의 count
-        $userRecordCount = $userRecord->count();
-        // 선택 경로, 나의 모든 기록 시간
-        $userAllRecords = array_column($userRecord->toArray(), 'rec_time');
-        // 나의 모든 기록 총 합계
-        $userRecordSum = array_sum($userAllRecords);
-        // 나의 모든 기록 평균
-        $userRecordAvg = ($userRecordSum / $userRecordCount); // 반환할 값
-=======
->>>>>>> cd2c6c9f5b6ca4bbd1ffb0eb4296d8568b846412
 
         // 이 경로의 가장 빠른 기록의 사용자
         $first_score = $this->rankSort($rec_route_id)->first();
@@ -264,7 +243,7 @@ class Record extends Model
             // 나의 모든 기록 총 합계
             $userRecordSum = array_sum($userAllRecords);
             // 나의 모든 기록 평균
-            $userRecordAvg = ($userRecordSum/$userRecordCount); // 반환할 값
+            $userRecordAvg = ($userRecordSum / $userRecordCount); // 반환할 값
 
 
             // 순위 카운트 출력
@@ -308,35 +287,25 @@ class Record extends Model
             // 유저의 랭킹
             $userRankValue = $resultValue["rec_rank"];
 
+
             return $queryValue = [
-                'record_user_rank'=>$userRankValue,
-                'record_user_account'=>$resultValue["user_account"],
-                'record_all_count'=>$allRankCount,
-                'record_user_top'=>$myTopRecord,
-                'record_user_avg'=>$userRecordAvg,
-                'record_top_score_user_id'=>$first_score_user_id,
-                'record_top_score_user_account'=>$first_score_account,
-                'record_top_score_user_time'=>$first_score_time
+                'record_user_rank' => $userRankValue,
+                'record_user_account' => $resultValue["user_account"],
+                'record_all_count' => $allRankCount,
+                'record_user_top' => $myTopRecord,
+                'record_user_avg' => $userRecordAvg,
+                'record_top_score_user_id' => $first_score_user_id,
+                'record_top_score_user_account' => $first_score_account,
+                'record_top_score_user_time' => $first_score_time
             ];
 
         }
         // 내 기록이 없을 때
         return $queryValue = [
-<<<<<<< HEAD
-            'record_user_rank' => $userRankValue,
-            'record_user_account' => $resultValue["user_account"],
-            'record_all_count' => $allRankCount,
-            'record_user_top' => $myTopRecord,
-            'record_user_avg' => $userRecordAvg,
+            'record_user_rank' => "라이딩 기록이 없습니다.",
             'record_top_score_user_id' => $first_score_user_id,
             'record_top_score_user_account' => $first_score_account,
             'record_top_score_user_time' => $first_score_time
-=======
-            'record_user_rank'=>"라이딩 기록이 없습니다.",
-            'record_top_score_user_id'=>$first_score_user_id,
-            'record_top_score_user_account'=>$first_score_account,
-            'record_top_score_user_time'=>$first_score_time
->>>>>>> cd2c6c9f5b6ca4bbd1ffb0eb4296d8568b846412
         ];
     }
 }

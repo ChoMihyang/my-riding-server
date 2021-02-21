@@ -93,7 +93,6 @@ class UserController extends Controller
     }
 
     // 전체 랭킹 출력
-    // TODO 등수 + 사용자 값 넘겨주기
     public function viewUserRank()
     {
         $rank_of_all_users = $this->user->getUserRank();
@@ -106,30 +105,42 @@ class UserController extends Controller
         );
     }
 
-    // 사용자 랭킹 상세 보기
-    public function viewDetailRank($rank_id)
+    // 사용자 랭킹 상세 보기'
+    // 요청하는 값 -> ? 랭킹 번호 + 사용자 닉네임 ??
+    // 현재 상태 : 요청한 사용자 id값 + 닉네임
+    public function viewDetailRank(Request $request)
     {
-        $rank_of_all_users = $this->user->getUserRank();
+        // TODO 밸리데이션 적용
+        $user_id = $request['id'];
+        $rank_user_name = $request['name'];
 
-//        $rank_of_user = $this->stats->getUserDetailRank($rank_id);
-//
-//        $sum_of_time = $rank_of_user->sum('time');
-//        $sum_of_distance = $rank_of_user->sum('distance');
-//        $avg_of_speed = $rank_of_user->avg('avg_speed');
-//        $max_of_speed = $rank_of_user->max('max_speed');
+        // 요청한 사용자의 id 값과 닉네임으로 정보 조회
+        $info_of_user = $this->stats->getUserDetailRank($user_id, $rank_user_name);
 
-//        $result_data = [
-//            "sum_of_time" => $sum_of_time,
-//            "sum_of_distance" => $sum_of_distance,
-//            "avg_of_speed" => $avg_of_speed,
-//            "max_of_speed" => $max_of_speed
-//        ];
+        // 반환할 데이터 계산
+        $picture = $info_of_user->pluck('picture')->first();
+        $score = $info_of_user->pluck('score')->first();
+        $sum_of_time = $info_of_user->sum('time');
+        $sum_of_distance = $info_of_user->sum('distance');
+        $avg_of_speed = $info_of_user->avg('avg_speed');
+        $max_of_speed = $info_of_user->max('max_speed');
 
-//        return $this->responseAppJson(
-//            self::PRINT_USER_RANK_SUCCESS,
-//            "ranks",
-//            $result_data,
-//            201
-//        );
+        // 반환할 데이터 배열 저장
+        $result_data = [
+            "nickname" => $rank_user_name,
+            "picture" => $picture,
+            "score" => $score,
+            "sum_of_time" => $sum_of_time,
+            "sum_of_distance" => $sum_of_distance,
+            "avg_of_speed" => $avg_of_speed,
+            "max_of_speed" => $max_of_speed
+        ];
+
+        return $this->responseAppJson(
+            self::PRINT_USER_RANK_SUCCESS,
+            "ranks",
+            $result_data,
+            200
+        );
     }
 }
