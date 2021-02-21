@@ -356,7 +356,7 @@ class RouteController extends Controller
     }
 
     /**
-     * 모바일 경로 상세 페이지
+     * [APP] 경로 상세 페이지
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
