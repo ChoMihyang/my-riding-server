@@ -205,7 +205,7 @@ class RecordController extends Controller
     }
 
     /**
-     * 경로 저장
+     * 가록 저장
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -228,7 +228,7 @@ class RecordController extends Controller
         $rec_avg_speed = $request->input('rec_avg_speed');
         $rec_max_speed = $request->input('rec_max_speed');
 
-        // 경로 저장
+        // 기록 저장
         $this->record->createRecord(
             $rec_user_id, $rec_route_id, $rec_title,
             $rec_distance, $rec_time, $rec_score,

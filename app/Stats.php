@@ -11,8 +11,8 @@ class Stats extends Model
     protected $table = 'stats';
     protected $hidden = ['created_at', 'updated_at'];
 
-    // TODO 웹에서 주차 선택 시 ,해당 통계 조회
 
+    // TODO 웹에서 주차 선택 시 ,해당 통계 조회
     /**
      * 대시보드 통계 정보(UserController - dashboard)
      * @param int $user_id
