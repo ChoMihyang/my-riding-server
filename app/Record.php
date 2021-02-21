@@ -2,11 +2,8 @@
 
 namespace App;
 
-use Carbon\Traits\Date;
-use Illuminate\Support\Collection;
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 
 
 class Record extends Model
@@ -186,7 +183,7 @@ class Record extends Model
     )
     {
         // users 테이블과 join
-        return Record::join('users','users.id','=','records.rec_user_id')
+        return Record::join('users', 'users.id', '=', 'records.rec_user_id')
             ->select('users.id',
                 'users.user_account',
                 'records.rec_user_id',
@@ -196,7 +193,7 @@ class Record extends Model
                 'records.rec_time',
                 'records.rec_title',
                 'records.created_at')
-            ->where('rec_route_id',$route_id)
+            ->where('rec_route_id', $route_id)
             ->orderBy('rec_time')
             ->get();
     }
@@ -225,7 +222,7 @@ class Record extends Model
         // 이 경로의 가장 빠른 기록의 사용자
         $first_score = $this->rankSort($rec_route_id)->first();
         $first_score_user_id = $first_score->rec_user_id;  // 반환할 값 아이디
-        $first_score_time    = $first_score->rec_time;     // 반환할 값 기록
+        $first_score_time = $first_score->rec_time;     // 반환할 값 기록
         $first_score_account = $first_score->user_account; // 반환할 값 계정
 
 
@@ -303,17 +300,10 @@ class Record extends Model
         }
         // 내 기록이 없을 때
         return $queryValue = [
-<<<<<<< HEAD
-            'record_user_rank'=>"라이딩 기록이 없습니다.",
-            'record_top_score_user_id'=>$first_score_user_id,
-            'record_top_score_user_account'=>$first_score_account,
-            'record_top_score_user_time'=>$first_score_time
-=======
             'record_user_rank' => "라이딩 기록이 없습니다.",
             'record_top_score_user_id' => $first_score_user_id,
             'record_top_score_user_account' => $first_score_account,
             'record_top_score_user_time' => $first_score_time
->>>>>>> 71a74f4ad8c2199da3f033c179e470a721a845f7
         ];
     }
 }
