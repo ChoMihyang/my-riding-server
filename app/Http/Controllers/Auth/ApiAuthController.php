@@ -41,7 +41,7 @@ class ApiAuthController extends Controller
         $validator = Validator::make($request->all(), [
             'user_account'  => 'required|string|min:6|max:15|regex:/^[a-z]+[a-z0-9]{5,15}$/|unique:users',
             'user_password' => 'required|string|min:8|regex:/^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{7,}$/|confirmed',
-            'user_nickname' => 'required|String|min:5|max:15|regex:/^[\w\Wㄱ-ㅎㅏ-ㅣ가-힣]{5,15}$/|unique:users',
+            'user_nickname' => 'required|string|min:5|max:15|regex:/^[\w\Wㄱ-ㅎㅏ-ㅣ가-힣]{5,15}$/|unique:users',
             'user_picture'  => 'required|string|max:255',
         ], [
             'user_account.regex' => '아이디를 다시 입력해주세요.',
