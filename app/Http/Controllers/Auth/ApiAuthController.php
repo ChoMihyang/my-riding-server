@@ -65,20 +65,21 @@ class ApiAuthController extends Controller
         $request['remember_token'] = Str::random(10);
 
         // TODO 사진 입력 부분 추가 해야됨
-        if (!($request->has('user_picture'))) {
+        if (($request->has('user_picture'))) {
+            $image = $request->file('user_picture');
+
+            $name = Str::slug($request->input('user_account')).'_'.time();
+
+            $folder = '/uploads/images/';
+            // 이미지 저장할 경로 생성(폴더 경로 + 파일 이름 + 파일 확장자명)
+            $filePath = $folder.$name.'.'.$image->getClientOriginalExtension();
+
+            $this->uploadOne($image, $folder, 'public', $name);
+
+            $user_picture = $filePath;
+        } else {
             $user_picture = NULL;
         }
-        $image = $request->file('user_picture');
-
-        $name = Str::slug($request->input('user_account')).'_'.time();
-
-        $folder = '/uploads/images/';
-        // 이미지 저장할 경로 생성(폴더 경로 + 파일 이름 + 파일 확장자명)
-        $filePath = $folder.$name.'.'.$image->getClientOriginalExtension();
-
-        $this->uploadOne($image, $folder, 'public', $name);
-
-        $user_picture = $filePath;
 
         $user_account = $request->input('user_account');
         $user_password = $request->input('user_password');
