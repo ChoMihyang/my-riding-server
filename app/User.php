@@ -46,13 +46,13 @@ class User extends Authenticatable
     /**
      * 대시보드 사용자 정보(UserController - dashboard)
      * @param int $user_id
-     * @return Collection
+     * @return array
      */
     public function getDashboardUserInfo(
-        int $user_id
-    ): Collection
+        $user_id
+    ): array
     {
-        $param = [
+        $param_user = [
             'user_nickname as nickname',
             'user_score_of_riding as score',
             'user_num_of_riding as count',
@@ -60,9 +60,22 @@ class User extends Authenticatable
             'user_picture as picture'
         ];
 
-        $user_info = self::select($param)
+        $user_info = self::select($param_user)
             ->where('id', $user_id)
-            ->get();
+            ->get()
+            ->first()
+            ->toArray();
+
+        $latest_riding_date = $user_info['last_riding'];
+
+        $latest_riding_id = Record::select('id')
+            ->where('rec_user_id', $user_id)
+            ->where('created_at', $latest_riding_date)
+            ->first();
+
+        $user_info['last_riding_id'] = $latest_riding_id->getAttribute('id');
+//        dd($user_info);
+
 
         return $user_info;
     }

@@ -16,14 +16,14 @@ class ApiAuthController extends Controller
     private $user;
     private const SIGNUP_FAIL = '회원가입에 실패하셨습니다.';
     private const SIGNUP_SUCCESS = '회원가입에 성공하셨습니다.';
-    private const LOGIN_FAIL_AC  = '유저 아이디가 일치하지 않습니다.';
-    private const LOGIN_FAIL_PW  = '유저 패스워드가 일치하지 않습니다.';
-    private const LOGIN_FAIL     = '로그인에 실패하셨습니다.';
-    private const LOGIN_SUCCESS  = '로그인에 성공하셨습니다.';
-    private const LOGOUT         = '로그아웃 되었습니다.';
-    private const USER_PROFILE   = '프로필 정보 조회에 성공하셨습니다.';
-    private const TOKEN_SUCCESS  = '유효한 토큰입니다.';
-    private const TOKEN_FAIL     = '잘못된 접근입니다.';
+    private const LOGIN_FAIL_AC = '유저 아이디가 일치하지 않습니다.';
+    private const LOGIN_FAIL_PW = '유저 패스워드가 일치하지 않습니다.';
+    private const LOGIN_FAIL = '로그인에 실패하셨습니다.';
+    private const LOGIN_SUCCESS = '로그인에 성공하셨습니다.';
+    private const LOGOUT = '로그아웃 되었습니다.';
+    private const USER_PROFILE = '프로필 정보 조회에 성공하셨습니다.';
+    private const TOKEN_SUCCESS = '유효한 토큰입니다.';
+    private const TOKEN_FAIL = '잘못된 접근입니다.';
 
     public function __construct()
     {
@@ -39,7 +39,7 @@ class ApiAuthController extends Controller
     public function signup(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'user_account'  => 'required|string|min:6|max:15|regex:/^[a-z]+[a-z0-9]{5,15}$/|unique:users',
+            'user_account' => 'required|string|min:6|max:15|regex:/^[a-z]+[a-z0-9]{5,15}$/|unique:users',
             'user_password' => 'required|string|min:8|regex:/^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{7,}$/|confirmed',
             'user_nickname' => 'required|string|min:5|max:15|regex:/^[\w\Wㄱ-ㅎㅏ-ㅣ가-힣]{5,15}$/|unique:users',
             'user_picture'  => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -105,7 +105,7 @@ class ApiAuthController extends Controller
     public function login(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'user_account'  => 'required|string',
+            'user_account' => 'required|string',
             'user_password' => 'required|string',
         ]);
 
@@ -192,20 +192,20 @@ class ApiAuthController extends Controller
     {
         $user = Auth::guard('api')->user();
 
-        $user_id         = $user->getAttribute('id');
-        $user_account    = $user->getAttribute('user_account');
-        $user_nickname   = $user->getAttribute('user_nickname');
-        $user_picture    = $user->getAttribute('user_picture');
+        $user_id = $user->getAttribute('id');
+        $user_account = $user->getAttribute('user_account');
+        $user_nickname = $user->getAttribute('user_nickname');
+        $user_picture = $user->getAttribute('user_picture');
         $user_created_at = $user->getAttribute('created_at');
 
         return $this->responseJson(
             self::USER_PROFILE,
             [
-                'id' =>$user_id,
-                'user_account'=>$user_account,
-                'user_nickname'=>$user_nickname,
-                'user_picture'=>$user_picture,
-                'created_at'=>$user_created_at
+                'id' => $user_id,
+                'user_account' => $user_account,
+                'user_nickname' => $user_nickname,
+                'user_picture' => $user_picture,
+                'created_at' => $user_created_at
             ]
             ,
             200
@@ -240,9 +240,9 @@ class ApiAuthController extends Controller
     {
         $user = Auth::guard('api')->user();
 
-        $user_id              = $user->getAttribute('id');
-        $user_nickname        = $user->getAttribute('user_nickname');
-        $user_picture         = $user->getAttribute('user_picture');
+        $user_id = $user->getAttribute('id');
+        $user_nickname = $user->getAttribute('user_nickname');
+        $user_picture = $user->getAttribute('user_picture');
         $user_score_of_riding = $user->getAttribute('user_score_of_riding');
 
         // TODO stats 테이블의 통계 들어가야함!!!
@@ -250,10 +250,10 @@ class ApiAuthController extends Controller
         return $this->responseJson(
             self::USER_PROFILE,
             [
-                'id' =>$user_id,
-                'user_nickname'=>$user_nickname,
-                'user_picture'=>$user_picture,
-                'user_score_of_riding'=>$user_score_of_riding
+                'id' => $user_id,
+                'user_nickname' => $user_nickname,
+                'user_picture' => $user_picture,
+                'user_score_of_riding' => $user_score_of_riding
             ],
             200
         );
