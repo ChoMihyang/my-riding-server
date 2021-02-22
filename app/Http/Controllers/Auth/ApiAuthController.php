@@ -42,7 +42,7 @@ class ApiAuthController extends Controller
             'user_account'  => 'required|string|min:6|max:15|regex:/^[a-z]+[a-z0-9]{5,15}$/|unique:users',
             'user_password' => 'required|string|min:8|regex:/^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{7,}$/|confirmed',
             'user_nickname' => 'required|string|min:5|max:15|regex:/^[\w\Wㄱ-ㅎㅏ-ㅣ가-힣]{5,15}$/|unique:users',
-            'user_picture'  => 'required|string|max:255',
+            'user_picture'  => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
             'user_account.regex' => '아이디를 다시 입력해주세요.',
             'user_password.regex' => '패스워드를 다시 입력해주세요.',
@@ -65,13 +65,26 @@ class ApiAuthController extends Controller
         $request['remember_token'] = Str::random(10);
 
         // TODO 사진 입력 부분 추가 해야됨
+        if (!($request->has('user_picture'))) {
+            $user_picture = NULL;
+        }
+        $image = $request->file('user_picture');
+
+        $name = Str::slug($request->input('user_account')).'_'.time();
+
+        $folder = '/uploads/images/';
+        // 이미지 저장할 경로 생성(폴더 경로 + 파일 이름 + 파일 확장자명)
+        $filePath = $folder.$name.'.'.$image->getClientOriginalExtension();
+
+        $this->uploadOne($image, $folder, 'public', $name);
+
+        $user_picture = $filePath;
 
         $user_account = $request->input('user_account');
         $user_password = $request->input('user_password');
         $user_nickname = $request->input('user_nickname');
-        $user_picture = $request->input('user_picture');
 
-        $data  = $this->user->createUserInfo($user_account,$user_password,$user_nickname,$user_picture);
+        $this->user->createUserInfo($user_account,$user_password,$user_nickname,$user_picture);
 //        $token = $data->createToken('Laravel Password Grant Client')->accessToken;
 //
 //        $response = ['token'=>$token];
@@ -245,4 +258,8 @@ class ApiAuthController extends Controller
             200
         );
     }
+
+    // TODO 프로필 수정
+
+    // TODO 비밀번호 변경
 }
