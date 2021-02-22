@@ -11,6 +11,7 @@ class Stats extends Model
     protected $table = 'stats';
     protected $hidden = ['created_at', 'updated_at'];
 
+
     // TODO 웹에서 주차 선택 시 ,해당 통계 조회
 
     /**
@@ -50,7 +51,7 @@ class Stats extends Model
      * @param int $same_week
      * @return Collection
      */
-    public function select_stats(
+    public function get_stats_by_year(
         int $user_id,
         int $year
     ): Collection
@@ -68,8 +69,7 @@ class Stats extends Model
         $returnData = Stats::select($param)
             ->where('stat_user_id', $user_id)
             ->where('stat_year', $year)
-            ->orderBy('stat_week')
-            ->orderBy('stat_day')
+            ->orderByDesc('stat_week')
             ->get();
 
         return $returnData;
