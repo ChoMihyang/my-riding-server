@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Record;
 use App\Route;
 use App\RouteLike;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -34,7 +35,7 @@ class RouteController extends Controller
     /**
      * [WEB] 경로 목록 조회 (생성, 좋아요 누른 경로만)
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function routeListView()
     {
@@ -56,16 +57,16 @@ class RouteController extends Controller
     /**
      * [WEB] 경로 삭제
      *
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param Route $route
+     * @return JsonResponse
      */
-    public function routeDelete(Request $request)
+    public function routeDelete(Route $id)
     {
         $user = Auth::guard('api')->user();
         // 유저 아이디 값
         $route_user_id = $user->getAttribute('id');
         // 경로 번호
-        $route_id = $request->id;
+        $route_id = $id->id;
 
         $deleteValue = $this->route->routeDelete($route_user_id, $route_id);
 
@@ -87,20 +88,21 @@ class RouteController extends Controller
     /**
      * [WEB] 경로 상세 조회
      *
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param Route $id
+     * @return JsonResponse
      */
-    public function routeDetailView(Request $request)
+    public function routeDetailView(Route $id): JsonResponse
     {
-        $route_id = (int)$request->id;
+        $route_id = $id->id;
 
         // 경로 정보 조회
         $routeValue = $this->route->routeDetailRouteValue($route_id);
-        // 요청한 Route 의 ID 값의 record 데이터(기록순 정렬) 가져옴
-        $recordValue = $this->record->rankSort($route_id)->take(3);
 
         $user = Auth::guard('api')->user();
         $route_user_id = $user->getAttribute('id');
+
+        // 요청한 Route 의 ID 값의 record 데이터(기록순 정렬) 가져옴
+        $recordValue = $this->record->rankSort($route_id)->take(3);
 
         $rankValues = $this->record->myRecord($route_id, $route_user_id);
 
@@ -121,7 +123,7 @@ class RouteController extends Controller
      * [WEB] 새로운 경로 저장
      *
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function routeSave(Request $request)
     {
@@ -171,9 +173,9 @@ class RouteController extends Controller
     /**
      * [APP] 인기 라이딩 경로 조회
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function routePopularity()
+    public function routePopularity(): JsonResponse
     {
         $routeValue = $this->route->routeListValue(2, 0);
         $response_data = $routeValue;
@@ -190,7 +192,7 @@ class RouteController extends Controller
      * [APP] 나의 경로, 좋아요한 경로 최신순 5개 조회
      *
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function routeMyListLatest()
     {
@@ -213,7 +215,7 @@ class RouteController extends Controller
      * [APP] 나의 경로 최신순 모두 조회
      *
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function routeMyListAll()
     {
@@ -242,7 +244,7 @@ class RouteController extends Controller
      * count = 5 : 라이딩 횟수순 정렬
      *
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function routeSearch(Request $request)
     {
@@ -304,7 +306,7 @@ class RouteController extends Controller
      * [WEB, APP] 좋아요 생성
      *
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function likePush(Request $request)
     {
@@ -318,7 +320,7 @@ class RouteController extends Controller
 
         // RouteLikes 테이블 새로운 레코드 추가후 갯수 조회함
         $likeCount = $this->routeLike->selectLike($route_like_obj);
-        // 레코드 갯수 조회후 갯수 업데이트
+        // 레코드 갯수 조회후 갯수 업데이트a
         $this->route->likeAlter($route_like_obj, $likeCount);
 
         return $this->responseJson(
@@ -332,7 +334,7 @@ class RouteController extends Controller
      * [WEB, APP] 좋아요 삭제
      *
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function likePull(Request $request)
     {
@@ -359,13 +361,13 @@ class RouteController extends Controller
      * [APP] 경로 상세 페이지
      *
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function routeMyListDetail(Request $request)
+    public function routeMyListDetail(Route $id)
     {
         // 경로 종류 -> 인기 경로, 좋아요 누른 경로, 내가 만든 경로, 검색한 경로
         // 이전 페이지에서 route 의 id 받음
-        $route_id = $request->id;
+        $route_id = $id->id;
 
         // 경로 종류별로 들어온 route_id
         $routeValue = $this->route->routeDetailValue($route_id);
