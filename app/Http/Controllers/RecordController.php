@@ -49,12 +49,13 @@ class RecordController extends Controller
         // 사용자가 요청한 연도
         $requested_year = $requestedData['stat_year'];
 
+
         // 현재 날짜의 주차
         $today_week = date('W', strtotime($today_date));
 
         // 해당 연도의 라이딩 통계 조회
         $record_stats_by_year = $this->stats
-            ->select_stats($user_id, $requested_year);
+            ->get_stats_by_year($user_id, $requested_year);
         $temp_stats = $record_stats_by_year->groupBy('week')->toArray();
 
         // 현재 날짜의 요일
@@ -86,7 +87,7 @@ class RecordController extends Controller
     }
 
     // 주차별 라이딩 통계
-    public function recordViewByWeek(Request $request)
+    public function recordViewByWeek(Record $request)
     {
         $today_year = date('Y');
         // 요청받은 연도의 유효 범위
@@ -158,12 +159,13 @@ class RecordController extends Controller
     }
 
     // 라이딩 일지 일별 상세 조회
-    public function recordDetailView(Request $request)
+    public function recordDetailView(Record $record)
     {
         // TODO request validation
         // 특정 날짜의 기록 레코드의 번호 요청 받기
-        $record_id = $request['id'];
+        $record_id = $record['id'];
 
+        // 사용자 토큰 가져오기
         $user_id = Auth::guard('api')->user()->getAttribute('id');
         $record_of_date = $this->record->getRecordOfDay($user_id, (int)$record_id);
 
@@ -175,7 +177,7 @@ class RecordController extends Controller
         return $this->responseJson(
             self::SELECT_BY_DAY_DETAIL_SUCCESS,
             $result,
-            201
+            200
         );
     }
 
@@ -205,11 +207,7 @@ class RecordController extends Controller
     }
 
     /**
-<<<<<<< HEAD
-     * 가록 저장
-=======
      * 기록 저장
->>>>>>> dev
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse

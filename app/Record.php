@@ -15,6 +15,32 @@ class Record extends Model
         'rec_avg_speed', 'rec_max_speed', 'created_at'
     ];
 
+
+    /**
+     * 올해의 누적 거리, 시간, 평균 속도 구하기
+     * @param int $user_id
+     * @param int $today_year
+     * @return Collection
+     */
+    public function getTodayYearStats(
+        int $user_id,
+        int $today_year
+    )
+    {
+        $param = [
+            'stat_distance as distance',
+            'stat_time as time',
+            'stat_avg_speed as avg_speed'
+        ];
+
+        $returnData = Stats::select($param)
+            ->where('stat_user_id', $user_id)
+            ->where('stat_year', $today_year)
+            ->get();
+
+        return $returnData;
+    }
+
     /**
      * 해당 날짜의 통계 반환 (RecordController - recordOfHome)
      * @param int $user_id
