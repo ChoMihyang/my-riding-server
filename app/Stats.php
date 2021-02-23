@@ -48,7 +48,6 @@ class Stats extends Model
     /**
      * @param int $year
      * @param int $user_id
-     * @param int $same_week
      * @return Collection
      */
     public function get_stats_by_year(
@@ -70,6 +69,7 @@ class Stats extends Model
             ->where('stat_user_id', $user_id)
             ->where('stat_year', $year)
             ->orderByDesc('stat_week')
+            ->orderBy('stat_date')
             ->get();
 
         return $returnData;

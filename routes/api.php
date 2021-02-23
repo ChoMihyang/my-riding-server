@@ -38,8 +38,8 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
              * 라이딩 알림 확인(X버튼) -> Notification
              */
             Route::get("/", "UserController@dashboard")->name("[대시보드] 통계 조회");
-//    Route::patch("/noti/{id}", "NotificationController@notiCheck")->name("[대시보드] 알림 확인");
-//    Route::get("/noti/{id}", "NotificationController@notiPageMove")->name("[대시보드] 해당 알림 페이지 이동");
+            Route::patch("/notification/check/{notification}", "UserController@notificationCheck")->name("[대시보드] 알림 확인");
+//    Route::get("/notification/{id}", "NotificationController@notiPageMove")->name("[대시보드] 해당 알림 페이지 이동");
         });
 
         // <<-- 라이딩 일지 관리-->>

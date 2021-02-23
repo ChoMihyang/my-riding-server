@@ -41,7 +41,6 @@ class UserController extends Controller
         // TODO 사용자 이미지 CONCAT 하기
         // TODO last_riding 포맷 변경
         $user_info = $this->user->getDashboardUserInfo($user_id);
-
         // 사용자 정보 -->>
 
         // <<-- 통계 정보 : 올해 합계, 이번주 합계, 월 ~ 일 통계(거리, 시간, 평균속도)
@@ -77,7 +76,7 @@ class UserController extends Controller
         // 통계 -->>
 
         // <<-- 알림 : 읽지 않은 알림-->>
-        // TODO 알림 확인 API
+
         // TODO 알림 페이지 URL 전송 API
         $user_noti = $this->notifications->getDashboardNoti($user_id);
 
@@ -109,6 +108,16 @@ class UserController extends Controller
         );
     }
 
+    // 알림 확인 버튼 클릭 시
+    //1. noti_check 필드 값 -> 0으로 업데이트
+    //2.updated_at 필드 값-> 확인 날짜 데이터 삽입
+    public function notificationCheck(Notification $notification)
+    {
+        $user_id = Auth::guard('api')->user()->getAttribute('id');
+
+        $this->notifications->checkNotification($user_id, $notification);
+    }
+
     // 전체 랭킹 출력
     public function viewUserRank()
     {
@@ -122,7 +131,7 @@ class UserController extends Controller
         );
     }
 
-    // 사용자 랭킹 상세 보기'
+    // 사용자 랭킹 상세 보기
     // 요청하는 값 -> ? 랭킹 번호 + 사용자 닉네임 ??
     // 현재 상태 : 요청한 사용자 id값 + 닉네임
     public function viewDetailRank(Request $request)
