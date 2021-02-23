@@ -74,8 +74,6 @@ class User extends Authenticatable
             ->first();
 
         $user_info['last_riding_id'] = $latest_riding_id->getAttribute('id');
-//        dd($user_info);
-
 
         return $user_info;
     }

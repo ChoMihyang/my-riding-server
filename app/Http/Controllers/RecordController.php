@@ -181,6 +181,8 @@ class RecordController extends Controller
         );
     }
 
+    //
+
     // [app] 홈 화면 - 연, 월, 일 요청 후 해당 기록 반환
     public function recordOfHome(Request $request)
     {

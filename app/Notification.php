@@ -33,4 +33,26 @@ class Notification extends Model
 
         return $user_noti;
     }
+
+    /**
+     * 알림 확인 시 알림 테이블 업데이트
+     *
+     * @param int $user_id
+     * @param Notification $noti_record_id
+     */
+    public function checkNotification(
+        int $user_id,
+        Notification $noti_record_id
+    )
+    {
+        $record_id = $noti_record_id['id'];
+
+
+        $notification = Notification::where('noti_user_id', $user_id)
+            ->find($record_id);
+
+        $notification->noti_check = false;
+        $notification->updated_at = date('Y-m-d');
+        $notification->save();
+    }
 }
