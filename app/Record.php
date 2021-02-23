@@ -339,4 +339,21 @@ class Record extends Model
             'record_top_score_user_time' => $first_score_time
         ];
     }
+
+    /**
+     * 경로 저장 확인용
+     *
+     * @param int $rec_route_id
+     * @param string $rec_title
+     * @return mixed
+     */
+    public function RecordSaveCheck(
+        int $rec_route_id,
+        string $rec_title
+    )
+    {
+        return self::where('rec_route_id', $rec_route_id)
+            ->where('rec_title', $rec_title)
+            ->get();
+    }
 }
