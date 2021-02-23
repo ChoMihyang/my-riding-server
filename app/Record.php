@@ -245,7 +245,7 @@ class Record extends Model
             ->orderBy('rec_time')
             ->get();
 
-        if (!($this->rankSort($rec_route_id)->first())){
+        if (!($this->rankSort($rec_route_id)->first())) {
             // 이 경로의 가장 빠른 기록의 사용자 없을 때
             return $queryValue = [
                 'record_user_rank' => "해당 라이딩 기록이 없습니다.",

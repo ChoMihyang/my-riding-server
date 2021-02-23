@@ -47,7 +47,6 @@ class Notification extends Model
     {
         $record_id = $noti_record_id['id'];
 
-
         $notification = Notification::where('noti_user_id', $user_id)
             ->find($record_id);
 

@@ -131,7 +131,7 @@ class UserController extends Controller
         );
     }
 
-    // 사용자 랭킹 상세 보기'
+    // 사용자 랭킹 상세 보기
     // 요청하는 값 -> ? 랭킹 번호 + 사용자 닉네임 ??
     // 현재 상태 : 요청한 사용자 id값 + 닉네임
     public function viewDetailRank(Request $request)

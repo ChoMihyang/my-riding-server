@@ -49,7 +49,6 @@ class RecordController extends Controller
         // 사용자가 요청한 연도
         $requested_year = $requestedData['stat_year'];
 
-
         // 현재 날짜의 주차
         $today_week = date('W', strtotime($today_date));
 
@@ -161,13 +160,12 @@ class RecordController extends Controller
     // 라이딩 일지 일별 상세 조회
     public function recordDetailView(Record $record)
     {
-        // TODO request validation
         // 특정 날짜의 기록 레코드의 번호 요청 받기
         $record_id = $record['id'];
 
         // 사용자 토큰 가져오기
         $user_id = Auth::guard('api')->user()->getAttribute('id');
-        $record_of_date = $this->record->getRecordOfDay($user_id, (int)$record_id);
+        $record_of_date = $this->record->getRecordOfDay($user_id, $record_id);
 
         $result = [
             'records' => $record_of_date,
