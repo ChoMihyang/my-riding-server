@@ -87,7 +87,7 @@ class ApiAuthController extends Controller
         $user_password = $request->input('user_password');
         $user_nickname = $request->input('user_nickname');
 
-        $this->user->createUserInfo($user_account,$user_password,$user_nickname,$user_picture);
+        $data = $this->user->createUserInfo($user_account,$user_password,$user_nickname,$user_picture);
 //        $token = $data->createToken('Laravel Password Grant Client')->accessToken;
 //
 //        $response = ['token'=>$token];
