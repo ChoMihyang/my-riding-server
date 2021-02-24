@@ -37,7 +37,7 @@ class RouteController extends Controller
      *
      * @return JsonResponse
      */
-    public function routeListView()
+    public function routeListView(): JsonResponse
     {
         $user = Auth::guard('api')->user();
         $route_user_id = $user->getAttribute('id');
@@ -57,10 +57,10 @@ class RouteController extends Controller
     /**
      * [WEB] 경로 삭제
      *
-     * @param Route $route
+     * @param Route $id
      * @return JsonResponse
      */
-    public function routeDelete(Route $id)
+    public function routeDelete(Route $id): JsonResponse
     {
         $user = Auth::guard('api')->user();
         // 유저 아이디 값
@@ -125,7 +125,7 @@ class RouteController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function routeSave(Request $request)
+    public function routeSave(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'route_title' => 'required|string|min:3|alpha_num|unique:routes',
@@ -194,7 +194,7 @@ class RouteController extends Controller
      *
      * @return JsonResponse
      */
-    public function routeMyListLatest()
+    public function routeMyListLatest(): JsonResponse
     {
         $user = Auth::guard('api')->user();
         $route_user_id = $user->getAttribute('id');
@@ -214,10 +214,9 @@ class RouteController extends Controller
     /**
      * [APP] 나의 경로 최신순 모두 조회
      *
-     * @param Request $request
      * @return JsonResponse
      */
-    public function routeMyListAll()
+    public function routeMyListAll(): JsonResponse
     {
         $user = Auth::guard('api')->user();
         $route_user_id = $user->getAttribute('id');
@@ -246,7 +245,7 @@ class RouteController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function routeSearch(Request $request)
+    public function routeSearch(Request $request): JsonResponse
     {
         // TODO 검색어 입력받기
         $wordValue = "";
@@ -308,7 +307,7 @@ class RouteController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function likePush(Request $request)
+    public function likePush(Request $request): JsonResponse
     {
         $user = Auth::guard('api')->user();
         $route_like_user = $user->getAttribute('id');
@@ -336,7 +335,7 @@ class RouteController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function likePull(Request $request)
+    public function likePull(Request $request): JsonResponse
     {
         $user = Auth::guard('api')->user();
         $route_like_user = $user->getAttribute('id');
@@ -360,10 +359,10 @@ class RouteController extends Controller
     /**
      * [APP] 경로 상세 페이지
      *
-     * @param Request $request
+     * @param Route $id
      * @return JsonResponse
      */
-    public function routeMyListDetail(Route $id)
+    public function routeMyListDetail(Route $id): JsonResponse
     {
         // 경로 종류 -> 인기 경로, 좋아요 누른 경로, 내가 만든 경로, 검색한 경로
         // 이전 페이지에서 route 의 id 받음

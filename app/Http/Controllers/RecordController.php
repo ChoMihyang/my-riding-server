@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use App\Record;
 use App\Route;
 use App\Stats;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use phpDocumentor\Reflection\Types\Nullable;
+use Illuminate\Support\Facades\Validator;
 
 class RecordController extends Controller
 {
@@ -17,6 +18,8 @@ class RecordController extends Controller
     private const SELECT_BY_YEAR_SUCCESS = '년도 통계 조회를 성공하였습니다.';
     private const SELECT_BY_DAY_DETAIL_SUCCESS = '라이딩 일지 상세 정보 조회를 성공하였습니다.';
     private const SELECT_BY_DAY_SUCCESS = '홈 기록 조회를 성공하였습니다.';
+    private const SAVE_RECORD_SUCCESS = '경로 저장에 성공했습니다';
+    private const SAVE_RECORD_FAIL = '경로 저장에 실패했습니다.';
 
     public function __construct()
     {
@@ -210,13 +213,31 @@ class RecordController extends Controller
      * 기록 저장
      *
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function recordSave(Request $request)
+    public function recordSave(Request $request): JsonResponse
     {
         $user = Auth::guard('api')->user();
         // 유저 아이디 값
         $rec_user_id = $user->getAttribute('id');
+
+        $validator = Validator::make($request->all(), [
+            'rec_title' => 'required|string|min:3|max:25|regex:/^[\w\Wㄱ-ㅎㅏ-ㅣ가-힣]{5,15}$/|unique:records'
+        ], [
+            'rec_title.regex' => '경로 제목을 다시 입력해주세요.',
+        ]);
+
+        if ($validator->fails()) {
+            $response_data = [
+                'error' => $validator->errors(),
+            ];
+
+            return $this->responseJson(
+                self::SAVE_RECORD_FAIL,
+                $response_data,
+                422
+            );
+        }
 
         // 경로 정보 있을 경우 가져오기
         $rec_route_id = $request->rec_route_id;
@@ -224,7 +245,7 @@ class RecordController extends Controller
         $rec_title = $request->input('rec_title');
         $rec_distance = $request->input('rec_distance');
         $rec_time = $request->input('rec_time');
-        $rec_score = $request->input('rec_score');
+        $rec_score = 0;
         $rec_start_point_address = $request->input('rec_start_point_address');
         $rec_end_point_address = $request->input('rec_end_point_address');
         $rec_avg_speed = $request->input('rec_avg_speed');
@@ -238,19 +259,49 @@ class RecordController extends Controller
             $rec_avg_speed, $rec_max_speed
         );
 
-        // 기록 저장 성공 여부 체크
-        // 성공한 경우
-        // -> 기록에 저장..
-        //      -> 오늘 날짜의 기록 존재 여부 체크
-        //              -> 존재하는 경우 : 기록 update
-        //              -> 존재하지 않는 경우 : 기록 create
-        //          -> 점수 계산 : 점수 이외의 data create 하고 연산 한 뒤에 update
-        //
-        // 실패한 경우 (app 문의)
-        // -> 데이터 전송 실패? (mysql, mongoDB)
-        //    msg 전송
-        //
+        // 주차, 요일 계산
+        // 현재 연도
+        $today_year = date('Y');
+        // 현재 날짜의 주차
+        $today_date = date('Y-m-d');
+        $today_week = date('W', strtotime($today_date));
+        // 현재 날짜의 요일
+        $temp_day = date('w', strtotime($today_date));
+        $today_day = $temp_day === 0 ? 6 : $temp_day - 1;
 
+        // 기록 저장 성공 여부 체크
+        // DB 조회 ?
+        $recordSavePoints = $this->record->RecordSaveCheck($rec_route_id, $rec_title);
+
+        if (!$recordSavePoints) {
+            // TODO 기록 저장 실패한 경우?
+            // app 문의?, 데이터 전송 실패?  (mysql, mongoDB)
+            // msg 전송
+            return $this->responseJson(
+                self::SAVE_RECORD_SUCCESS,
+                [],
+                422
+            );
+        }
+        $year = date("Y-m-d");
+        // 기록 저장 성공한 경우
+        // -> stats 테이블 select : 오늘 날짜의 기록 존재 여부 체크
+        $statCheck = Stats::where('stat_user_id', $rec_user_id)
+            ->where('stat_date', $year)
+            ->first();
+
+        if ($statCheck) {
+            // -> 통계 존재하는 경우 : 기존 기록에서 update
+            // TODO 수정할 부분 점수 계산
+            $this->stats->updateStat($rec_user_id);
+        }
+        else {
+            // -> 통계 존재하지 않는 경우 : 기록 create
+            $this->stats->createStats(
+                $rec_user_id, $today_week, $today_day,
+                $rec_distance, $rec_time, $rec_avg_speed, $rec_max_speed, $today_year
+            );
+        }
 
         if ($rec_route_id) {
             // 만들어진 경로로 주행 한 경우에만
@@ -258,13 +309,17 @@ class RecordController extends Controller
         }
 
         return $this->responseJson(
-            "경로 저장 성공",
+            self::SAVE_RECORD_SUCCESS,
             [],
             201
         );
     }
 
-    // routes - record 의 시도 횟수 맞추기
+    /**
+     * routes - record 의 시도 횟수 맞추기
+     *
+     * @param int $rec_route_id
+     */
     public function tryCount(
         int $rec_route_id
     )
