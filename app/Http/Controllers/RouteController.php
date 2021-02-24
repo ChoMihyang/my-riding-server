@@ -279,7 +279,7 @@ class RouteController extends Controller
 
             $pick = $this->route->sortSearchCount($count);
 
-            $routeValue = $wordValue->sortByDesc($pick);
+            $routeValue = $wordValue->orderBy($pick)->get();
         }
         // 검색 안하면 바로 사용자 입력 방법으로 정렬
 
@@ -287,7 +287,7 @@ class RouteController extends Controller
             // TODO 검색부분 수정해야됨
             $pick = $this->route->sortSearchCount($count);
 
-            $routeValue = Route::all()->sortByDesc($pick);
+            $routeValue = Route::orderBy($pick)->get();
         }
 
         $response_data = $routeValue;
