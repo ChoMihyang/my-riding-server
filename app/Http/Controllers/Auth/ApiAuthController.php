@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use App\Traits\UploadTrait;
 
 class ApiAuthController extends Controller
 {
@@ -24,6 +25,7 @@ class ApiAuthController extends Controller
     private const USER_PROFILE = '프로필 정보 조회에 성공하셨습니다.';
     private const TOKEN_SUCCESS = '유효한 토큰입니다.';
     private const TOKEN_FAIL = '잘못된 접근입니다.';
+    use UploadTrait;
 
     public function __construct()
     {
@@ -42,7 +44,7 @@ class ApiAuthController extends Controller
             'user_account' => 'required|string|min:6|max:15|regex:/^[a-z]+[a-z0-9]{5,15}$/|unique:users',
             'user_password' => 'required|string|min:8|regex:/^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{7,}$/|confirmed',
             'user_nickname' => 'required|string|min:5|max:15|regex:/^[\w\Wㄱ-ㅎㅏ-ㅣ가-힣]{5,15}$/|unique:users',
-            'user_picture'  => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'user_picture'  => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
             'user_account.regex' => '아이디를 다시 입력해주세요.',
             'user_password.regex' => '패스워드를 다시 입력해주세요.',
@@ -64,7 +66,7 @@ class ApiAuthController extends Controller
         $request['user_password'] = Hash::make($request['user_password']);
         $request['remember_token'] = Str::random(10);
 
-        // TODO 사진 입력 부분 추가 해야됨
+        // TODO 사진 입력 테스트
         if (($request->has('user_picture'))) {
             $image = $request->file('user_picture');
 
