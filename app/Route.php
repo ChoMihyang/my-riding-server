@@ -205,7 +205,7 @@ class Route extends Model
     {
         return self::where('route_title', 'like', '%' . $word . '%')
             ->orWhere('route_start_point_address', 'like', '%' . $word . '%')
-            ->orWhere('route_end_point_address', 'like', '%' . $word . '%')->get();
+            ->orWhere('route_end_point_address', 'like', '%' . $word . '%');
     }
 
     /**
