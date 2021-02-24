@@ -117,7 +117,7 @@ class Stats extends Model
      */
     public
     function getUserDetailRank(
-        int $user_id,
+//        int $user_id,
         string $rank_user_name
     ): Collection
     {
@@ -132,7 +132,7 @@ class Stats extends Model
         ];
         $returnData = Stats::select($param)
             ->join('users', 'stat_user_id', 'users.id')
-            ->where('users.id', $user_id)
+//            ->where('users.id', $user_id)
             ->where('users.user_nickname', $rank_user_name)
             ->get();
 

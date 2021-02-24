@@ -134,14 +134,12 @@ class UserController extends Controller
     // 사용자 랭킹 상세 보기
     // 요청하는 값 -> ? 랭킹 번호 + 사용자 닉네임 ??
     // 현재 상태 : 요청한 사용자 id값 + 닉네임
-    public function viewDetailRank(Request $request)
+    public function viewDetailRank(User $name)
     {
-        // TODO 밸리데이션 적용
-        $user_id = $request['id'];
-        $rank_user_name = $request['name'];
-
+//        $rank_user_name = $request['name'];
+        dd($name['name']);
         // 요청한 사용자의 id 값과 닉네임으로 정보 조회
-        $info_of_user = $this->stats->getUserDetailRank($user_id, $rank_user_name);
+        $info_of_user = $this->stats->getUserDetailRank($rank_user_name);
 
         // 반환할 데이터 계산
         $picture = $info_of_user->pluck('picture')->first();
