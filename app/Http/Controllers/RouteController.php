@@ -204,8 +204,9 @@ class RouteController extends Controller
             'routes' => $routeValue
         ];
 
-        return $this->responseJson(
+        return $this->responseAppJson(
             self::ROUTEDETAILVIEW_SUCCESS,
+            "routes",
             $response_data,
             200
         );
@@ -226,8 +227,9 @@ class RouteController extends Controller
             'routes' => $routeValue
         ];
 
-        return $this->responseJson(
+        return $this->responseAppJson(
             self::ROUTEDETAILVIEW_SUCCESS,
+            "routes",
             $response_data,
             200
         );
@@ -268,8 +270,9 @@ class RouteController extends Controller
                     'error' => $validator->errors(),
                 ];
 
-                return $this->responseJson(
+                return $this->responseAppJson(
                     self::ROUTESEARCH_FAIL,
+                    "routes",
                     $response_data,
                     422
                 );
