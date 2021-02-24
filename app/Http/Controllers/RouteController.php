@@ -200,9 +200,7 @@ class RouteController extends Controller
         $route_user_id = $user->getAttribute('id');
 
         $routeValue = $this->route->routeListValue(1, $route_user_id)->take(5);
-        $response_data = [
-            'routes' => $routeValue
-        ];
+        $response_data = $routeValue;
 
         return $this->responseAppJson(
             self::ROUTEDETAILVIEW_SUCCESS,
@@ -223,9 +221,7 @@ class RouteController extends Controller
         $route_user_id = $user->getAttribute('id');
 
         $routeValue = $this->route->routeListValue(1, $route_user_id);
-        $response_data = [
-            'routes' => $routeValue
-        ];
+        $response_data = $routeValue;
 
         return $this->responseAppJson(
             self::ROUTEDETAILVIEW_SUCCESS,
