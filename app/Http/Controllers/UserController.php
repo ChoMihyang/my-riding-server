@@ -133,11 +133,11 @@ class UserController extends Controller
 
     // 사용자 랭킹 상세 보기
     // 요청하는 값 -> ? 랭킹 번호 + 사용자 닉네임 ??
-    // 현재 상태 : 요청한 사용자 id값 + 닉네임
-    public function viewDetailRank(User $name)
+    // 현재 상태 : 닉네임
+    public function viewDetailRank(Request $request)
     {
-//        $rank_user_name = $request['name'];
-        dd($name['name']);
+        $rank_user_name = $request['name'];
+
         // 요청한 사용자의 id 값과 닉네임으로 정보 조회
         $info_of_user = $this->stats->getUserDetailRank($rank_user_name);
 
@@ -146,7 +146,7 @@ class UserController extends Controller
         $score = $info_of_user->pluck('score')->first();
         $sum_of_time = $info_of_user->sum('time');
         $sum_of_distance = $info_of_user->sum('distance');
-        $avg_of_speed = $info_of_user->avg('avg_speed');
+        $avg_of_speed = round($info_of_user->avg('avg_speed'), 1);
         $max_of_speed = $info_of_user->max('max_speed');
 
         // 반환할 데이터 배열 저장
