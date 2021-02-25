@@ -283,8 +283,10 @@ class RecordController extends Controller
                 422
             );
         }
-        $year = date("Y-m-d");
+
         // 기록 저장 성공한 경우
+        $year = date("Y-m-d");
+
         // -> stats 테이블 select : 오늘 날짜의 기록 존재 여부 체크
         $statCheck = Stats::where('stat_user_id', $rec_user_id)
             ->where('stat_date', $year)
@@ -294,8 +296,7 @@ class RecordController extends Controller
             // -> 통계 존재하는 경우 : 기존 기록에서 update
             // TODO 수정할 부분 점수 계산
             $this->stats->updateStat($rec_user_id);
-        }
-        else {
+        } else {
             // -> 통계 존재하지 않는 경우 : 기록 create
             $this->stats->createStats(
                 $rec_user_id, $today_week, $today_day,
@@ -307,6 +308,40 @@ class RecordController extends Controller
             // 만들어진 경로로 주행 한 경우에만
             $this->tryCount($rec_route_id);
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         return $this->responseJson(
             self::SAVE_RECORD_SUCCESS,
@@ -334,22 +369,75 @@ class RecordController extends Controller
         $this->route->tryUserCheck($rec_route_id);
     }
 
-    // 경로 몽고로 보내기
-    public function test(Request $request)
+
+    // TODO 몽고 연동 테스트 완료..
+    // 라이딩 기록 몽고로 보내기
+    public function testSave(Request $request)
     {
-        $date = $request->input('date');
-        $lat = $request->input('lat');
-        $lng = $request->input('lng');
-        $speed = $request->input('speed');
+        $response_data = $request->input('records');
 
-        $response_data = [
-            
-        ];
+        // TODO 기록 아이디로 바꾸기
 
-//        dd($response_data);
-
-        return response()->json([
+//        $response = \Illuminate\Support\Facades\Http::post("http://13.209.75.193:3000/api/record/{id}", [
+        $response = \Illuminate\Support\Facades\Http::post("http://13.209.75.193:3000/api/record/1", [
             "records" => $response_data
-        ], 201);
+        ]);
+
+        return $response->json();
+    }
+
+    // 라이딩 기록 몽고에서 조회
+    public function testShow()
+    {
+        // TODO 기록 아이디로 바꾸기
+
+        $response = \Illuminate\Support\Facades\Http::get("http://13.209.75.193:3000/api/record/1");
+
+        return $response->json();
+    }
+
+    // 라이딩 기록 삭제
+    public function testDelete()
+    {
+        // TODO 기록 아이디로 바꾸기
+
+        $response = \Illuminate\Support\Facades\Http::delete("http://13.209.75.193:3000/api/record/1");
+
+        return $response->json();
+    }
+
+    // 경로 정보 저장
+    public function myTestSave(Request $request)
+    {
+
+        $response_data = $request->input('points');
+
+        // TODO 기록 아이디로 바꾸기
+
+        $response = \Illuminate\Support\Facades\Http::post("http://13.209.75.193:3000/api/route/1", [
+            "points" => $response_data
+        ]);
+
+        return $response->json();
+    }
+
+    // 경로 정보 조회
+    public function myTestShow()
+    {
+        // TODO 기록 아이디로 바꾸기
+
+        $response = \Illuminate\Support\Facades\Http::get("http://13.209.75.193:3000/api/route/1");
+
+        return $response->json();
+    }
+
+    // 경로 정보 삭제
+    public function myTestDelete()
+    {
+        // TODO 기록 아이디로 바꾸기
+
+        $response = \Illuminate\Support\Facades\Http::delete("http://13.209.75.193:3000/api/route/1");
+
+        return $response->json();
     }
 }
