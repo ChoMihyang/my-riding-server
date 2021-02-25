@@ -200,12 +200,11 @@ class RouteController extends Controller
         $route_user_id = $user->getAttribute('id');
 
         $routeValue = $this->route->routeListValue(1, $route_user_id)->take(5);
-        $response_data = [
-            'routes' => $routeValue
-        ];
+        $response_data = $routeValue;
 
-        return $this->responseJson(
+        return $this->responseAppJson(
             self::ROUTEDETAILVIEW_SUCCESS,
+            "routes",
             $response_data,
             200
         );
@@ -222,12 +221,11 @@ class RouteController extends Controller
         $route_user_id = $user->getAttribute('id');
 
         $routeValue = $this->route->routeListValue(1, $route_user_id);
-        $response_data = [
-            'routes' => $routeValue
-        ];
+        $response_data = $routeValue;
 
-        return $this->responseJson(
+        return $this->responseAppJson(
             self::ROUTEDETAILVIEW_SUCCESS,
+            "routes",
             $response_data,
             200
         );
@@ -268,8 +266,9 @@ class RouteController extends Controller
                     'error' => $validator->errors(),
                 ];
 
-                return $this->responseJson(
+                return $this->responseAppJson(
                     self::ROUTESEARCH_FAIL,
+                    "routes",
                     $response_data,
                     422
                 );
@@ -280,7 +279,7 @@ class RouteController extends Controller
 
             $pick = $this->route->sortSearchCount($count);
 
-            $routeValue = $wordValue->sortByDesc($pick);
+            $routeValue = $wordValue->orderBy($pick)->get();
         }
         // 검색 안하면 바로 사용자 입력 방법으로 정렬
 
@@ -288,7 +287,7 @@ class RouteController extends Controller
             // TODO 검색부분 수정해야됨
             $pick = $this->route->sortSearchCount($count);
 
-            $routeValue = Route::all()->sortByDesc($pick);
+            $routeValue = Route::orderBy($pick)->get();
         }
 
         $response_data = $routeValue;
