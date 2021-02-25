@@ -333,4 +333,23 @@ class RecordController extends Controller
         // -> record 테이블에서 rec_route_id 카운트 하기, rec_user_id 와 rec_route_id 가 중복되는 경우 제외
         $this->route->tryUserCheck($rec_route_id);
     }
+
+    // 경로 몽고로 보내기
+    public function test(Request $request)
+    {
+        $date = $request->input('date');
+        $lat = $request->input('lat');
+        $lng = $request->input('lng');
+        $speed = $request->input('speed');
+
+        $response_data = [
+            
+        ];
+
+//        dd($response_data);
+
+        return response()->json([
+            "records" => $response_data
+        ], 201);
+    }
 }

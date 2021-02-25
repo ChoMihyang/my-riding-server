@@ -87,3 +87,44 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
     Route::get('/rank', 'UserController@viewUserRank')->name('[랭킹] 사용자 랭킹 출력');
     Route::get('/rank/{id}/{name}', 'UserController@viewDetailRank')->name('[랭킹] 사용자 상세 보기');
 });
+Route::get("test/get/record", function () {
+    $response = \Illuminate\Support\Facades\Http::get("http://13.209.75.193:3000/api/record/1");
+    return $response->json();
+});
+
+Route::get("test/post/record", function (Request $request) {
+    $date = $request->input('date');
+    $lat = $request->input('lat');
+    $lng = $request->input('lng');
+    $speed = $request->input('speed');
+    $location = ["date" => $date, "lat" => $lat, "lng" => $lng, "speed" => $speed];
+    event(new SendLocation($location));
+    return response()->json(['status' => 'success', 'data' => $location]);
+});
+
+
+Route::get("test/post/record", function () {
+
+    $response = \Illuminate\Support\Facades\Http::post("http://13.209.75.193:3000/api/record/1", [
+        "records" => [
+            [
+                "date" => "Sun Nov 29 2020 23:23:30 GMT+0900 (대한민국 표준시)",
+                "lat" => 35.185689,
+                "lng" => 129.07168,
+                "speed" => 0
+            ],
+            [
+                "date" => "Sun Nov 29 2020 23:23:40 GMT+0900 (대한민국 표준시)",
+                "lat" => 35.185749,
+                "lng" => 129.071722,
+                "speed" => 0
+            ]
+        ]
+    ]);
+    return $response->json();
+});
+Route::get("test/delete/record", function () {
+    $response = \Illuminate\Support\Facades\Http::delete("http://13.209.75.193:3000/api/record/1");
+    return $response->json();
+});
+Route::get("/test", "RecordController@test");
