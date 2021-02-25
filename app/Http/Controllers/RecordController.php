@@ -283,8 +283,10 @@ class RecordController extends Controller
                 422
             );
         }
-        $year = date("Y-m-d");
+
         // 기록 저장 성공한 경우
+        $year = date("Y-m-d");
+
         // -> stats 테이블 select : 오늘 날짜의 기록 존재 여부 체크
         $statCheck = Stats::where('stat_user_id', $rec_user_id)
             ->where('stat_date', $year)
@@ -293,11 +295,10 @@ class RecordController extends Controller
         if ($statCheck) {
             // -> 통계 존재하는 경우 : 기존 기록에서 update
             // TODO 수정할 부분 점수 계산
-            $this->stats->updateStat($rec_user_id);
-        }
-        else {
+            $statResult = $this->stats->updateStat($rec_user_id);
+        } else {
             // -> 통계 존재하지 않는 경우 : 기록 create
-            $this->stats->createStats(
+            $statResult = $this->stats->createStats(
                 $rec_user_id, $today_week, $today_day,
                 $rec_distance, $rec_time, $rec_avg_speed, $rec_max_speed, $today_year
             );
@@ -307,6 +308,40 @@ class RecordController extends Controller
             // 만들어진 경로로 주행 한 경우에만
             $this->tryCount($rec_route_id);
         }
+
+        // 통계 레코드 생성을 성공한 경우 배지 달성 여부 판단
+        // 배지 타입 : 100 - 거리, 200 - 시간, 300 - 최고 속도, 400 - 점수, 500 - 랭킹, 600 - 연속
+
+        // TODO 달성 여부 판단 메서드 BadgeController 이동
+        if ($statResult) {
+            // 1. 거리 배지
+            // 통계 테이블 조회 -> 누적 거리 비교 (기준 - 30m / 50m / 100m)
+            $user_info = $this->stats->select_stats_badge($rec_user_id);
+
+            $sum_of_distance = $user_info->sum('distance');
+
+            $badge_msg = "";
+            if ($sum_of_distance >= 300) {
+                $badge_msg = "300km";
+            } elseif ($sum_of_distance >= 150) {
+                $badge_msg = "150km";
+            } elseif ($sum_of_distance >= 100) {
+                $badge_msg = "100km";
+            } elseif ($sum_of_distance >= 50) {
+                $badge_msg = "50km";
+            } elseif ($sum_of_distance >= 30) {
+                $badge_msg = "30km";
+            }
+            $badge_msg .= "달성";
+
+            // 위 기준과 같거나 넘을 경우
+            // -> badge Table 내 '배지 달성한 사용자 id', '배지 타입(100)', '달성 메시지("누적 거리 30m / 50m / 100m ... 달성")', '달성 날짜' 삽입
+
+
+            $sum_of_time = $user_info->sum('time');
+            $max_of_speed = $user_info->max('max_speed');
+        }
+
 
         return $this->responseJson(
             self::SAVE_RECORD_SUCCESS,

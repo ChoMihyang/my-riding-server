@@ -8,7 +8,7 @@ class RouteLike extends Model
 {
     protected $table = 'route_likes';
 
-    protected $fillable = ['route_like_user','route_like_obj'];
+    protected $fillable = ['route_like_user', 'route_like_obj'];
 
     public function user()
     {
@@ -49,7 +49,7 @@ class RouteLike extends Model
     )
     {
         return self::select('route_like_obj')
-            ->where('route_like_obj',$route_like_obj)
+            ->where('route_like_obj', $route_like_obj)
             ->get()
             ->count();
     }
@@ -66,12 +66,12 @@ class RouteLike extends Model
         int $route_like_obj
     )
     {
-        $idCheck = self::where('route_like_user',$route_like_user)
-            ->where('route_like_obj',$route_like_obj)
+        $idCheck = self::where('route_like_user', $route_like_user)
+            ->where('route_like_obj', $route_like_obj)
             ->get();
 
         $pickId = $idCheck->pluck('id');
 
-        return self::where('id',$pickId)->delete();
+        return self::where('id', $pickId)->delete();
     }
 }

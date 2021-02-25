@@ -85,5 +85,6 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
     });
 
     Route::get('/rank', 'UserController@viewUserRank')->name('[랭킹] 사용자 랭킹 출력');
-    Route::get('/rank/{id}/{name}', 'UserController@viewDetailRank')->name('[랭킹] 사용자 상세 보기');
+//    Route::get('/rank/{name}', 'UserController@viewDetailRank')->name('[랭킹] 사용자 상세 보기');
+
 });
