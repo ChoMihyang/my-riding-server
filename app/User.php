@@ -123,10 +123,8 @@ class User extends Authenticatable
         return $this->belongsToMany(Record::class, 'rec_user_id');
     }
 
-    /**
-     * 사용자 랭킹 10순위
-     *
-     */
+    // 사용자 랭킹 정보
+    // TODO 상세정보까지 볼 수 있도록 누적 값 등 전체 기록 전달하기
     public function getUserRank()
     {
         $param = [
