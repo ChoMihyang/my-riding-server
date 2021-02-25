@@ -246,16 +246,31 @@ class Route extends Model
      * [라이딩 경로] 코스 상세 페이지 값 조회
      *
      * @param int $route_id
+     * @param int $route_like_user
      * @return mixed
      */
     public function routeDetailValue(
-        int $route_id
+        int $route_id,
+        int $route_like_user
     )
     {
-        $routeInfo = self::select('id','route_user_id','route_title','route_like','route_distance','route_image',
-            'route_time','route_start_point_address','route_end_point_address','created_at')
-            ->where('id', $route_id)
-            ->first();
+        $routeInfo = Route::join('route_likes', 'route_likes.route_like_user', '=', 'routes.route_user_id')
+            ->select('routes.id',
+                'routes.route_user_id',
+                'routes.route_title',
+                'routes.route_like',
+                'routes.route_distance',
+                'routes.route_image',
+                'routes.route_time',
+                'routes.route_start_point_address',
+                'routes.route_end_point_address',
+                'routes.created_at',
+                'route_likes.route_like_user'
+            )
+            ->where('routes.id', $route_id)
+            ->where('routes.route_user_id',$route_like_user)
+            ->where('route_likes.route_like_obj', $route_id)
+            ->get();
 
         return $routeInfo;
     }

@@ -368,4 +368,76 @@ class RecordController extends Controller
         // -> record 테이블에서 rec_route_id 카운트 하기, rec_user_id 와 rec_route_id 가 중복되는 경우 제외
         $this->route->tryUserCheck($rec_route_id);
     }
+
+
+    // TODO 몽고 연동 테스트 완료..
+    // 라이딩 기록 몽고로 보내기
+    public function testSave(Request $request)
+    {
+        $response_data = $request->input('records');
+
+        // TODO 기록 아이디로 바꾸기
+
+//        $response = \Illuminate\Support\Facades\Http::post("http://13.209.75.193:3000/api/record/{id}", [
+        $response = \Illuminate\Support\Facades\Http::post("http://13.209.75.193:3000/api/record/1", [
+            "records" => $response_data
+        ]);
+
+        return $response->json();
+    }
+
+    // 라이딩 기록 몽고에서 조회
+    public function testShow()
+    {
+        // TODO 기록 아이디로 바꾸기
+
+        $response = \Illuminate\Support\Facades\Http::get("http://13.209.75.193:3000/api/record/1");
+
+        return $response->json();
+    }
+
+    // 라이딩 기록 삭제
+    public function testDelete()
+    {
+        // TODO 기록 아이디로 바꾸기
+
+        $response = \Illuminate\Support\Facades\Http::delete("http://13.209.75.193:3000/api/record/1");
+
+        return $response->json();
+    }
+
+    // 경로 정보 저장
+    public function myTestSave(Request $request)
+    {
+
+        $response_data = $request->input('points');
+
+        // TODO 기록 아이디로 바꾸기
+
+        $response = \Illuminate\Support\Facades\Http::post("http://13.209.75.193:3000/api/route/1", [
+            "points" => $response_data
+        ]);
+
+        return $response->json();
+    }
+
+    // 경로 정보 조회
+    public function myTestShow()
+    {
+        // TODO 기록 아이디로 바꾸기
+
+        $response = \Illuminate\Support\Facades\Http::get("http://13.209.75.193:3000/api/route/1");
+
+        return $response->json();
+    }
+
+    // 경로 정보 삭제
+    public function myTestDelete()
+    {
+        // TODO 기록 아이디로 바꾸기
+
+        $response = \Illuminate\Support\Facades\Http::delete("http://13.209.75.193:3000/api/route/1");
+
+        return $response->json();
+    }
 }

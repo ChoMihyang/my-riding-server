@@ -363,12 +363,14 @@ class RouteController extends Controller
      */
     public function routeMyListDetail(Route $id): JsonResponse
     {
+        $user = Auth::guard('api')->user();
+        $route_like_user = $user->getAttribute('id');
         // 경로 종류 -> 인기 경로, 좋아요 누른 경로, 내가 만든 경로, 검색한 경로
         // 이전 페이지에서 route 의 id 받음
         $route_id = $id->id;
 
         // 경로 종류별로 들어온 route_id
-        $routeValue = $this->route->routeDetailValue($route_id);
+        $routeValue = $this->route->routeDetailValue($route_id, $route_like_user);
 
         $responseData = $routeValue;
 
