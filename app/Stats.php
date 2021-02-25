@@ -175,6 +175,8 @@ class Stats extends Model
             'stat_year' => $today_year,
             'created_at' => now(),
         ]);
+
+        return true;
     }
 
     // 통계 업데이트
@@ -211,11 +213,11 @@ class Stats extends Model
 
         $userRecord = Record::where('rec_user_id', $rec_user_id)
             ->where('created_at', 'like', '%' . $checkDate . '%')
-            ->orderBy('rec_max_speed','DESC')
+            ->orderBy('rec_max_speed', 'DESC')
             ->first();
 
 
-        Stats::where('stat_user_id',$rec_user_id)
+        Stats::where('stat_user_id', $rec_user_id)
             ->where('stat_date', 'like', '%' . $checkDate . '%')
             ->update([
                 'stat_distance' => $userAllDistanceSum,
@@ -226,5 +228,28 @@ class Stats extends Model
                 'stat_year' => $today_year,
                 'updated_at' => now(),
             ]);
+
+        return true;
+    }
+
+    /**
+     * @param int $user_id
+     * @return Collection
+     */
+    public function select_stats_badge(
+        int $user_id
+    ): Collection
+    {
+        $param = [
+            'stat_distance as distance',
+            'stat_time as time',
+            'stat_max_speed as max_speed',
+            'stat_week as week'
+        ];
+        $returnData = self::select($param)
+            ->where('stat_user_id', $user_id)
+            ->get();
+
+        return $returnData;
     }
 }
