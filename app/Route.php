@@ -324,4 +324,15 @@ class Route extends Model
         // 경로 가져옴
         return self::find($rec_route_id)->update($param);
     }
+
+    // 경로 저장 체크용
+    public function routeSaveCheck(
+        int $route_user_id,
+        string $route_title
+    )
+    {
+        return self::where('route_user_id', $route_user_id)
+            ->where('route_title', $route_title)
+            ->get();
+    }
 }

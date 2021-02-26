@@ -90,10 +90,10 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
 });
 
 // 몽고 경로 테스트 중..
-Route::get("/test/post/record", "RecordController@testSave")->name("라이딩 기록 몽고로 데이터 전송");
-Route::get("/test/get/record/{id}", "RecordController@testShow")->name("라이딩 기록 몽고에서 조회");
-Route::get("/test/delete/record", "RecordController@testDelete")->name("라이딩 기록 몽고에서 삭제");
+Route::get("/test/post/record", "RecordController@mongoRecordSave")->name("라이딩 기록 몽고로 데이터 전송");
+Route::get("/test/get/record/{id}", "RecordController@mongoRecordShow")->name("라이딩 기록 몽고에서 조회");
+Route::get("/test/delete/record", "RecordController@mongoRecordDelete")->name("라이딩 기록 몽고에서 삭제");
 // 몽고 기록 테스트 중
-Route::get("/test/post/route", "RecordController@myTestSave")->name("라이딩 경로 몽고로 데이터 전달");
-Route::get("/test/get/route/{id}", "RecordController@myTestShow")->name("라이딩 경로 몽고에서 조회");
-Route::get("/test/delete/route", "RecordController@myTestDelete")->name("라이딩 경로 몽고에서 삭제");
+Route::get("/test/post/route", "RouteController@mongoRouteSave")->name("라이딩 경로 몽고로 데이터 전달");
+Route::get("/test/get/route/{id}", "RouteController@mongoRouteShow")->name("라이딩 경로 몽고에서 조회");
+Route::get("/test/delete/route", "RouteController@mongoRouteDelete")->name("라이딩 경로 몽고에서 삭제");
