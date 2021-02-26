@@ -68,7 +68,7 @@ class ApiAuthController extends Controller
 
         $user_picture = "null";
 
-        // TODO 사진 입력 테스트
+        // 사진 입력
         if (($request->has('user_picture'))) {
             $image = $request->file('user_picture');
 
@@ -88,7 +88,6 @@ class ApiAuthController extends Controller
         $user_nickname = $request->input('user_nickname');
 //        dd($user_picture);
 
-        // TODO 에러남..
         $data = $this->user->createUserInfo($user_account,$user_password,$user_nickname,$user_picture);
 //        $token = $data->createToken('Laravel Password Grant Client')->accessToken;
 //

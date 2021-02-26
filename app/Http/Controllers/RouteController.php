@@ -42,7 +42,6 @@ class RouteController extends Controller
         $user = Auth::guard('api')->user();
         $route_user_id = $user->getAttribute('id');
 
-        // TODO 경로 이미지 추가
 
         $routeValue = $this->route->routeListValue(1, $route_user_id);
         $response_data = [
@@ -110,9 +109,9 @@ class RouteController extends Controller
 
         // 요청한 Route 의 ID 값의 record 데이터(기록순 정렬) 가져옴
         $recordValue = $this->record->rankSort($route_id)->take(3);
-
+        // 랭킹 데이터
         $rankValues = $this->record->myRecord($route_id, $route_user_id);
-        // TODO 몽고 데이터 조회하기
+        // 몽고 데이터 조회
         $routeMongo = $this->mongoRouteShow($route_id);
 
         $response_data = [
@@ -264,7 +263,6 @@ class RouteController extends Controller
      */
     public function routeSearch(Request $request): JsonResponse
     {
-        // TODO 검색어 입력받기
         $wordValue = "";
         $word = (string)$request->word;
         $count = (int)$request->count;
@@ -413,8 +411,6 @@ class RouteController extends Controller
     public function mongoRouteSave(Request $request, int $routeId)
     {
         $response_data = $request->input('points');
-
-        // TODO 기록 아이디로 바꾸기
 
         $response = \Illuminate\Support\Facades\Http::post("http://13.209.75.193:3000/api/route/$routeId", [
             "points" => $response_data

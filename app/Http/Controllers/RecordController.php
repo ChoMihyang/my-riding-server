@@ -376,14 +376,10 @@ class RecordController extends Controller
         $this->route->tryUserCheck($rec_route_id);
     }
 
-
-    // TODO 몽고 연동 테스트 완료..
     // 라이딩 기록 몽고로 보내기
     public function mongoRecordSave(Request $request, int $recordId)
     {
         $response_data = $request->input('records');
-
-        // TODO 기록 아이디로 바꾸기
 
         $response = \Illuminate\Support\Facades\Http::post("http://13.209.75.193:3000/api/record/$recordId", [
             "records" => $response_data
@@ -403,8 +399,6 @@ class RecordController extends Controller
     // 라이딩 기록 삭제
     public function mongoRecordDelete(int $recordId)
     {
-        // TODO 기록 아이디로 바꾸기
-
         $response = \Illuminate\Support\Facades\Http::delete("http://13.209.75.193:3000/api/record/$recordId");
 
         return $response->json();
