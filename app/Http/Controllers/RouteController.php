@@ -70,6 +70,7 @@ class RouteController extends Controller
         // 경로 번호
         $route_id = $id->id;
 
+        $this->routeLike->likeDown($route_user_id, $route_id);
         $deleteValue = $this->route->routeDelete($route_user_id, $route_id);
 
         if (!$deleteValue) {
