@@ -251,13 +251,23 @@ class RecordController extends Controller
         $rec_avg_speed = $request->input('rec_avg_speed');
         $rec_max_speed = $request->input('rec_max_speed');
 
-        // 기록 저장
+        // 1. mysql 에 기록 저장
         $this->record->createRecord(
             $rec_user_id, $rec_route_id, $rec_title,
             $rec_distance, $rec_time, $rec_score,
             $rec_start_point_address, $rec_end_point_address,
             $rec_avg_speed, $rec_max_speed
         );
+
+        // 2. 경로 ID 값으로 몽고에 기록, 경로 데이터 저장
+        // 기록 저장 성공 여부 체크
+        $recordSavePoints = $this->record->RecordSaveCheck($rec_route_id, $rec_title);
+        // 가장 최근 기록의 ID 값 가져와 몽고의 drivingId로 넘겨줌
+        $saveRecordId = $recordSavePoints[0]['id'];
+
+        // 3. 몽고에 데이터 저장 후 값 뽑기
+        // 몽고에 기록 데이터 저장 완료, 조회 완료
+        $saveRecordMongo = $this->mongoRecordSave($request, $saveRecordId);
 
         // 주차, 요일 계산
         // 현재 연도
@@ -269,16 +279,13 @@ class RecordController extends Controller
         $temp_day = date('w', strtotime($today_date));
         $today_day = $temp_day === 0 ? 6 : $temp_day - 1;
 
-        // 기록 저장 성공 여부 체크
-        // DB 조회 ?
-        $recordSavePoints = $this->record->RecordSaveCheck($rec_route_id, $rec_title);
 
         if (!$recordSavePoints) {
             // TODO 기록 저장 실패한 경우?
             // app 문의?, 데이터 전송 실패?  (mysql, mongoDB)
             // msg 전송
             return $this->responseJson(
-                self::SAVE_RECORD_SUCCESS,
+                self::SAVE_RECORD_FAIL,
                 [],
                 422
             );
@@ -293,54 +300,54 @@ class RecordController extends Controller
             ->first();
 
         if ($statCheck) {
-            // -> 통계 존재하는 경우 : 기존 기록에서 update
+            // -> 통계 존재하는 경우 : 기존 통계에서 update
             // TODO 수정할 부분 점수 계산
             $statResult = $this->stats->updateStat($rec_user_id);
         } else {
-            // -> 통계 존재하지 않는 경우 : 기록 create
+            // -> 통계 존재하지 않는 경우 : 통계 create
             $statResult = $this->stats->createStats(
                 $rec_user_id, $today_week, $today_day,
                 $rec_distance, $rec_time, $rec_avg_speed, $rec_max_speed, $today_year
             );
         }
 
-        if ($rec_route_id) {
-            // 만들어진 경로로 주행 한 경우에만
-            $this->tryCount($rec_route_id);
-        }
-
-        // 통계 레코드 생성을 성공한 경우 배지 달성 여부 판단
-        // 배지 타입 : 100 - 거리, 200 - 시간, 300 - 최고 속도, 400 - 점수, 500 - 랭킹, 600 - 연속
-
-        // TODO 달성 여부 판단 메서드 BadgeController 이동
-        if ($statResult) {
-            // 1. 거리 배지
-            // 통계 테이블 조회 -> 누적 거리 비교 (기준 - 30m / 50m / 100m)
-            $user_info = $this->stats->select_stats_badge($rec_user_id);
-
-            $sum_of_distance = $user_info->sum('distance');
-
-            $badge_msg = "";
-            if ($sum_of_distance >= 300) {
-                $badge_msg = "300km";
-            } elseif ($sum_of_distance >= 150) {
-                $badge_msg = "150km";
-            } elseif ($sum_of_distance >= 100) {
-                $badge_msg = "100km";
-            } elseif ($sum_of_distance >= 50) {
-                $badge_msg = "50km";
-            } elseif ($sum_of_distance >= 30) {
-                $badge_msg = "30km";
-            }
-            $badge_msg .= "달성";
-
-            // 위 기준과 같거나 넘을 경우
-            // -> badge Table 내 '배지 달성한 사용자 id', '배지 타입(100)', '달성 메시지("누적 거리 30m / 50m / 100m ... 달성")', '달성 날짜' 삽입
-
-
-            $sum_of_time = $user_info->sum('time');
-            $max_of_speed = $user_info->max('max_speed');
-        }
+//        if ($rec_route_id) {
+//            // 만들어진 경로로 주행 한 경우에만
+//            $this->tryCount($rec_route_id);
+//        }
+//
+//        // 통계 레코드 생성을 성공한 경우 배지 달성 여부 판단
+//        // 배지 타입 : 100 - 거리, 200 - 시간, 300 - 최고 속도, 400 - 점수, 500 - 랭킹, 600 - 연속
+//
+//        // TODO 달성 여부 판단 메서드 BadgeController 이동
+//        if ($statResult) {
+//            // 1. 거리 배지
+//            // 통계 테이블 조회 -> 누적 거리 비교 (기준 - 30m / 50m / 100m)
+//            $user_info = $this->stats->select_stats_badge($rec_user_id);
+//
+//            $sum_of_distance = $user_info->sum('distance');
+//
+//            $badge_msg = "";
+//            if ($sum_of_distance >= 300) {
+//                $badge_msg = "300km";
+//            } elseif ($sum_of_distance >= 150) {
+//                $badge_msg = "150km";
+//            } elseif ($sum_of_distance >= 100) {
+//                $badge_msg = "100km";
+//            } elseif ($sum_of_distance >= 50) {
+//                $badge_msg = "50km";
+//            } elseif ($sum_of_distance >= 30) {
+//                $badge_msg = "30km";
+//            }
+//            $badge_msg .= "달성";
+//
+//            // 위 기준과 같거나 넘을 경우
+//            // -> badge Table 내 '배지 달성한 사용자 id', '배지 타입(100)', '달성 메시지("누적 거리 30m / 50m / 100m ... 달성")', '달성 날짜' 삽입
+//
+//
+//            $sum_of_time = $user_info->sum('time');
+//            $max_of_speed = $user_info->max('max_speed');
+//        }
 
 
         return $this->responseJson(
@@ -369,17 +376,12 @@ class RecordController extends Controller
         $this->route->tryUserCheck($rec_route_id);
     }
 
-
-    // TODO 몽고 연동 테스트 완료..
     // 라이딩 기록 몽고로 보내기
-    public function testSave(Request $request)
+    public function mongoRecordSave(Request $request, int $recordId)
     {
         $response_data = $request->input('records');
 
-        // TODO 기록 아이디로 바꾸기
-
-//        $response = \Illuminate\Support\Facades\Http::post("http://13.209.75.193:3000/api/record/{id}", [
-        $response = \Illuminate\Support\Facades\Http::post("http://13.209.75.193:3000/api/record/1", [
+        $response = \Illuminate\Support\Facades\Http::post("http://13.209.75.193:3000/api/record/$recordId", [
             "records" => $response_data
         ]);
 
@@ -387,56 +389,17 @@ class RecordController extends Controller
     }
 
     // 라이딩 기록 몽고에서 조회
-    public function testShow()
+    public function mongoRecordShow(int $recordId)
     {
-        // TODO 기록 아이디로 바꾸기
-
-        $response = \Illuminate\Support\Facades\Http::get("http://13.209.75.193:3000/api/record/1");
+        $response = \Illuminate\Support\Facades\Http::get("http://13.209.75.193:3000/api/record/$recordId");
 
         return $response->json();
     }
 
     // 라이딩 기록 삭제
-    public function testDelete()
+    public function mongoRecordDelete(int $recordId)
     {
-        // TODO 기록 아이디로 바꾸기
-
-        $response = \Illuminate\Support\Facades\Http::delete("http://13.209.75.193:3000/api/record/1");
-
-        return $response->json();
-    }
-
-    // 경로 정보 저장
-    public function myTestSave(Request $request)
-    {
-
-        $response_data = $request->input('points');
-
-        // TODO 기록 아이디로 바꾸기
-
-        $response = \Illuminate\Support\Facades\Http::post("http://13.209.75.193:3000/api/route/1", [
-            "points" => $response_data
-        ]);
-
-        return $response->json();
-    }
-
-    // 경로 정보 조회
-    public function myTestShow()
-    {
-        // TODO 기록 아이디로 바꾸기
-
-        $response = \Illuminate\Support\Facades\Http::get("http://13.209.75.193:3000/api/route/1");
-
-        return $response->json();
-    }
-
-    // 경로 정보 삭제
-    public function myTestDelete()
-    {
-        // TODO 기록 아이디로 바꾸기
-
-        $response = \Illuminate\Support\Facades\Http::delete("http://13.209.75.193:3000/api/route/1");
+        $response = \Illuminate\Support\Facades\Http::delete("http://13.209.75.193:3000/api/record/$recordId");
 
         return $response->json();
     }
