@@ -42,6 +42,8 @@ class RouteController extends Controller
         $user = Auth::guard('api')->user();
         $route_user_id = $user->getAttribute('id');
 
+        // TODO 경로 이미지 추가
+
         $routeValue = $this->route->routeListValue(1, $route_user_id);
         $response_data = [
             'routes' => $routeValue
@@ -125,7 +127,7 @@ class RouteController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function routeSave(Request $request): JsonResponse
+    public function routeSave(Request $request, Record $record): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'route_title' => 'required|string|min:3|alpha_num|unique:routes',
@@ -145,6 +147,8 @@ class RouteController extends Controller
 
         $user = Auth::guard('api')->user();
         $route_user_id = $user->getAttribute('id');
+
+        // TODO 경로 저장 할 때 몽고DB에서 위도, 경도 값 가져오기
 
         $route_title = $request->input('route_title');
         $route_image = $request->input('route_image');
@@ -381,4 +385,16 @@ class RouteController extends Controller
             200
         );
     }
+
+    // 경로 정보 조회
+    public function myTestShow(Request $request)
+    {
+        $route_id = $request->id;
+        // TODO 기록 아이디로 바꾸기
+
+        $response = \Illuminate\Support\Facades\Http::get("http://13.209.75.193:3000/api/route/$route_id");
+
+        return $response->json();
+    }
+
 }
