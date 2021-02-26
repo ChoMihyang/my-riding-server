@@ -8,6 +8,7 @@ use App\Stats;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class RecordController extends Controller
@@ -241,6 +242,7 @@ class RecordController extends Controller
 
         // 경로 정보 있을 경우 가져오기
         $rec_route_id = $request->rec_route_id;
+//        dd($rec_route_id);
 
         $rec_title = $request->input('rec_title');
         $rec_distance = $request->input('rec_distance');
@@ -251,23 +253,30 @@ class RecordController extends Controller
         $rec_avg_speed = $request->input('rec_avg_speed');
         $rec_max_speed = $request->input('rec_max_speed');
 
-        // 1. mysql 에 기록 저장
-        $this->record->createRecord(
-            $rec_user_id, $rec_route_id, $rec_title,
-            $rec_distance, $rec_time, $rec_score,
-            $rec_start_point_address, $rec_end_point_address,
-            $rec_avg_speed, $rec_max_speed
-        );
+        DB::beginTransaction();
+        try {
+            // 1. mysql 에 기록 저장
+            $this->record->createRecord(
+                $rec_user_id, $rec_route_id, $rec_title,
+                $rec_distance, $rec_time, $rec_score,
+                $rec_start_point_address, $rec_end_point_address,
+                $rec_avg_speed, $rec_max_speed
+            );
 
-        // 2. 경로 ID 값으로 몽고에 기록, 경로 데이터 저장
-        // 기록 저장 성공 여부 체크
-        $recordSavePoints = $this->record->RecordSaveCheck($rec_route_id, $rec_title);
-        // 가장 최근 기록의 ID 값 가져와 몽고의 drivingId로 넘겨줌
-        $saveRecordId = $recordSavePoints[0]['id'];
+            // 2. 경로 ID 값으로 몽고에 기록, 경로 데이터 저장
+            // 기록 저장 성공 여부 체크
+            $recordSavePoints = $this->record->RecordSaveCheck($rec_route_id, $rec_title);
+            // 가장 최근 기록의 ID 값 가져와 몽고의 drivingId로 넘겨줌
+            $saveRecordId = $recordSavePoints[0]['id'];
 
-        // 3. 몽고에 데이터 저장 후 값 뽑기
-        // 몽고에 기록 데이터 저장 완료, 조회 완료
-        $saveRecordMongo = $this->mongoRecordSave($request, $saveRecordId);
+            // 3. 몽고에 데이터 저장 후 값 뽑기
+            // 몽고에 기록 데이터 저장 완료, 조회 완료
+            $saveRecordMongo = $this->mongoRecordSave($request, $saveRecordId);
+            DB::commit();
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            throw $exception;
+        }
 
         // 주차, 요일 계산
         // 현재 연도

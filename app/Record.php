@@ -348,7 +348,7 @@ class Record extends Model
      * @return mixed
      */
     public function RecordSaveCheck(
-        int $rec_route_id,
+        ?int $rec_route_id,
         string $rec_title
     )
     {
