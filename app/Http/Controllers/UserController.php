@@ -121,11 +121,37 @@ class UserController extends Controller
     public function viewUserRank()
     {
         $rank_of_all_users = $this->user->getUserRank();
+        $stat_of_all_users = $this->stats->getUserStat();
+        dd($stat_of_all_users);
 
+        $info_all_users = [];
+
+        foreach ($rank_of_all_users as $user => $value) {
+
+            $sum_of_time = $info_of_user->sum('time');
+            $sum_of_distance = $info_of_user->sum('distance');
+            $avg_of_speed = round($info_of_user->avg('avg_speed'), 1);
+            $max_of_speed = $info_of_user->max('max_speed');
+
+            $info_all_users[$user] = [
+                'id' => $value->id,
+                'nickname' => $value->nickname,
+                'picture' => $value->picture,
+                'score' => $value->score,
+            ];
+        }
+
+        // 반환할 데이터 계산
+//        $picture = $info_of_user->pluck('picture')->first();
+//        $score = $info_of_user->pluck('score')->first();
+//        $sum_of_time = $info_of_user->sum('time');
+//        $sum_of_distance = $info_of_user->sum('distance');
+//        $avg_of_speed = round($info_of_user->avg('avg_speed'), 1);
+//        $max_of_speed = $info_of_user->max('max_speed');
         return $this->responseAppJson(
             self::PRINT_USER_RANK_SUCCESS,
             "ranks",
-            $rank_of_all_users,
+            $info_all_users,
             200
         );
     }
