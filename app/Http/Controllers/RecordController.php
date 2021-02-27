@@ -321,43 +321,34 @@ class RecordController extends Controller
             );
         }
 
-//        if ($rec_route_id) {
-//            // 만들어진 경로로 주행 한 경우에만
-//            $this->tryCount($rec_route_id);
-//        }
-//
-//        // 통계 레코드 생성을 성공한 경우 배지 달성 여부 판단
-//        // 배지 타입 : 100 - 거리, 200 - 시간, 300 - 최고 속도, 400 - 점수, 500 - 랭킹, 600 - 연속
-//
-//        // TODO 달성 여부 판단 메서드 BadgeController 이동
-//        if ($statResult) {
-//            // 1. 거리 배지
-//            // 통계 테이블 조회 -> 누적 거리 비교 (기준 - 30m / 50m / 100m)
-//            $user_info = $this->stats->select_stats_badge($rec_user_id);
-//
-//            $sum_of_distance = $user_info->sum('distance');
-//
-//            $badge_msg = "";
-//            if ($sum_of_distance >= 300) {
-//                $badge_msg = "300km";
-//            } elseif ($sum_of_distance >= 150) {
-//                $badge_msg = "150km";
-//            } elseif ($sum_of_distance >= 100) {
-//                $badge_msg = "100km";
-//            } elseif ($sum_of_distance >= 50) {
-//                $badge_msg = "50km";
-//            } elseif ($sum_of_distance >= 30) {
-//                $badge_msg = "30km";
-//            }
-//            $badge_msg .= "달성";
-//
-//            // 위 기준과 같거나 넘을 경우
-//            // -> badge Table 내 '배지 달성한 사용자 id', '배지 타입(100)', '달성 메시지("누적 거리 30m / 50m / 100m ... 달성")', '달성 날짜' 삽입
-//
-//
-//            $sum_of_time = $user_info->sum('time');
-//            $max_of_speed = $user_info->max('max_speed');
-//        }
+
+        if ($rec_route_id) {
+            // 만들어진 경로로 주행 한 경우에만
+            $this->tryCount($rec_route_id);
+        }
+
+        // 통계 레코드 생성을 성공한 경우 배지 달성 여부 판단
+        // 배지 타입 : 100 - 거리, 200 - 시간, 300 - 최고 속도, 400 - 점수, 500 - 랭킹, 600 - 연속
+
+        // TODO 달성 여부 판단 메서드 BadgeController 이동
+        if ($statResult) {
+
+            $badgeController = app('App\Http\Controllers\BadgeController');
+
+            // 통계 테이블 조회 -> 기준 필드 값 반환
+            $user_info = $this->stats->select_stats_badge($rec_user_id);
+
+            $sum_of_distance = $user_info->sum('distance');
+            $sum_of_time = $user_info->sum('time');
+            $max_of_speed = $user_info->max('max_speed');
+
+            $badge_result = $badgeController->checkBadge($sum_of_distance, $sum_of_time, $max_of_speed);
+
+            // -> badge Table 내 '배지 달성한 사용자 id', '배지 타입(100)', '달성 메시지("누적 거리 30m / 50m / 100m ... 달성")', '달성 날짜' 삽입
+            if (count($badge_result) > 0) {
+
+            }
+        }
 
 
         return $this->responseJson(
@@ -406,11 +397,26 @@ class RecordController extends Controller
         return $response->json();
     }
 
-    // 라이딩 기록 삭제
-    public function mongoRecordDelete(int $recordId)
+    // 라이딩 일지 제목 수정
+    public function recordModify(Record $record, Request $request)
     {
-        $response = \Illuminate\Support\Facades\Http::delete("http://13.209.75.193:3000/api/record/$recordId");
+        $record_id = $record['id'];
+        $modified_title = $request->input('title');
 
-        return $response->json();
+        $this->record->modify_record_name($record_id, $modified_title);
+    }
+
+    // 라이딩 기록 삭제
+    public function recordDelete(Record $record)
+    {
+        // 삭제 요청 받은 기록 레코드의 ID
+        $record_id = $record['id'];
+        // 사용자 ID 가져오기
+        $user_id = Auth::guard('api')->user()->getAttribute('id');
+
+        // 몽고 DB 내 기록 레코드 삭제 요청
+        $this->record->mongoRouteDelete($record_id);
+        // 기록 레코드 삭제
+        $this->record->delete_record($user_id, $record_id);
     }
 }

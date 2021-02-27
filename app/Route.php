@@ -31,9 +31,9 @@ class Route extends Model
         if ($count == 1) {
             // 두 테이블 union
             $routeTableInfo = Route::select('id as route_id', 'route_user_id')
-                    ->where('route_user_id',$route_user_id);
+                ->where('route_user_id', $route_user_id);
             $routeLikeTableInfo = RouteLike::select('id as route_like_id', 'route_like_user as route_user_id')
-                    ->where('route_like_user',$route_user_id);
+                ->where('route_like_user', $route_user_id);
             $calValue = $routeTableInfo->union($routeLikeTableInfo)->get();
 
             // collection -> array
@@ -56,21 +56,19 @@ class Route extends Model
                 'route_start_point_address',
                 'route_end_point_address',
                 'route_image')
-            ->whereIn('id',$arr)
-            ->orderBy('created_at','DESC')
-            ->get();
-        }
-        elseif ($count == 2) {
-            $routeInfo = self::select('id','route_title','route_distance','route_image','route_like')
-                ->orderBy('route_like','DESC')
+                ->whereIn('id', $arr)
+                ->orderBy('created_at', 'DESC')
+                ->get();
+        } elseif ($count == 2) {
+            $routeInfo = self::select('id', 'route_title', 'route_distance', 'route_image', 'route_like')
+                ->orderBy('route_like', 'DESC')
                 ->get()
                 ->take(5);
-        }
-        elseif ($count == 3) {
-            $routeInfo = self::select('id','route_user_id','route_title','route_like','route_distance','route_image',
-                                      'route_time','route_start_point_address','route_end_point_address','created_at')
+        } elseif ($count == 3) {
+            $routeInfo = self::select('id', 'route_user_id', 'route_title', 'route_like', 'route_distance', 'route_image',
+                'route_time', 'route_start_point_address', 'route_end_point_address', 'created_at')
                 ->where('route_user_id', $route_user_id)
-                ->orderBy('id','DESC')
+                ->orderBy('id', 'DESC')
                 ->get();
         }
 
@@ -90,7 +88,7 @@ class Route extends Model
         int $route_id
     )
     {
-        $routeInfo = self::where('id',$route_id)->get();
+        $routeInfo = self::where('id', $route_id)->get();
 
         return $routeInfo;
     }
@@ -107,8 +105,8 @@ class Route extends Model
         int $route_id
     )
     {
-        return Route::where('route_user_id',$route_user_id)
-            ->where('id',$route_id)
+        return Route::where('route_user_id', $route_user_id)
+            ->where('id', $route_id)
             ->delete();
     }
 
@@ -141,16 +139,16 @@ class Route extends Model
     )
     {
         return self::create([
-            'route_user_id'=>$route_user_id,
-            'route_title'=>$route_title,
-            'route_image'=>$route_image,
-            'route_distance'=>$route_distance,
-            'route_time'=>$route_time,
-            'route_avg_degree'=>$route_avg_degree,
-            'route_max_altitude'=>$route_max_altitude,
-            'route_min_altitude'=>$route_min_altitude,
-            'route_start_point_address'=>$route_start_point_address,
-            'route_end_point_address'=>$route_end_point_address,
+            'route_user_id' => $route_user_id,
+            'route_title' => $route_title,
+            'route_image' => $route_image,
+            'route_distance' => $route_distance,
+            'route_time' => $route_time,
+            'route_avg_degree' => $route_avg_degree,
+            'route_max_altitude' => $route_max_altitude,
+            'route_min_altitude' => $route_min_altitude,
+            'route_start_point_address' => $route_start_point_address,
+            'route_end_point_address' => $route_end_point_address,
         ]);
     }
 
@@ -221,20 +219,16 @@ class Route extends Model
         if ($count == 1) {
             // 최신 순 정렬
             $routeInfo = 'id';
-        }
-        elseif ($count == 2) {
+        } elseif ($count == 2) {
             // 좋아요 순 정렬
             $routeInfo = 'route_like';
-        }
-        elseif ($count == 3) {
+        } elseif ($count == 3) {
             // 거리 순 정렬
             $routeInfo = 'route_distance';
-        }
-        elseif ($count == 4) {
+        } elseif ($count == 4) {
             // 소요 시간 순 정렬
             $routeInfo = 'route_time';
-        }
-        elseif ($count == 5) {
+        } elseif ($count == 5) {
             // 라이딩 횟수 순 정렬
             $routeInfo = 'route_num_of_try_count';
         }
@@ -268,7 +262,7 @@ class Route extends Model
                 'route_likes.route_like_user'
             )
             ->where('routes.id', $route_id)
-            ->where('routes.route_user_id',$route_like_user)
+            ->where('routes.route_user_id', $route_like_user)
             ->where('route_likes.route_like_obj', $route_id)
             ->get();
 

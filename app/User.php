@@ -73,7 +73,9 @@ class User extends Authenticatable
             ->where('created_at', $latest_riding_date)
             ->first();
 
-//        $user_info['last_riding_id'] = $latest_riding_id[0]['id'];
+        // 최근 라이딩 날짜의 통계를 배열에 추가
+        $user_info['last_riding_id'] = $latest_riding_id === null
+            ? 0 : $latest_riding_id['id'];
 
         return $user_info;
     }
