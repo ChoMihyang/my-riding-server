@@ -223,7 +223,7 @@ class RecordController extends Controller
         $rec_user_id = $user->getAttribute('id');
 
         $validator = Validator::make($request->all(), [
-            'rec_title' => 'required|string|min:3|max:25|regex:/^[\w\Wㄱ-ㅎㅏ-ㅣ가-힣]{5,15}$/|unique:records'
+            'rec_title' => 'required|string|min:3|max:30|regex:/^[\w\Wㄱ-ㅎㅏ-ㅣ가-힣]{3,30}$/|unique:records'
         ], [
             'rec_title.regex' => '경로 제목을 다시 입력해주세요.',
         ]);
@@ -242,7 +242,6 @@ class RecordController extends Controller
 
         // 경로 정보 있을 경우 가져오기
         $rec_route_id = $request->rec_route_id;
-//        dd($rec_route_id);
 
         $rec_title = $request->input('rec_title');
         $rec_distance = $request->input('rec_distance');

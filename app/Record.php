@@ -194,7 +194,7 @@ class Record extends Model
             'rec_end_point_address' => $rec_end_point_address,
             'rec_avg_speed' => $rec_avg_speed,
             'rec_max_speed' => $rec_max_speed,
-            'created_at' => now(),
+            'created_at' => now('Asia/Seoul'),
         ]);
     }
 
