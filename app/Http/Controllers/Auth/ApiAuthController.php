@@ -25,6 +25,10 @@ class ApiAuthController extends Controller
     private const USER_PROFILE = '프로필 정보 조회에 성공하셨습니다.';
     private const TOKEN_SUCCESS = '유효한 토큰입니다.';
     private const TOKEN_FAIL = '잘못된 접근입니다.';
+    private const IMAGE_CHANGE_SUCCESS = '이미지가 변경되었습니다.';
+    private const IMAGE_CHANGE_FAIL = '이미지 변경 실패했습니다.';
+    private const PASSWORD_CHANGE_SUCCESS = '패스워드가 변경되었습니다.';
+    private const PASSWORD_CHANGE_FAIL = '패스워드 변경 실패했습니다.';
     use UploadTrait;
 
     public function __construct()
@@ -263,7 +267,12 @@ class ApiAuthController extends Controller
         );
     }
 
-    // TODO 프로필 수정
+    /**
+     * 프로필 이미지 수정
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function profileImageChange(Request $request)
     {
         // TODO 유저 사진 UPDATE
@@ -271,6 +280,7 @@ class ApiAuthController extends Controller
         $user = Auth::guard('api')->user();
 
         $user_id = $user->getAttribute('id');
+        $user_account = $user->getAttribute('user_account');
 
         $validator = Validator::make($request->all(), [
             'user_picture.*'  => 'image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -292,7 +302,7 @@ class ApiAuthController extends Controller
         if (($request->has('user_picture'))) {
             $image = $request->file('user_picture');
 
-            $name = Str::slug($request->input('user_account')).'_'.time();
+            $name = Str::slug($user_account).'_'.time();
 
             $folder = '/uploads/images/';
             // 이미지 저장할 경로 생성(폴더 경로 + 파일 이름 + 파일 확장자명)
@@ -301,28 +311,73 @@ class ApiAuthController extends Controller
             $this->uploadOne($image, $folder, 'public', $name);
 
             $user_picture = $filePath;
+
+            // 유저 이미지 변경
+            $this->user->UserImageChange($user_id, $user_picture);
+
+            return $this->responseJson(
+                self::IMAGE_CHANGE_SUCCESS,
+                [],
+                201
+            );
         }
 
-        // 2. 유저 사진 유무 판단
-        //  2-1. 유저 사진 없는 경우 -> 바로 저장
-        //  2-2. 유저 사진 있는 경우 -> 기존 사진 삭제 후 저장
-
-
-
-
-        return "dd";
+        return $this->responseJson(
+            self::IMAGE_CHANGE_FAIL,
+            [],
+            422
+        );
     }
 
-    // TODO 비밀번호 변경
-    public function passwordUpdate()
+    /**
+     * 비밀번호 변경
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function passwordUpdate(Request $request)
     {
         $user = Auth::guard('api')->user();
 
         $user_id = $user->getAttribute('id');
+        $user_password_old = $user->getAttribute('user_password');
 
-        // 1. 새로운 비밀번호 입력 받기
+        $validator = Validator::make($request->all(), [
+            'user_password_old' => 'required',
+            'user_password_new' => 'required|string|min:8|regex:/^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{7,}$/|confirmed',
+        ], [
+            'user_password_old.regex' => '기존 패스워드를 다시 입력해주세요.',
+            'user_password_new.regex' => '새로운 패스워드를 다시 입력해주세요.',
+        ]);
 
-        // 2. 비밀번호 업데이트
+        if ($validator->fails()) {
+            $response_data = [
+                'error' => $validator->errors(),
+            ];
 
+            return $this->responseJson(
+                self::PASSWORD_CHANGE_FAIL,
+                $response_data,
+                422
+            );
+        }
+
+        if (Hash::check($request['user_password_old'], $user_password_old)) {
+            $user_password_new = Hash::make($request['user_password_new']);
+            User::find($user_id)->update(['user_password' => $user_password_new]);
+
+            return $this->responseJson(
+              self::PASSWORD_CHANGE_SUCCESS,
+              [],
+              201
+            );
+        }
+        else {
+            return $this->responseJson(
+                self::PASSWORD_CHANGE_FAIL,
+                [],
+                422
+            );
+        }
     }
 }

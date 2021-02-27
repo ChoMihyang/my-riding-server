@@ -143,4 +143,13 @@ class User extends Authenticatable
 
         return $returnData;
     }
+
+    public function UserImageChange(
+       int $user_id,
+       string $user_picture
+    )
+    {
+        self::where('id', $user_id)
+            ->update(['user_picture' => $user_picture]);
+    }
 }
