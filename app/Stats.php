@@ -220,7 +220,7 @@ class Stats extends Model
 
 
         Stats::where('stat_user_id', $rec_user_id)
-            ->where('stat_date', 'like', '%' . $checkDate . '%')
+            ->where('stat_date', 'like', $checkDate)
             ->update([
                 'stat_distance' => $userAllDistanceSum,
                 'stat_time' => $userAllTimeSum,

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Record;
 use App\Route;
 use App\Stats;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -215,6 +216,7 @@ class RecordController extends Controller
      *
      * @param Request $request
      * @return JsonResponse
+     * @throws Exception
      */
     public function recordSave(Request $request): JsonResponse
     {
@@ -272,7 +274,7 @@ class RecordController extends Controller
             // 몽고에 기록 데이터 저장 완료, 조회 완료
             $saveRecordMongo = $this->mongoRecordSave($request, $saveRecordId);
             DB::commit();
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             DB::rollBack();
             throw $exception;
         }
