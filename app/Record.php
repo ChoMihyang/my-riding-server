@@ -138,16 +138,34 @@ class Record extends Model
         return $returnData;
     }
 
+    /**
+     * 라이딩 기록 레코드 삭제
+     */
     public function delete_record()
     {
         // 해당 레코드 id 값 조회 후 삭제
+        // 몽고 DB 삭제 요청
     }
 
-    public function modify_record_name()
+    /**
+     * 라이딩 기록의 제목 수정
+     *
+     * @param int $user_id
+     * @param Record $record
+     * @param string $new_title
+     */
+    public function modify_record_name(
+        int $user_id,
+        Record $record,
+        string $new_title
+    )
     {
         // 해당 레코드 id 필드의 rec_title 값 수정
-    }
+        $record = Record::find($record['id']);
+        $record->rec_title = $new_title;
 
+        $record->save();
+    }
 
     // User  <-> Record 모델 다대다 관계 선언
     public function user()

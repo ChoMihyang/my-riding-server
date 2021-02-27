@@ -314,32 +314,22 @@ class RecordController extends Controller
 
         // TODO 달성 여부 판단 메서드 BadgeController 이동
         if ($statResult) {
-            // 1. 거리 배지
-            // 통계 테이블 조회 -> 누적 거리 비교 (기준 - 30m / 50m / 100m)
+
+            $badgeController = app('App\Http\Controllers\BadgeController');
+
+            // 통계 테이블 조회 -> 기준 필드 값 반환
             $user_info = $this->stats->select_stats_badge($rec_user_id);
 
             $sum_of_distance = $user_info->sum('distance');
-
-            $badge_msg = "";
-            if ($sum_of_distance >= 300) {
-                $badge_msg = "300km";
-            } elseif ($sum_of_distance >= 150) {
-                $badge_msg = "150km";
-            } elseif ($sum_of_distance >= 100) {
-                $badge_msg = "100km";
-            } elseif ($sum_of_distance >= 50) {
-                $badge_msg = "50km";
-            } elseif ($sum_of_distance >= 30) {
-                $badge_msg = "30km";
-            }
-            $badge_msg .= "달성";
-
-            // 위 기준과 같거나 넘을 경우
-            // -> badge Table 내 '배지 달성한 사용자 id', '배지 타입(100)', '달성 메시지("누적 거리 30m / 50m / 100m ... 달성")', '달성 날짜' 삽입
-
-
             $sum_of_time = $user_info->sum('time');
             $max_of_speed = $user_info->max('max_speed');
+
+            $badge_result = $badgeController->checkBadge($sum_of_distance, $sum_of_time, $max_of_speed);
+
+            // -> badge Table 내 '배지 달성한 사용자 id', '배지 타입(100)', '달성 메시지("누적 거리 30m / 50m / 100m ... 달성")', '달성 날짜' 삽입
+            if (count($badge_result) > 0) {
+
+            }
         }
 
 
@@ -394,6 +384,16 @@ class RecordController extends Controller
         $response = \Illuminate\Support\Facades\Http::get("http://13.209.75.193:3000/api/record/1");
 
         return $response->json();
+    }
+
+    // 라이딩 일지 제목 수정
+    public function recordModify(Record $record, Request $request)
+    {
+        $user_id = Auth::guard('api')->user()->getAttribute('id');
+        $modified_title = $request->input('title');
+
+
+        $this->record->modify_record_name($user_id, $record, $modified_title);
     }
 
     // 라이딩 기록 삭제
