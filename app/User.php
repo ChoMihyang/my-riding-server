@@ -73,7 +73,7 @@ class User extends Authenticatable
             ->where('created_at', $latest_riding_date)
             ->first();
 
-//        $user_info['last_riding_id'] = $latest_riding_id[0]['id'];
+        $user_info['last_riding_id'] = $latest_riding_id[0]['id'];
 
         return $user_info;
     }
@@ -140,5 +140,14 @@ class User extends Authenticatable
             ->get();
 
         return $returnData;
+    }
+
+    public function UserImageChange(
+       int $user_id,
+       string $user_picture
+    )
+    {
+        self::where('id', $user_id)
+            ->update(['user_picture' => $user_picture]);
     }
 }
