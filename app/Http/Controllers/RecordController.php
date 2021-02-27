@@ -91,7 +91,7 @@ class RecordController extends Controller
     }
 
     // 주차별 라이딩 통계
-    public function recordViewByWeek(Record $request)
+    public function recordViewByWeek(Request $request)
     {
         $today_year = date('Y');
         // 요청받은 연도의 유효 범위
@@ -110,7 +110,6 @@ class RecordController extends Controller
         // 해당 연도, 주차의 시작일, 종료일 조회
         // 현재 날짜의 주차
         $today_date = date('Y-m-d');
-//        $today_date = '2021-02-14';
         $today_week = date('W', strtotime($today_date));
         // 현재 날짜의 요일
         $temp_day = date('w', strtotime($today_date));

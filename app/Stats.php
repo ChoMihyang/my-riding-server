@@ -114,32 +114,18 @@ class Stats extends Model
     }
 
     /**
-     * 사용자 랭킹 기록 상세 보기
-     * TODO users 테이블 조인 -> 사진, 닉네임, 점수 추가 반환
-     * @param string $rank_user_name
-     * @param int $user_id
+     * 랭킹 10위 사용자의 통계 조회
      * @return Collection
      */
-    public
-    function getUserDetailRank(
-//        int $user_id,
-        string $rank_user_name
-    ): Collection
+    public function getUserStat(): Collection
     {
         $param = [
-            'users.user_picture as picture',
-            'users.user_nickname as name',
-            'users.user_score_of_riding as score',
             'stat_distance as distance',
             'stat_time as time',
             'stat_avg_speed as avg_speed',
             'stat_max_speed as max_speed'
         ];
-        $returnData = Stats::select($param)
-            ->join('users', 'stat_user_id', 'users.id')
-//            ->where('users.id', $user_id)
-            ->where('users.user_nickname', $rank_user_name)
-            ->get();
+        $returnData = Stats::select($param)->get();
 
         return $returnData;
     }

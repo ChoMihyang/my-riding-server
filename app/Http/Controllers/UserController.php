@@ -116,53 +116,39 @@ class UserController extends Controller
         $this->notifications->checkNotification($user_id, $notification);
     }
 
-    // 전체 랭킹 출력
+    // 전체 랭킹 출력 (진행중)
     public function viewUserRank()
     {
-        $rank_of_all_users = $this->user->getUserRank();
 
-        return $this->responseAppJson(
-            self::PRINT_USER_RANK_SUCCESS,
-            "ranks",
-            $rank_of_all_users,
-            200
-        );
-    }
-
-    // 사용자 랭킹 상세 보기
-    // 요청하는 값 -> ? 랭킹 번호 + 사용자 닉네임 ??
-    // 현재 상태 : 닉네임
-//    public function viewDetailRank(Request $request)
-//    {
-//        $rank_user_name = $request['name'];
-//
-//        // 요청한 사용자의 id 값과 닉네임으로 정보 조회
-//        $info_of_user = $this->stats->getUserDetailRank($rank_user_name);
-//
-//        // 반환할 데이터 계산
+        // 반환할 데이터 계산
 //        $picture = $info_of_user->pluck('picture')->first();
 //        $score = $info_of_user->pluck('score')->first();
 //        $sum_of_time = $info_of_user->sum('time');
 //        $sum_of_distance = $info_of_user->sum('distance');
 //        $avg_of_speed = round($info_of_user->avg('avg_speed'), 1);
 //        $max_of_speed = $info_of_user->max('max_speed');
-//
-//        // 반환할 데이터 배열 저장
-//        $result_data = [
-//            "nickname" => $rank_user_name,
-//            "picture" => $picture,
-//            "score" => $score,
-//            "sum_of_time" => $sum_of_time,
-//            "sum_of_distance" => $sum_of_distance,
-//            "avg_of_speed" => $avg_of_speed,
-//            "max_of_speed" => $max_of_speed
-//        ];
-//
-//        return $this->responseAppJson(
-//            self::PRINT_USER_RANK_SUCCESS,
-//            "ranks",
-//            $result_data,
-//            200
-//        );
-//}
+
+        $rank_of_all_users = $this->user->getUserRank();
+        $stat_of_all_users = $this->stats->getUserStat();
+        dd($rank_of_all_users);
+
+        $info_all_users = [];
+
+        foreach ($rank_of_all_users as $user => $value) {
+
+            $info_all_users[$user] = [
+                'id' => $value->id,
+                'nickname' => $value->nickname,
+                'picture' => $value->picture,
+                'score' => $value->score,
+            ];
+        }
+
+        return $this->responseAppJson(
+            self::PRINT_USER_RANK_SUCCESS,
+            "ranks",
+            $info_all_users,
+            200
+        );
+    }
 }
