@@ -104,7 +104,7 @@ class UserController extends Controller
         return $this->responseJson(
             self::PRINT_USER_PROFILE_SUCCESS,
             $returnData,
-            201
+            200
         );
     }
 
