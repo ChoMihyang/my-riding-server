@@ -91,7 +91,7 @@ class RecordController extends Controller
     }
 
     // 주차별 라이딩 통계
-    public function recordViewByWeek(Record $record)
+    public function recordViewByWeek(Request $request)
     {
         $today_year = date('Y');
         // 요청받은 연도의 유효 범위
@@ -99,19 +99,17 @@ class RecordController extends Controller
         $max_year = (int)$today_year;
 
         // TODO 올해 주차 범위 함수화
-//        $requestedData = $request->validate([
-//            'year' => 'required | numeric | min: ' . $min_year . '|max: ' . $max_year,
-//            'week' => 'required | numeric | min:0 | max:53'
-//        ]);
+        $requestedData = $request->validate([
+            'year' => 'required | numeric | min: ' . $min_year . '|max: ' . $max_year,
+            'week' => 'required | numeric | min:0 | max:53'
+        ]);
 
-        $year = $record['year'];
-        $week = $record['week'];
-        dd($year . $week);
+        $year = $requestedData['year'];
+        $week = $requestedData['week'];
 
         // 해당 연도, 주차의 시작일, 종료일 조회
         // 현재 날짜의 주차
         $today_date = date('Y-m-d');
-//        $today_date = '2021-02-14';
         $today_week = date('W', strtotime($today_date));
         // 현재 날짜의 요일
         $temp_day = date('w', strtotime($today_date));

@@ -130,13 +130,18 @@ class User extends Authenticatable
     public function getUserRank()
     {
         $param = [
-            'id',
+            'users.id',
             'user_nickname as nickname',
             'user_picture as picture',
-            'user_score_of_riding as score'
+            'user_score_of_riding as score',
+//            'stats.stat_distance',
+//            'stats.stat_time',
+//            'stats.stat_avg_speed',
+//            'stats.stat_max_speed'
         ];
 
         $returnData = User::select($param)
+            ->join('stats', 'users.id', 'stats.stat_user_id')
             ->orderByDesc('user_score_of_riding')
             ->take(10)
             ->get();
@@ -145,8 +150,8 @@ class User extends Authenticatable
     }
 
     public function UserImageChange(
-       int $user_id,
-       string $user_picture
+        int $user_id,
+        string $user_picture
     )
     {
         self::where('id', $user_id)
