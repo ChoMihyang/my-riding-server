@@ -71,7 +71,9 @@ class RouteLike extends Model
             ->get();
 
         $pickId = $idCheck->pluck('id');
-
+        if ($pickId->isEmpty()) {
+            return [];
+        }
         return self::where('id', $pickId)->delete();
     }
 }
