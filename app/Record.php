@@ -4,6 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Http\Client\Response;
+use Illuminate\Support\Facades\Http;
 
 
 class Record extends Model
@@ -138,14 +140,51 @@ class Record extends Model
         return $returnData;
     }
 
-    public function delete_record()
+    /**
+     * 몽고 DB 로 라이딩 기록 삭제 요청
+     * @param int $record_id
+     * @return Response
+     */
+    public function mongoRouteDelete(int $record_id)
     {
         // 해당 레코드 id 값 조회 후 삭제
+        // 몽고 DB 삭제 요청
+        $response = Http::delete("http://13.209.75.193:3000/api/record/$record_id");
+
+        return $response->json();
     }
 
-    public function modify_record_name()
+    /**
+     * 라이딩 기록 레코드 삭제
+     * @param int $user_id
+     * @param int $record_id
+     */
+    public function delete_record(
+        int $user_id,
+        int $record_id
+    )
+    {
+        Record::where('rec_user_id', $user_id)
+            ->where('id', $record_id)
+            ->delete();
+    }
+
+    /**
+     * 라이딩 기록의 제목 수정
+     * @param int $record_id
+     * @param string $new_title
+     */
+    public function modify_record_name(
+
+        int $record_id,
+        string $new_title
+    )
     {
         // 해당 레코드 id 필드의 rec_title 값 수정
+        $record = Record::find($record_id);
+        $record->rec_title = $new_title;
+
+        $record->save();
     }
 
 

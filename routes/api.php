@@ -55,8 +55,8 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
             Route::get("/week", "RecordController@recordViewByWeek")->name("[라이딩 일지] 주 기준 조회");
             Route::get('/home', 'RecordController@recordOfHome')->name("[홈화면] 날짜별 조회");
             Route::get("/{record}", "RecordController@recordDetailView")->name("[라이딩 일지] 상세 조회");
-            //    Route::patch("/{id}", "RecordController@recordModify")->name("[라이딩 일지] 이름 수정");
-            //    Route::delete("/{id}", "RecordController@recordDelete")->name("[라이딩 일지] 기록 삭제");
+            Route::patch("/{record}", "RecordController@recordModify")->name("[라이딩 일지] 이름 수정");
+            Route::delete("/{record}", "RecordController@recordDelete")->name("[라이딩 일지] 기록 삭제");
             Route::post("/", "RecordController@recordSave")->name("[라이딩 일지] 라이딩 기록 저장");
         });
 
@@ -98,4 +98,4 @@ Route::get("/test/delete/record", "RecordController@mongoRecordDelete")->name("�
 // 몽고 기록 테스트 중
 Route::get("/test/post/route", "RouteController@mongoRouteSave")->name("라이딩 경로 몽고로 데이터 전달");
 Route::get("/test/get/route/{id}", "RouteController@mongoRouteShow")->name("라이딩 경로 몽고에서 조회");
-Route::get("/test/delete/route", "RouteController@mongoRouteDelete")->name("라이딩 경로 몽고에서 삭제");
+//Route::get("/test/delete/route", "RouteController@mongoRouteDelete")->name("라이딩 경로 몽고에서 삭제");

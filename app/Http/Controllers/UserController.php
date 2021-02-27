@@ -32,15 +32,15 @@ class UserController extends Controller
     }
 
     // 대시보드 페이지 출력
+    // TODO null 처리하기
     public function dashboard()
     {
         // 사용자 정보 토큰 가져오기
         $user_id = Auth::guard('api')->user()->getAttribute('id');
 
         // <<-- 사용자 정보 : 사진, 이름, 라이딩 점수, 총 라이딩 횟수, 최근 라이딩
-        // TODO 사용자 이미지 CONCAT 하기
-        // TODO last_riding 포맷 변경
         $user_info = $this->user->getDashboardUserInfo($user_id);
+        dd($user_info);
         // 사용자 정보 -->>
 
         // <<-- 통계 정보 : 올해 합계, 이번주 합계, 월 ~ 일 통계(거리, 시간, 평균속도)
@@ -57,7 +57,6 @@ class UserController extends Controller
 
         $temp_day = date('w', strtotime($today_date));
         $day_of_week = $temp_day === 0 ? 6 : $temp_day - 1; // 현재 요일
-
 
         // 해당 주의 시작일
         $start_date = date('Y-m-d', strtotime($today_date . " -" . $day_of_week . "days"));
