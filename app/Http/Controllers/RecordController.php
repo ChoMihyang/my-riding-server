@@ -400,18 +400,23 @@ class RecordController extends Controller
     // 라이딩 일지 제목 수정
     public function recordModify(Record $record, Request $request)
     {
-        $user_id = Auth::guard('api')->user()->getAttribute('id');
+        $record_id = $record['id'];
         $modified_title = $request->input('title');
 
-
-        $this->record->modify_record_name($user_id, $record, $modified_title);
+        $this->record->modify_record_name($record_id, $modified_title);
     }
 
     // 라이딩 기록 삭제
-    public function mongoRecordDelete(int $recordId)
+    public function recordDelete(Record $record)
     {
-        $response = \Illuminate\Support\Facades\Http::delete("http://13.209.75.193:3000/api/record/$recordId");
+        // 삭제 요청 받은 기록 레코드의 ID
+        $record_id = $record['id'];
+        // 사용자 ID 가져오기
+        $user_id = Auth::guard('api')->user()->getAttribute('id');
 
-        return $response->json();
+        // 몽고 DB 내 기록 레코드 삭제 요청
+        $this->record->mongoRouteDelete($record_id);
+        // 기록 레코드 삭제
+        $this->record->delete_record($user_id, $record_id);
     }
 }
