@@ -40,7 +40,6 @@ class UserController extends Controller
 
         // <<-- 사용자 정보 : 사진, 이름, 라이딩 점수, 총 라이딩 횟수, 최근 라이딩
         $user_info = $this->user->getDashboardUserInfo($user_id);
-        dd($user_info);
         // 사용자 정보 -->>
 
         // <<-- 통계 정보 : 올해 합계, 이번주 합계, 월 ~ 일 통계(거리, 시간, 평균속도)
