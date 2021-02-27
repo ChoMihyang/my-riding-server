@@ -25,6 +25,7 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
 
     Route::group(['middleware' => ['usertoken']], function () {
         Route::prefix("auth")->group(function () {
+            Route::post('/passwordchange', 'Auth\ApiAuthController@passwordUpdate')->name('[사용자] 프로필 비밀번호 변경');
             Route::post('/imagechange', 'Auth\ApiAuthController@profileImageChange')->name('[사용자] 프로필 이미지 변경');
             Route::get('/profilemobile', 'Auth\ApiAuthController@profileMobile')->name('모바일 사용자 프로필 테스트');
             Route::get('/profile', 'Auth\ApiAuthController@profile')->name('[사용자] 프로필 조회');
