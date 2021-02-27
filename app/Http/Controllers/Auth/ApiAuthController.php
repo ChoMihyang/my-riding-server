@@ -68,7 +68,7 @@ class ApiAuthController extends Controller
 
         $user_picture = "null";
 
-        // TODO 사진 입력 테스트
+        // 사진 입력
         if (($request->has('user_picture'))) {
             $image = $request->file('user_picture');
 
@@ -88,7 +88,6 @@ class ApiAuthController extends Controller
         $user_nickname = $request->input('user_nickname');
 //        dd($user_picture);
 
-        // TODO 에러남..
         $data = $this->user->createUserInfo($user_account,$user_password,$user_nickname,$user_picture);
 //        $token = $data->createToken('Laravel Password Grant Client')->accessToken;
 //
@@ -265,6 +264,65 @@ class ApiAuthController extends Controller
     }
 
     // TODO 프로필 수정
+    public function profileImageChange(Request $request)
+    {
+        // TODO 유저 사진 UPDATE
+        // 1. 유저 사진 파일 validation 체크
+        $user = Auth::guard('api')->user();
+
+        $user_id = $user->getAttribute('id');
+
+        $validator = Validator::make($request->all(), [
+            'user_picture.*'  => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            $response_data = [
+                'error' => $validator->errors(),
+            ];
+
+            return $this->responseJson(
+                self::SIGNUP_FAIL,
+                $response_data,
+                422
+            );
+        }
+
+        // 사진 입력
+        if (($request->has('user_picture'))) {
+            $image = $request->file('user_picture');
+
+            $name = Str::slug($request->input('user_account')).'_'.time();
+
+            $folder = '/uploads/images/';
+            // 이미지 저장할 경로 생성(폴더 경로 + 파일 이름 + 파일 확장자명)
+            $filePath = $folder.$name.'.'.$image->getClientOriginalExtension();
+
+            $this->uploadOne($image, $folder, 'public', $name);
+
+            $user_picture = $filePath;
+        }
+
+        // 2. 유저 사진 유무 판단
+        //  2-1. 유저 사진 없는 경우 -> 바로 저장
+        //  2-2. 유저 사진 있는 경우 -> 기존 사진 삭제 후 저장
+
+
+
+
+        return "dd";
+    }
 
     // TODO 비밀번호 변경
+    public function passwordUpdate()
+    {
+        $user = Auth::guard('api')->user();
+
+        $user_id = $user->getAttribute('id');
+
+        // 1. 새로운 비밀번호 입력 받기
+
+        // 2. 비밀번호 업데이트
+
+    }
 }

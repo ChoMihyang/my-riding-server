@@ -2,6 +2,7 @@
 
 namespace App;
 
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -164,7 +165,7 @@ class Stats extends Model
     {
         Stats::create([
             'stat_user_id' => $rec_user_id,
-            'stat_date' => now(),
+            'stat_date' => date("Y-m-d"),
             'stat_week' => $today_week,
             'stat_day' => $today_day,
             'stat_distance' => $rec_distance,
@@ -173,7 +174,8 @@ class Stats extends Model
             'stat_max_speed' => $rec_max_speed,
             'stat_count' => 1,
             'stat_year' => $today_year,
-            'created_at' => now(),
+            'created_at' => now('Asia/Seoul'),
+            'updated_at' => now('Asia/Seoul')
         ]);
 
         return true;
@@ -218,7 +220,7 @@ class Stats extends Model
 
 
         Stats::where('stat_user_id', $rec_user_id)
-            ->where('stat_date', 'like', '%' . $checkDate . '%')
+            ->where('stat_date', 'like', $checkDate)
             ->update([
                 'stat_distance' => $userAllDistanceSum,
                 'stat_time' => $userAllTimeSum,
@@ -226,7 +228,7 @@ class Stats extends Model
                 'stat_max_speed' => $userRecord->rec_max_speed,
                 'stat_count' => $userAllCount,
                 'stat_year' => $today_year,
-                'updated_at' => now(),
+                'updated_at' => now('Asia/Seoul'),
             ]);
 
         return true;
@@ -251,5 +253,10 @@ class Stats extends Model
             ->get();
 
         return $returnData;
+    }
+
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
     }
 }

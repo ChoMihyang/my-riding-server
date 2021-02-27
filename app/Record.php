@@ -212,7 +212,7 @@ class Record extends Model
             'rec_end_point_address' => $rec_end_point_address,
             'rec_avg_speed' => $rec_avg_speed,
             'rec_max_speed' => $rec_max_speed,
-            'created_at' => now(),
+            'created_at' => now('Asia/Seoul'),
         ]);
     }
 
@@ -366,7 +366,7 @@ class Record extends Model
      * @return mixed
      */
     public function RecordSaveCheck(
-        int $rec_route_id,
+        ?int $rec_route_id,
         string $rec_title
     )
     {

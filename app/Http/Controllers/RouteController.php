@@ -42,6 +42,7 @@ class RouteController extends Controller
         $user = Auth::guard('api')->user();
         $route_user_id = $user->getAttribute('id');
 
+
         $routeValue = $this->route->routeListValue(1, $route_user_id);
         $response_data = [
             'routes' => $routeValue
@@ -68,6 +69,11 @@ class RouteController extends Controller
         // 경로 번호
         $route_id = $id->id;
 
+        // 몽고 경로 정보 삭제
+        $this->mongoRouteDelete($route_id);
+        // 경로 좋아요 삭제
+        $this->routeLike->likeDown($route_user_id, $route_id);
+        // 경로 삭제
         $deleteValue = $this->route->routeDelete($route_user_id, $route_id);
 
         if (!$deleteValue) {
@@ -103,13 +109,16 @@ class RouteController extends Controller
 
         // 요청한 Route 의 ID 값의 record 데이터(기록순 정렬) 가져옴
         $recordValue = $this->record->rankSort($route_id)->take(3);
-
+        // 랭킹 데이터
         $rankValues = $this->record->myRecord($route_id, $route_user_id);
+        // 몽고 데이터 조회
+        $routeMongo = $this->mongoRouteShow($route_id);
 
         $response_data = [
             'route' => $routeValue,
             'record' => $recordValue,
-            'rankvalue' => $rankValues
+            'rankvalue' => $rankValues,
+            'routedata' => $routeMongo
         ];
 
         return $this->responseJson(
@@ -125,7 +134,7 @@ class RouteController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function routeSave(Request $request): JsonResponse
+    public function routeSave(Request $request, Record $record): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'route_title' => 'required|string|min:3|alpha_num|unique:routes',
@@ -156,12 +165,21 @@ class RouteController extends Controller
         $route_start_point_address = $request->input('route_start_point_address');
         $route_end_point_address = $request->input('route_end_point_address');
 
+        // mysql 에 경로 데이터 먼저 저장 후
         $this->route->routeSave(
             $route_user_id, $route_title, $route_image,
             $route_distance, $route_time,
             $route_avg_degree, $route_max_altitude, $route_min_altitude,
             $route_start_point_address, $route_end_point_address
         );
+
+        // 저장된 경로의 id 값 가져와 몽고로 전송하기
+        // 경로 저장 체크용
+        $routeSavePoints = $this->route->RouteSaveCheck($route_user_id, $route_title);
+        $saveRouteId = $routeSavePoints[0]['id'];
+
+        // 몽고에 경로 데이터 저장 완료, 조회 완료
+        $savaRouteMongo = $this->mongoRouteSave($request, $saveRouteId);
 
         return $this->responseJson(
             self::ROUTESAVE_SUCCESS,
@@ -245,7 +263,6 @@ class RouteController extends Controller
      */
     public function routeSearch(Request $request): JsonResponse
     {
-        // TODO 검색어 입력받기
         $wordValue = "";
         $word = (string)$request->word;
         $count = (int)$request->count;
@@ -380,5 +397,33 @@ class RouteController extends Controller
             $responseData,
             200
         );
+    }
+
+    // 경로 정보 조회
+    public function mongoRouteShow(int $routeId)
+    {
+        $response = \Illuminate\Support\Facades\Http::get("http://13.209.75.193:3000/api/route/$routeId");
+
+        return $response->json();
+    }
+
+    // 경로 정보 저장
+    public function mongoRouteSave(Request $request, int $routeId)
+    {
+        $response_data = $request->input('points');
+
+        $response = \Illuminate\Support\Facades\Http::post("http://13.209.75.193:3000/api/route/$routeId", [
+            "points" => $response_data
+        ]);
+
+        return $response->json();
+    }
+
+    // 경로 정보 삭제
+    public function mongoRouteDelete(int $routeId)
+    {
+        $response = \Illuminate\Support\Facades\Http::delete("http://13.209.75.193:3000/api/route/$routeId");
+
+        return $response->json();
     }
 }
