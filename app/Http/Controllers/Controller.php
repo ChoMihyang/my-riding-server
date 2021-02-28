@@ -8,6 +8,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use \Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use PhpParser\Node\Scalar\String_;
 
 class Controller extends BaseController
@@ -21,7 +22,7 @@ class Controller extends BaseController
 //        $this->member = new Member();
 //    }
 
-    public static function makeResponseJson($msg, $statusCode, $data = null)
+    public static function makeResponseJson($msg, $statusCode, $data = null): JsonResponse
     {
         return response()->json([
             "message" => $msg,
@@ -70,5 +71,40 @@ class Controller extends BaseController
             $type => $data
         ], $http_code
         );
+    }
+
+    /**
+     * 사용자 이미지 불러오기
+     *
+     * @return string
+     */
+    public function loadImage(): string
+    {
+        $user = Auth::guard('api')->user();
+
+        $user_img = $user->getAttribute('user_picture');
+        if ($user_img == "null") {
+            return "null";
+        }
+
+        return $loadImg = $this->getBase64Img($user_img);
+    }
+
+    public function getBase64Img($img_name): string
+    {
+        $data = Storage::get('public/' . $img_name);
+        $type = pathinfo('storage/' . $img_name, PATHINFO_EXTENSION);
+
+        return 'image/' . $type . ';base64,' . base64_encode($data);
+    }
+
+    /**
+     * 사용자 이미지 삭제
+     *
+     * @param String $url
+     */
+    public function deleteImage(String $url)
+    {
+        Storage::delete($url);
     }
 }
