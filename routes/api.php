@@ -88,8 +88,9 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
     });
 
     Route::get('/rank', 'UserController@viewUserRank')->name('[랭킹] 사용자 랭킹 출력');
-
+    Route::get('/rank/{rank_id}', 'UserController@viewUserDetailRank')->name('[랭킹] 사용자 랭킹 상세 정보');
 });
+
 
 // 몽고 경로 테스트 중..
 Route::get("/test/post/record", "RecordController@mongoRecordSave")->name("라이딩 기록 몽고로 데이터 전송");

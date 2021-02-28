@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Record;
 use App\Route;
 use App\Stats;
+use App\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -14,9 +15,11 @@ use Illuminate\Support\Facades\Validator;
 
 class RecordController extends Controller
 {
+    private $user;
     private $stats;
     private $record;
     private $route;
+
     private const SELECT_BY_YEAR_SUCCESS = '년도 통계 조회를 성공하였습니다.';
     private const SELECT_BY_DAY_DETAIL_SUCCESS = '라이딩 일지 상세 정보 조회를 성공하였습니다.';
     private const SELECT_BY_DAY_SUCCESS = '홈 기록 조회를 성공하였습니다.';
@@ -25,6 +28,7 @@ class RecordController extends Controller
 
     public function __construct()
     {
+        $this->user = new User();
         $this->stats = new Stats();
         $this->record = new Record();
         $this->route = new Route();
@@ -285,9 +289,7 @@ class RecordController extends Controller
         $today_date = date('Y-m-d');
         $today_week = date('W', strtotime($today_date));
         // 현재 날짜의 요일
-        $temp_day = date('w', strtotime($today_date));
-        $today_day = $temp_day === 0 ? 6 : $temp_day - 1;
-
+        $today_day = date('w', strtotime($today_date));
 
         if (!$recordSavePoints) {
             // TODO 기록 저장 실패한 경우?
@@ -319,6 +321,8 @@ class RecordController extends Controller
                 $rec_distance, $rec_time, $rec_avg_speed, $rec_max_speed, $today_year
             );
         }
+        // 최근 라이딩 날짜 업데이트
+        $this->user->updateLatestRidingDate($rec_user_id, date('Y-m-d'));
 
 
         if ($rec_route_id) {
@@ -342,11 +346,6 @@ class RecordController extends Controller
             $max_of_speed = $user_info->max('max_speed');
 
             $badge_result = $badgeController->checkBadge($sum_of_distance, $sum_of_time, $max_of_speed);
-
-            // -> badge Table 내 '배지 달성한 사용자 id', '배지 타입(100)', '달성 메시지("누적 거리 30m / 50m / 100m ... 달성")', '달성 날짜' 삽입
-            if (count($badge_result) > 0) {
-
-            }
         }
 
 
