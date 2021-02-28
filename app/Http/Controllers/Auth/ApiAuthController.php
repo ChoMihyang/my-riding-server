@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Stats;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -17,6 +19,7 @@ use App\Traits\UploadTrait;
 class ApiAuthController extends Controller
 {
     private $user;
+    private $stat;
     private const SIGNUP_FAIL = '회원가입에 실패하셨습니다.';
     private const SIGNUP_SUCCESS = '회원가입에 성공하셨습니다.';
     private const LOGIN_FAIL_AC = '유저 아이디가 일치하지 않습니다.';
@@ -36,6 +39,7 @@ class ApiAuthController extends Controller
     public function __construct()
     {
         $this->user = new User();
+        $this->stat = new Stats();
     }
 
     /**
@@ -50,7 +54,7 @@ class ApiAuthController extends Controller
             'user_account' => 'required|string|min:6|max:15|regex:/^[a-z]+[a-z0-9]{5,15}$/|unique:users',
             'user_password' => 'required|string|min:8|regex:/^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{7,}$/|confirmed',
             'user_nickname' => 'required|string|regex:/^[\w\Wㄱ-ㅎㅏ-ㅣ가-힣]{5,15}$/|unique:users',
-            'user_picture.*'  => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'user_picture.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
             'user_account.regex' => '아이디를 다시 입력해주세요.',
             'user_password.regex' => '패스워드를 다시 입력해주세요.',
@@ -76,7 +80,7 @@ class ApiAuthController extends Controller
 
         // 사진 입력
         if (($request->has('user_picture'))) {
-            $name = Str::slug($request->input('user_account')).'_img';
+            $name = Str::slug($request->input('user_account')) . '_img';
 
             $folder = '/uploads/images/';
 
@@ -88,7 +92,7 @@ class ApiAuthController extends Controller
         $user_password = $request->input('user_password');
         $user_nickname = $request->input('user_nickname');
 
-        $data = $this->user->createUserInfo($user_account,$user_password,$user_nickname,$user_picture);
+        $data = $this->user->createUserInfo($user_account, $user_password, $user_nickname, $user_picture);
 //        $token = $data->createToken('Laravel Password Grant Client')->accessToken;
 //
 //        $response = ['token'=>$token];
@@ -251,15 +255,37 @@ class ApiAuthController extends Controller
         $user_picture = $this->loadImage();
         $user_score_of_riding = $user->getAttribute('user_score_of_riding');
 
-        // TODO stats 테이블의 통계 들어가야함!!!
+        // 이번주의 시작일
+        $today_date = date('Y-m-d');
 
-        return $this->responseJson(
+        $temp_day = date('w', strtotime($today_date));
+        $today_day = $temp_day == 0 ? 6 : $temp_day - 1;
+
+        $today_start_date = date('Y-m-d', strtotime($today_date . "-" . $today_day . "days"));
+        $last_date_range = date('Y-m-d', strtotime($today_start_date . "-1day"));
+
+        // 91일 전 날짜
+        $start_date_range = date('Y-m-d', strtotime($today_start_date . "-91days"));
+
+        // stats 모델에서 날짜 범위에 해당하는 통계 조회하기
+        $profile_stat = $this->stat->select_profile_stat(
+            $user_id,
+            $start_date_range,
+            $last_date_range
+        );
+
+        // TODO 배지 현황 넣기
+
+        return $this->responseAppJson(
             self::USER_PROFILE,
+            'profile',
             [
                 'id' => $user_id,
                 'user_nickname' => $user_nickname,
                 'user_picture' => $user_picture,
-                'user_score_of_riding' => $user_score_of_riding
+                'user_score_of_riding' => $user_score_of_riding,
+                'stat' => $profile_stat,
+                'badge' => 0
             ],
             200
         );
@@ -281,7 +307,7 @@ class ApiAuthController extends Controller
         $user_account = $user->getAttribute('user_account');
 
         $validator = Validator::make($request->all(), [
-            'user_picture.*'  => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'user_picture.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -298,7 +324,7 @@ class ApiAuthController extends Controller
 
         // 사진 입력
         if (($request->has('user_picture'))) {
-            $name = Str::slug($user_account).'_img';
+            $name = Str::slug($user_account) . '_img';
 
             $folder = '/uploads/images/';
 
@@ -307,7 +333,7 @@ class ApiAuthController extends Controller
 
 
             // 기존 이미지 삭제
-            $this->deleteImage($user_account.'_img');
+            $this->deleteImage($user_account . '_img');
 
             // 유저 이미지 변경
             $this->user->UserImageChange($user_id, $user_picture);
@@ -364,12 +390,11 @@ class ApiAuthController extends Controller
             User::find($user_id)->update(['user_password' => $user_password_new]);
 
             return $this->responseJson(
-              self::PASSWORD_CHANGE_SUCCESS,
-              [],
-              200
+                self::PASSWORD_CHANGE_SUCCESS,
+                [],
+                200
             );
-        }
-        else {
+        } else {
             return $this->responseJson(
                 self::PASSWORD_CHANGE_FAIL,
                 [],
