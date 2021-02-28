@@ -125,28 +125,31 @@ class User extends Authenticatable
         return $this->belongsToMany(Record::class, 'rec_user_id');
     }
 
-    // 사용자 랭킹 정보
-    // TODO 상세정보까지 볼 수 있도록 누적 값 등 전체 기록 전달하기
+    // 사용자 랭킹 정보 (10순위)
     public function getUserRank()
     {
         $param = [
             'users.id',
             'user_nickname as nickname',
             'user_picture as picture',
-            'user_score_of_riding as score',
-//            'stats.stat_distance',
-//            'stats.stat_time',
-//            'stats.stat_avg_speed',
-//            'stats.stat_max_speed'
+            'user_score_of_riding as score'
         ];
 
         $returnData = User::select($param)
-            ->join('stats', 'users.id', 'stats.stat_user_id')
             ->orderByDesc('user_score_of_riding')
             ->take(10)
             ->get();
 
         return $returnData;
+    }
+
+    // 최근 라이딩 업데이트
+    public function updateLatestRidingDate(int $user_id, $date)
+    {
+        $user = User::find($user_id);
+        $user->date_of_latest_riding = $date;
+
+        $user->save();
     }
 
     public function UserImageChange(
