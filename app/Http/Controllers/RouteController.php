@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -325,7 +326,17 @@ class RouteController extends Controller
 
             $routeValue = Route::orderBy($pick)->get();
         }
+        // 경로 이미지 출력
+        $route_img = array();
+        for ($i = 0; $i < $routeValue->count(); $i++) {
+            $route_img = $routeValue[$i]['route_image'];
+            if (!($route_img == "null")) {
+                $data = Storage::get('public/' . $route_img);
+                $type = pathinfo('storage/' . $route_img, PATHINFO_EXTENSION);
 
+                $routeValue[$i]['route_image'] = 'data:image/' . $type . ';base64,' . base64_encode($data);
+            }
+        }
         $response_data = $routeValue;
 
         return $this->responseAppJson(
