@@ -377,27 +377,4 @@ class ApiAuthController extends Controller
             );
         }
     }
-
-    /**
-     * 사용자 이미지 저장
-     *
-     * @param UploadedFile $uploadedFile
-     * @param string $imgFileName
-     * @param string $folderName
-     * @return string
-     */
-    public function getImage(
-        UploadedFile $uploadedFile,
-        string $imgFileName,
-        string $folderName
-    ): string
-    {
-        $extension = $uploadedFile->extension();
-        $storagePath = "{$folderName}/{$imgFileName}.{$extension}";
-
-        Storage::putFileAs('public', $uploadedFile, $storagePath);
-
-        return $storagePath;
-    }
-
 }

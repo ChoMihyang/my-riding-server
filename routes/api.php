@@ -98,7 +98,8 @@ Route::get("/test/get/record/{id}", "RecordController@mongoRecordShow")->name("�
 Route::get("/test/delete/record", "RecordController@mongoRecordDelete")->name("라이딩 기록 몽고에서 삭제");
 // 몽고 기록 테스트 중
 Route::get("/test/post/route", "RouteController@mongoRouteSave")->name("라이딩 경로 몽고로 데이터 전달");
-Route::get("/test/get/route/{id}", "RouteController@mongoRouteShow")->name("라이딩 경로 몽고에서 조회");
+Route::get("/test/get/route/{routeId}", "RouteController@mongoRouteShow")->name("라이딩 경로 몽고에서 조회");
 //Route::get("/test/delete/route", "RouteController@mongoRouteDelete")->name("라이딩 경로 몽고에서 삭제");
 
-Route::get("/test/img", "Auth\ApiAuthController@loadImage")->name("이미지로드 테스트");
+// 경로 이미지 조회 테스트
+Route::get("/test/img/{route}", "RouteController@loadRouteImage")->name("이미지로드 테스트");
