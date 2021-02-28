@@ -224,6 +224,8 @@ class ApiAuthController extends Controller
     public function user(): JsonResponse
     {
         $user = Auth::guard('api')->user();
+        $user['user_picture'] = $this->loadImage();
+
         if (!$user) {
             return $this->responseJson(
                 self::TOKEN_FAIL,
