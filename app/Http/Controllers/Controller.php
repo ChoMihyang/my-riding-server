@@ -22,7 +22,7 @@ class Controller extends BaseController
 //        $this->member = new Member();
 //    }
 
-    public static function makeResponseJson($msg, $statusCode, $data = null)
+    public static function makeResponseJson($msg, $statusCode, $data = null): JsonResponse
     {
         return response()->json([
             "message" => $msg,
@@ -78,16 +78,19 @@ class Controller extends BaseController
      *
      * @return string
      */
-    public function loadImage()
+    public function loadImage(): string
     {
         $user = Auth::guard('api')->user();
 
         $user_img = $user->getAttribute('user_picture');
+        if ($user_img == "null") {
+            return "null";
+        }
 
         return $loadImg = $this->getBase64Img($user_img);
     }
 
-    public function getBase64Img($img_name)
+    public function getBase64Img($img_name): string
     {
         $data = Storage::get('public/' . $img_name);
         $type = pathinfo('storage/' . $img_name, PATHINFO_EXTENSION);

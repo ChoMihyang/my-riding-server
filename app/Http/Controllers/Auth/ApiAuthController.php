@@ -189,7 +189,6 @@ class ApiAuthController extends Controller
     /**
      * 프로필 정보
      *
-     * @param User $id
      * @return JsonResponse
      */
     public function profile(): JsonResponse
@@ -241,7 +240,7 @@ class ApiAuthController extends Controller
     }
 
     // 프로필 정보 모바일.. (수정중)
-    public function profileMobile()
+    public function profileMobile(): JsonResponse
     {
         $user = Auth::guard('api')->user();
 
@@ -270,7 +269,7 @@ class ApiAuthController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function profileImageChange(Request $request)
+    public function profileImageChange(Request $request): JsonResponse
     {
         // TODO 유저 사진 UPDATE
         // 1. 유저 사진 파일 validation 체크
@@ -331,7 +330,7 @@ class ApiAuthController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function passwordUpdate(Request $request)
+    public function passwordUpdate(Request $request): JsonResponse
     {
         $user = Auth::guard('api')->user();
 
@@ -389,7 +388,7 @@ class ApiAuthController extends Controller
         UploadedFile $uploadedFile,
         string $imgFileName,
         string $folderName
-    )
+    ): string
     {
         $extension = $uploadedFile->extension();
         $storagePath = "{$folderName}/{$imgFileName}.{$extension}";
