@@ -345,7 +345,7 @@ class RecordController extends Controller
             $sum_of_time = $user_info->sum('time');
             $max_of_speed = $user_info->max('max_speed');
 
-            $badge_result = $badgeController->checkBadge($sum_of_distance, $sum_of_time, $max_of_speed);
+//            $badge_result = $badgeController->checkBadge($sum_of_distance, $sum_of_time, $max_of_speed);
         }
 
 

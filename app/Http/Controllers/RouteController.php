@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Record;
 use App\Route;
 use App\RouteLike;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class RouteController extends Controller
 {
@@ -134,6 +137,7 @@ class RouteController extends Controller
      *
      * @param Request $request
      * @return JsonResponse
+     * @throws Exception
      */
     public function routeSave(Request $request, Record $record): JsonResponse
     {
@@ -156,8 +160,17 @@ class RouteController extends Controller
         $user = Auth::guard('api')->user();
         $route_user_id = $user->getAttribute('id');
 
+        // 경로 이미지 추가
+        $name = Str::slug($route_user_id).'_'.($request->input('route_title')).'_img';
+
+        $folder = '/uploads/images/';
+
+        $imgFile = $request->file('route_image');
+        $routePicture = $this->getImage($imgFile, $name, $folder);
+
+
         $route_title = $request->input('route_title');
-        $route_image = $request->input('route_image');
+        $route_image = $routePicture;
         $route_distance = $request->input('route_distance');
         $route_time = $request->input('route_time');
         $route_avg_degree = $request->input('route_avg_degree');
@@ -181,6 +194,10 @@ class RouteController extends Controller
 
         // 몽고에 경로 데이터 저장 완료, 조회 완료
         $savaRouteMongo = $this->mongoRouteSave($request, $saveRouteId);
+
+//        if ($savaRouteMongo["message"] == "잘못된 요청 값입니다.") {
+//
+//        }
 
         return $this->responseJson(
             self::ROUTESAVE_SUCCESS,
@@ -426,5 +443,16 @@ class RouteController extends Controller
         $response = \Illuminate\Support\Facades\Http::delete("http://13.209.75.193:3000/api/route/$routeId");
 
         return $response->json();
+    }
+
+    // TODO 경로 이미지 조회
+    public function loadRouteImage(Route $route): string
+    {
+        $routeImg = $route['route_image'];
+        if ($routeImg == "null") {
+            return "null";
+        }
+
+        return $loadImg = $this->getBase64Img($routeImg);
     }
 }
