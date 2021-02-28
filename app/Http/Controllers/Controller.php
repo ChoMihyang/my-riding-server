@@ -8,6 +8,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use \Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use PhpParser\Node\Scalar\String_;
 
 class Controller extends BaseController
@@ -70,5 +71,13 @@ class Controller extends BaseController
             $type => $data
         ], $http_code
         );
+    }
+
+    public function get_base64_img($img_name)
+    {
+        $data = Storage::get('public/' . $img_name);
+        $type = pathinfo('storage/' . $img_name, PATHINFO_EXTENSION);
+
+        return 'image/' . $type . ';base64,' . base64_encode($data);
     }
 }

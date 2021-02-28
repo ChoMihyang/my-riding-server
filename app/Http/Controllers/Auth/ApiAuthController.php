@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\User;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Traits\UploadTrait;
@@ -47,7 +49,7 @@ class ApiAuthController extends Controller
         $validator = Validator::make($request->all(), [
             'user_account' => 'required|string|min:6|max:15|regex:/^[a-z]+[a-z0-9]{5,15}$/|unique:users',
             'user_password' => 'required|string|min:8|regex:/^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{7,}$/|confirmed',
-            'user_nickname' => 'required|string|min:5|max:15|regex:/^[\w\Wㄱ-ㅎㅏ-ㅣ가-힣]{5,15}$/|unique:users',
+            'user_nickname' => 'required|string|regex:/^[\w\Wㄱ-ㅎㅏ-ㅣ가-힣]{5,15}$/|unique:users',
             'user_picture.*'  => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
             'user_account.regex' => '아이디를 다시 입력해주세요.',
@@ -74,23 +76,17 @@ class ApiAuthController extends Controller
 
         // 사진 입력
         if (($request->has('user_picture'))) {
-            $image = $request->file('user_picture');
-
-            $name = Str::slug($request->input('user_account')).'_'.time();
+            $name = Str::slug($request->input('user_account')).'_img';
 
             $folder = '/uploads/images/';
-            // 이미지 저장할 경로 생성(폴더 경로 + 파일 이름 + 파일 확장자명)
-            $filePath = $folder.$name.'.'.$image->getClientOriginalExtension();
 
-            $this->uploadOne($image, $folder, 'public', $name);
-
-            $user_picture = $filePath;
+            $imgFile = $request->file('user_picture');
+            $user_picture = $this->getImage($imgFile, $name, $folder);
         }
 
         $user_account = $request->input('user_account');
         $user_password = $request->input('user_password');
         $user_nickname = $request->input('user_nickname');
-//        dd($user_picture);
 
         $data = $this->user->createUserInfo($user_account,$user_password,$user_nickname,$user_picture);
 //        $token = $data->createToken('Laravel Password Grant Client')->accessToken;
@@ -300,17 +296,16 @@ class ApiAuthController extends Controller
 
         // 사진 입력
         if (($request->has('user_picture'))) {
-            $image = $request->file('user_picture');
-
-            $name = Str::slug($user_account).'_'.time();
+            $name = Str::slug($user_account).'_img';
 
             $folder = '/uploads/images/';
-            // 이미지 저장할 경로 생성(폴더 경로 + 파일 이름 + 파일 확장자명)
-            $filePath = $folder.$name.'.'.$image->getClientOriginalExtension();
 
-            $this->uploadOne($image, $folder, 'public', $name);
+            $imgFile = $request->file('user_picture');
+            $user_picture = $this->getImage($imgFile, $name, $folder);
 
-            $user_picture = $filePath;
+
+            // 기존 이미지 삭제
+            $this->deleteImage($user_account.'_img');
 
             // 유저 이미지 변경
             $this->user->UserImageChange($user_id, $user_picture);
@@ -318,7 +313,7 @@ class ApiAuthController extends Controller
             return $this->responseJson(
                 self::IMAGE_CHANGE_SUCCESS,
                 [],
-                201
+                200
             );
         }
 
@@ -369,7 +364,7 @@ class ApiAuthController extends Controller
             return $this->responseJson(
               self::PASSWORD_CHANGE_SUCCESS,
               [],
-              201
+              200
             );
         }
         else {
@@ -379,5 +374,41 @@ class ApiAuthController extends Controller
                 422
             );
         }
+    }
+
+    // 사용자 이미지 저장
+    public function getImage(
+        UploadedFile $uploadedFile,
+        string $imgFileName,
+        string $folderName
+    )
+    {
+        $extension = $uploadedFile->extension();
+        $storagePath = "{$folderName}/{$imgFileName}.{$extension}";
+
+        Storage::putFileAs('public', $uploadedFile, $storagePath);
+
+        return $storagePath;
+    }
+
+    public function deleteImage(String $url)
+    {
+        Storage::delete($url);
+    }
+
+    // 사용자 이미지 로딩
+    public function loadImage()
+    {
+        $user = Auth::guard('api')->user();
+
+        $user_img = $user->getAttribute('user_picture');
+
+        $loadImg = $this->get_base64_img($user_img);
+
+        return $this->responseJson(
+          "이미지 로드",
+            $loadImg,
+            200
+        );
     }
 }

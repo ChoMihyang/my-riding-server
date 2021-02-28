@@ -149,6 +149,7 @@ class User extends Authenticatable
         return $returnData;
     }
 
+    // 이미지 url 업데이트
     public function UserImageChange(
         int $user_id,
         string $user_picture
@@ -157,4 +158,6 @@ class User extends Authenticatable
         self::where('id', $user_id)
             ->update(['user_picture' => $user_picture]);
     }
+
+    // 이미지
 }
