@@ -152,9 +152,6 @@ class User extends Authenticatable
         return $returnData;
     }
 
-<<<<<<< HEAD
-    // 이미지 url 업데이트
-=======
     // 최근 라이딩 업데이트
     public function updateLatestRidingDate(int $user_id, $date)
     {
@@ -164,7 +161,7 @@ class User extends Authenticatable
         $user->save();
     }
 
->>>>>>> 950a7d8436b95e057afe952b1a73e22743a232d7
+    // 이미지 url 업데이트
     public function UserImageChange(
         int $user_id,
         string $user_picture
@@ -173,6 +170,4 @@ class User extends Authenticatable
         self::where('id', $user_id)
             ->update(['user_picture' => $user_picture]);
     }
-
-    // 이미지
 }
