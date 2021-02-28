@@ -114,18 +114,22 @@ class Stats extends Model
     }
 
     /**
-     * 랭킹 10위 사용자의 통계 조회
+     * 사용자 랭킹 상세보기
+     * @param int $rank_id
      * @return Collection
      */
-    public function getUserStat(): Collection
+    public function getUserDetailStats(int $rank_id)
     {
         $param = [
             'stat_distance as distance',
             'stat_time as time',
-            'stat_avg_speed as avg_speed',
-            'stat_max_speed as max_speed'
+            'stats.stat_avg_speed as avg_speed',
+            'stats.stat_max_speed as max_speed'
         ];
-        $returnData = Stats::select($param)->get();
+
+        $returnData = self::select($param)
+            ->where('stat_user_id', $rank_id)
+            ->get();
 
         return $returnData;
     }

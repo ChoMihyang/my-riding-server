@@ -285,9 +285,7 @@ class RecordController extends Controller
         $today_date = date('Y-m-d');
         $today_week = date('W', strtotime($today_date));
         // 현재 날짜의 요일
-        $temp_day = date('w', strtotime($today_date));
-        $today_day = $temp_day === 0 ? 6 : $temp_day - 1;
-
+        $today_day = date('w', strtotime($today_date));
 
         if (!$recordSavePoints) {
             // TODO 기록 저장 실패한 경우?

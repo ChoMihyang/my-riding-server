@@ -133,21 +133,17 @@ class User extends Authenticatable
             'users.id',
             'user_nickname as nickname',
             'user_picture as picture',
-            'user_score_of_riding as score',
-//            'stats.stat_distance',
-//            'stats.stat_time',
-//            'stats.stat_avg_speed',
-//            'stats.stat_max_speed'
+            'user_score_of_riding as score'
         ];
 
         $returnData = User::select($param)
-            ->join('stats', 'users.id', 'stats.stat_user_id')
             ->orderByDesc('user_score_of_riding')
             ->take(10)
             ->get();
 
         return $returnData;
     }
+
 
     public function UserImageChange(
         int $user_id,
