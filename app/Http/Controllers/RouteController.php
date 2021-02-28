@@ -143,6 +143,7 @@ class RouteController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'route_title' => 'required|string|min:3|alpha_num|unique:routes',
+            'route_image.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($validator->fails()) {

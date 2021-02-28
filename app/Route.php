@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Route extends Model
 {
@@ -64,6 +65,19 @@ class Route extends Model
                 ->orderBy('route_like', 'DESC')
                 ->get()
                 ->take(5);
+
+            // 경로 이미지 출력
+            $route_img = array();
+            for ($i = 0; $i < 5; $i++) {
+                $route_img = $routeInfo[$i]->route_image;
+                if (!($route_img == "null")) {
+                    $data = Storage::get('public/' . $route_img);
+                    $type = pathinfo('storage/' . $route_img, PATHINFO_EXTENSION);
+
+                    $routeInfo[$i]['route_image'] = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                }
+            }
+
         } elseif ($count == 3) {
             $routeInfo = self::select('id', 'route_user_id', 'route_title', 'route_like', 'route_distance', 'route_image',
                 'route_time', 'route_start_point_address', 'route_end_point_address', 'created_at')
