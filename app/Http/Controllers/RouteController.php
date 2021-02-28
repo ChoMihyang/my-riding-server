@@ -418,12 +418,14 @@ class RouteController extends Controller
 
         // 경로 종류별로 들어온 route_id
         $routeValue = $this->route->routeDetailValue($route_id, $route_like_user);
+        $routeMongoValue = $this->mongoRouteShow($route_id);
+        $mongo = $routeMongoValue['data'][0]['points'];
 
-        $responseData = $routeValue;
+        $responseData = ['routeValue' => $routeValue, 'routeMongoValue' => $mongo];
 
         return $this->responseAppJson(
             self::ROUTEDETAILVIEW_SUCCESS,
-            "routes",
+            'routes',
             $responseData,
             200
         );

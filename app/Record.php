@@ -382,7 +382,7 @@ class Record extends Model
     /**
      * 경로 저장 확인용
      *
-     * @param int $rec_route_id
+     * @param int|null $rec_route_id
      * @param string $rec_title
      * @return mixed
      */

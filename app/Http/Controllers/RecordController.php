@@ -456,7 +456,7 @@ class RecordController extends Controller
         $this->record->delete_record($user_id, $record_id);
     }
 
-    // app 경로 상세 페이지
+    // app 기록 상세 페이지
     public function recordAppDetailPage(Record $record): JsonResponse
     {
         $record_id = $record['id'];

@@ -275,23 +275,45 @@ class Route extends Model
         int $route_like_user
     )
     {
-        $routeInfo = Route::join('route_likes', 'route_likes.route_like_user', '=', 'routes.route_user_id')
-            ->select('routes.id',
-                'routes.route_user_id',
-                'routes.route_title',
-                'routes.route_like',
-                'routes.route_distance',
-                'routes.route_image',
-                'routes.route_time',
-                'routes.route_start_point_address',
-                'routes.route_end_point_address',
-                'routes.created_at',
-                'route_likes.route_like_user'
-            )
-            ->where('routes.id', $route_id)
-            ->where('routes.route_user_id', $route_like_user)
-            ->where('route_likes.route_like_obj', $route_id)
+        $routeLike = RouteLike::where('route_like_user', $route_like_user)
+            ->where('route_like_obj', $route_id)
             ->get();
+
+        // 좋아요 없을 때
+        if (!($routeLike->isEmpty())) {
+            $routeInfo = Route::join('route_likes', 'route_likes.route_like_user', '=', 'routes.route_user_id')
+                ->select('routes.id',
+                    'routes.route_user_id',
+                    'routes.route_title',
+                    'routes.route_like',
+                    'routes.route_distance',
+                    'routes.route_image',
+                    'routes.route_time',
+                    'routes.route_start_point_address',
+                    'routes.route_end_point_address',
+                    'routes.created_at',
+                    'route_likes.route_like_user'
+                )
+                ->where('routes.id', $route_id)
+                ->where('routes.route_user_id', $route_like_user)
+                ->where('route_likes.route_like_obj', $route_id)
+                ->get();
+            // TODO 이미지 추가해야됨!!!
+
+            return $routeInfo;
+        }
+        $routeInfo = Route::where('id', $route_id)
+            ->where('route_user_id', $route_like_user)
+            ->get();
+
+        // 경로 이미지 출력
+        $route_img = $routeInfo[0]->route_image;
+        if (!($route_img == "null")) {
+            $data = Storage::get('public/' . $route_img);
+            $type = pathinfo('storage/' . $route_img, PATHINFO_EXTENSION);
+
+            $routeInfo[0]['route_image'] = 'data:image/' . $type . ';base64,' . base64_encode($data);
+        }
 
         return $routeInfo;
     }
