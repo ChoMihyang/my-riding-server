@@ -458,15 +458,4 @@ class RouteController extends Controller
 
         return $response->json();
     }
-
-    // TODO 경로 이미지 조회
-    public function loadRouteImage(Route $route): string
-    {
-        $routeImg = $route['route_image'];
-        if ($routeImg == "null") {
-            return "null";
-        }
-
-        return $loadImg = $this->getBase64Img($routeImg);
-    }
 }

@@ -299,7 +299,6 @@ class ApiAuthController extends Controller
      */
     public function profileImageChange(Request $request): JsonResponse
     {
-        // TODO 유저 사진 UPDATE
         // 1. 유저 사진 파일 validation 체크
         $user = Auth::guard('api')->user();
 
