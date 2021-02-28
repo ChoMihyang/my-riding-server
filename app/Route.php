@@ -60,6 +60,19 @@ class Route extends Model
                 ->whereIn('id', $arr)
                 ->orderBy('created_at', 'DESC')
                 ->get();
+
+            // 경로 이미지 출력
+            $route_img = array();
+            for ($i = 0; $i < 5; $i++) {
+                $route_img = $routeInfo[$i]->route_image;
+                if (!($route_img == "null")) {
+                    $data = Storage::get('public/' . $route_img);
+                    $type = pathinfo('storage/' . $route_img, PATHINFO_EXTENSION);
+
+                    $routeInfo[$i]['route_image'] = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                }
+            }
+
         } elseif ($count == 2) {
             $routeInfo = self::select('id', 'route_title', 'route_distance', 'route_image', 'route_like')
                 ->orderBy('route_like', 'DESC')
