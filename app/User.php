@@ -125,8 +125,7 @@ class User extends Authenticatable
         return $this->belongsToMany(Record::class, 'rec_user_id');
     }
 
-    // 사용자 랭킹 정보
-    // TODO 상세정보까지 볼 수 있도록 누적 값 등 전체 기록 전달하기
+    // 사용자 랭킹 정보 (10순위)
     public function getUserRank()
     {
         $param = [
@@ -144,6 +143,14 @@ class User extends Authenticatable
         return $returnData;
     }
 
+    // 최근 라이딩 업데이트
+    public function updateLatestRidingDate(int $user_id, $date)
+    {
+        $user = User::find($user_id);
+        $user->date_of_latest_riding = $date;
+
+        $user->save();
+    }
 
     public function UserImageChange(
         int $user_id,
