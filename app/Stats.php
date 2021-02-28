@@ -80,10 +80,9 @@ class Stats extends Model
         return $returnData;
     }
 
-// 선택 연도와 주차에 해당하는 통계 조회
 
     /**
-     *
+     * 선택 연도와 주차에 해당하는 통계 조회
      * @param int $user_id
      * @param int $year
      * @param int $week
@@ -134,11 +133,9 @@ class Stats extends Model
         return $returnData;
     }
 
-// 특정 주차의 통계 조회
-    public
-    function select_stats_by_week()
+    // 특정 주차의 통계 조회
+    public function select_stats_by_week()
     {
-
     }
 
     // 통계 저장
@@ -224,11 +221,39 @@ class Stats extends Model
         return true;
     }
 
+    public function select_profile_stat(
+        int $user_id,
+        string $start_date_range,
+        string $last_date_range
+    )
+    {
+        $param = [
+            'stat_year as year',
+            'stat_week as week',
+            DB::raw('sum(stat_distance) as distance'),
+            DB::raw('sum(stat_time) as time'),
+            DB::raw('avg(stat_avg_speed) as avg_speed'),
+            DB::raw('max(stat_max_speed) as max_speed')
+        ];
+
+        $returnData = Stats::select($param)
+            ->groupBy('stat_year')
+            ->groupBy('stat_week')
+            ->where('stat_user_id', $user_id)
+            ->whereBetween('stat_date', [$start_date_range, $last_date_range])
+            ->orderByDesc('stat_year')
+            ->orderByDesc('stat_week')
+            ->get();
+
+        return $returnData;
+    }
+
     /**
      * @param int $user_id
      * @return Collection
      */
-    public function select_stats_badge(
+    public
+    function select_stats_badge(
         int $user_id
     ): Collection
     {
@@ -245,7 +270,8 @@ class Stats extends Model
         return $returnData;
     }
 
-    protected function serializeDate(DateTimeInterface $date)
+    protected
+    function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');
     }
