@@ -63,11 +63,12 @@ class RouteController extends Controller
      */
     public function routeDelete(Route $id): JsonResponse
     {
-        $user = Auth::guard('api')->user();
-        // 유저 아이디 값
-        $route_user_id = $user->getAttribute('id');
         // 경로 번호
         $route_id = $id->id;
+
+        // 유저 아이디 값
+        $user = Auth::guard('api')->user();
+        $route_user_id = $user->getAttribute('id');
 
         // 몽고 경로 정보 삭제
         $this->mongoRouteDelete($route_id);
