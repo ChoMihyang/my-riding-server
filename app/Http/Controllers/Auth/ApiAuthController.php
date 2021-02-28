@@ -199,8 +199,9 @@ class ApiAuthController extends Controller
         $user_id = $user->getAttribute('id');
         $user_account = $user->getAttribute('user_account');
         $user_nickname = $user->getAttribute('user_nickname');
-        $user_picture = $user->getAttribute('user_picture');
+        $user_picture = $this->loadImage();
         $user_created_at = $user->getAttribute('created_at');
+
 
         return $this->responseJson(
             self::USER_PROFILE,
@@ -246,7 +247,7 @@ class ApiAuthController extends Controller
 
         $user_id = $user->getAttribute('id');
         $user_nickname = $user->getAttribute('user_nickname');
-        $user_picture = $user->getAttribute('user_picture');
+        $user_picture = $this->loadImage();
         $user_score_of_riding = $user->getAttribute('user_score_of_riding');
 
         // TODO stats 테이블의 통계 들어가야함!!!
@@ -376,7 +377,14 @@ class ApiAuthController extends Controller
         }
     }
 
-    // 사용자 이미지 저장
+    /**
+     * 사용자 이미지 저장
+     *
+     * @param UploadedFile $uploadedFile
+     * @param string $imgFileName
+     * @param string $folderName
+     * @return string
+     */
     public function getImage(
         UploadedFile $uploadedFile,
         string $imgFileName,
@@ -391,24 +399,4 @@ class ApiAuthController extends Controller
         return $storagePath;
     }
 
-    public function deleteImage(String $url)
-    {
-        Storage::delete($url);
-    }
-
-    // 사용자 이미지 로딩
-    public function loadImage()
-    {
-        $user = Auth::guard('api')->user();
-
-        $user_img = $user->getAttribute('user_picture');
-
-        $loadImg = $this->get_base64_img($user_img);
-
-        return $this->responseJson(
-          "이미지 로드",
-            $loadImg,
-            200
-        );
-    }
 }

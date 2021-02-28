@@ -73,11 +73,35 @@ class Controller extends BaseController
         );
     }
 
-    public function get_base64_img($img_name)
+    /**
+     * 사용자 이미지 불러오기
+     *
+     * @return string
+     */
+    public function loadImage()
+    {
+        $user = Auth::guard('api')->user();
+
+        $user_img = $user->getAttribute('user_picture');
+
+        return $loadImg = $this->getBase64Img($user_img);
+    }
+
+    public function getBase64Img($img_name)
     {
         $data = Storage::get('public/' . $img_name);
         $type = pathinfo('storage/' . $img_name, PATHINFO_EXTENSION);
 
         return 'image/' . $type . ';base64,' . base64_encode($data);
+    }
+
+    /**
+     * 사용자 이미지 삭제
+     *
+     * @param String $url
+     */
+    public function deleteImage(String $url)
+    {
+        Storage::delete($url);
     }
 }
