@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Support\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
@@ -65,6 +66,14 @@ class User extends Authenticatable
             ->get()
             ->first()
             ->toArray();
+
+        $user_img = $user_info['picture'];
+        if (!($user_img == "null")) {
+            $data = Storage::get('public/' . $user_img);
+            $type = pathinfo('storage/' . $user_img, PATHINFO_EXTENSION);
+
+            $user_info['picture'] = 'image/' . $type . ';base64,' . base64_encode($data);
+        }
 
         $latest_riding_date = $user_info['last_riding'];
 
@@ -152,6 +161,7 @@ class User extends Authenticatable
         $user->save();
     }
 
+    // 이미지 url 업데이트
     public function UserImageChange(
         int $user_id,
         string $user_picture

@@ -25,8 +25,9 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
 
     Route::group(['middleware' => ['usertoken']], function () {
         Route::prefix("auth")->group(function () {
-            Route::post('/passwordchange', 'Auth\ApiAuthController@passwordUpdate')->name('[사용자] 프로필 비밀번호 변경');
-            Route::post('/imagechange', 'Auth\ApiAuthController@profileImageChange')->name('[사용자] 프로필 이미지 변경');
+            Route::get("/load/img", "Auth\ApiAuthController@loadImage")->name("[사용자] 이미지 로드");
+            Route::patch('/update/password', 'Auth\ApiAuthController@passwordUpdate')->name('[사용자] 프로필 비밀번호 변경');
+            Route::post('/update/image', 'Auth\ApiAuthController@profileImageChange')->name('[사용자] 프로필 이미지 변경');
             Route::get('/profilemobile', 'Auth\ApiAuthController@profileMobile')->name('모바일 사용자 프로필 테스트');
             Route::get('/profile', 'Auth\ApiAuthController@profile')->name('[사용자] 프로필 조회');
             Route::get('/', 'Auth\ApiAuthController@user')->name('[사용자] 회원정보 인증');
@@ -99,3 +100,5 @@ Route::get("/test/delete/record", "RecordController@mongoRecordDelete")->name("�
 Route::get("/test/post/route", "RouteController@mongoRouteSave")->name("라이딩 경로 몽고로 데이터 전달");
 Route::get("/test/get/route/{id}", "RouteController@mongoRouteShow")->name("라이딩 경로 몽고에서 조회");
 //Route::get("/test/delete/route", "RouteController@mongoRouteDelete")->name("라이딩 경로 몽고에서 삭제");
+
+Route::get("/test/img", "Auth\ApiAuthController@loadImage")->name("이미지로드 테스트");
