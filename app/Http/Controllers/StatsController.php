@@ -7,6 +7,9 @@ use App\Stats;
 
 class StatsController extends Controller
 {
-
+    public function test()
+    {
+        echo "zz";
+    }
 
 }

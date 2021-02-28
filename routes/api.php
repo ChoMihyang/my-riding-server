@@ -90,7 +90,7 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
     Route::get('/rank/{rank_id}', 'UserController@viewUserDetailRank')->name('[랭킹] 사용자 랭킹 상세 정보');
 });
 
-
+Route::get('/appStatsTest', 'StatsController@test');
 // 몽고 경로 테스트 중..
 Route::get("/test/post/record", "RecordController@mongoRecordSave")->name("라이딩 기록 몽고로 데이터 전송");
 Route::get("/test/get/record/{id}", "RecordController@mongoRecordShow")->name("라이딩 기록 몽고에서 조회");
