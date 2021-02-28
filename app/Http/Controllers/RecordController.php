@@ -22,6 +22,8 @@ class RecordController extends Controller
 
     private const SELECT_BY_YEAR_SUCCESS = '년도 통계 조회를 성공하였습니다.';
     private const SELECT_BY_DAY_DETAIL_SUCCESS = '라이딩 일지 상세 정보 조회를 성공하였습니다.';
+    private const RIDING_TITLE_UPDATE_SUCCESS = '라이딩 제목 수정을 성공하였습니다.';
+    private const RIDING_TITLE_DELETE_SUCCESS = '라이딩 기록 삭제를 성공하였습니다.';
     private const SELECT_BY_DAY_SUCCESS = '홈 기록 조회를 성공하였습니다.';
     private const SAVE_RECORD_SUCCESS = '경로 저장에 성공했습니다';
     private const SAVE_RECORD_FAIL = '경로 저장에 실패했습니다.';
@@ -436,10 +438,17 @@ class RecordController extends Controller
     // 라이딩 일지 제목 수정
     public function recordModify(Record $record, Request $request)
     {
+        // TODO title 벨리데이션
+
         $record_id = $record['id'];
         $modified_title = $request->input('title');
 
         $this->record->modify_record_name($record_id, $modified_title);
+
+        return $this->responseJson(
+            self::RIDING_TITLE_UPDATE_SUCCESS,
+            [],
+            200);
     }
 
     // 라이딩 기록 삭제
@@ -454,6 +463,12 @@ class RecordController extends Controller
         $this->record->mongoRouteDelete($record_id);
         // 기록 레코드 삭제
         $this->record->delete_record($user_id, $record_id);
+
+        return $this->responseJson(
+            self::RIDING_TITLE_DELETE_SUCCESS,
+            [],
+            200
+        );
     }
 
     // app 기록 상세 페이지
@@ -475,7 +490,7 @@ class RecordController extends Controller
 
         return $this->responseAppJson(
             self::SELECT_BY_DAY_DETAIL_SUCCESS,
-            'recordValue',$result,
+            'recordValue', $result,
             200
         );
     }

@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Support\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\HasApiTokens;
 
@@ -79,7 +80,7 @@ class User extends Authenticatable
 
         $latest_riding_id = Record::select('id')
             ->where('rec_user_id', $user_id)
-            ->where('created_at', $latest_riding_date)
+            ->whereDate('created_at', DB::raw("date('$latest_riding_date')"))
             ->first();
 
         // 최근 라이딩 날짜의 통계를 배열에 추가
