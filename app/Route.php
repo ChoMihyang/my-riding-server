@@ -63,7 +63,7 @@ class Route extends Model
 
             // 경로 이미지 출력
             $route_img = array();
-            for ($i = 0; $i < 5; $i++) {
+            for ($i = 0; $i < $calValue->count(); $i++) {
                 $route_img = $routeInfo[$i]->route_image;
                 if (!($route_img == "null")) {
                     $data = Storage::get('public/' . $route_img);

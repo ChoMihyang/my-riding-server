@@ -199,7 +199,7 @@ class Record extends Model
      * 기록 생성
      *
      * @param int $rec_user_id
-     * @param int $rec_route_id
+     * @param int|null $rec_route_id
      * @param string $rec_title
      * @param float $rec_distance
      * @param int $rec_time
