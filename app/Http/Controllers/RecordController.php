@@ -174,10 +174,12 @@ class RecordController extends Controller
         // 사용자 토큰 가져오기
         $user_id = Auth::guard('api')->user()->getAttribute('id');
         $record_of_date = $this->record->getRecordOfDay($user_id, $record_id);
+        // 몽고 데이터 조회
+        $recordMongo = $this->mongoRecordShow($record_id);
 
         $result = [
             'records' => $record_of_date,
-            'path' => []
+            'path' => $recordMongo
         ];
 
         return $this->responseJson(
@@ -416,5 +418,17 @@ class RecordController extends Controller
         $this->record->mongoRouteDelete($record_id);
         // 기록 레코드 삭제
         $this->record->delete_record($user_id, $record_id);
+    }
+
+    // app 경로 상세 페이지
+    public function recordDetailPage(int $record_id)
+    {
+        $recordMongo = $this->mongoRecordShow($record_id);
+
+        return $this->responseAppJson(
+            "데이터 조회 성공",
+            "record",$recordMongo,
+            200
+        );
     }
 }
