@@ -52,6 +52,7 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
              *  거리, 시간, 평균 속도 통계 조회
              *  -> RecordController
              */
+            Route::get("/detail/{record}", "RecordController@recordAppDetailPage")->name("[라이딩 일지] 앱 상세조회 페이지");
             Route::get("/year", "RecordController@recordViewByYear")->name("[라이딩 일지] 연도 기준 조회");
             Route::get("/week", "RecordController@recordViewByWeek")->name("[라이딩 일지] 주 기준 조회");
             Route::get('/home', 'RecordController@recordOfHome')->name("[홈화면] 날짜별 조회");
@@ -98,7 +99,8 @@ Route::get("/test/get/record/{id}", "RecordController@mongoRecordShow")->name("�
 Route::get("/test/delete/record", "RecordController@mongoRecordDelete")->name("라이딩 기록 몽고에서 삭제");
 // 몽고 기록 테스트 중
 Route::get("/test/post/route", "RouteController@mongoRouteSave")->name("라이딩 경로 몽고로 데이터 전달");
-Route::get("/test/get/route/{id}", "RouteController@mongoRouteShow")->name("라이딩 경로 몽고에서 조회");
+Route::get("/test/get/route/{routeId}", "RouteController@mongoRouteShow")->name("라이딩 경로 몽고에서 조회");
 //Route::get("/test/delete/route", "RouteController@mongoRouteDelete")->name("라이딩 경로 몽고에서 삭제");
 
-Route::get("/test/img", "Auth\ApiAuthController@loadImage")->name("이미지로드 테스트");
+// 경로 이미지 조회 테스트
+Route::get("/test/img/{route}", "RouteController@loadRouteImage")->name("이미지로드 테스트");
