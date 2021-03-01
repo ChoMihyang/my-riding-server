@@ -98,6 +98,37 @@ class Route extends Model
                 ->where('route_user_id', $route_user_id)
                 ->orderBy('id', 'DESC')
                 ->get();
+        } elseif ($count == 4) {
+            // 두 테이블 union
+            $routeTableInfo = Route::select('id as route_id', 'route_user_id')
+                ->where('route_user_id', $route_user_id);
+            $routeLikeTableInfo = RouteLike::select('id as route_like_id', 'route_like_user as route_user_id')
+                ->where('route_like_user', $route_user_id);
+            $calValue = $routeTableInfo->union($routeLikeTableInfo)->get();
+
+            // collection -> array
+            $arrayCalValue = $calValue->toArray();
+            $arr = array();
+            // 경로 번호 뽑아냄
+            for ($i = 0; $i < $calValue->count(); $i++) {
+                $arr[$i] = $arrayCalValue[$i]["route_id"];
+            }
+
+            $routeInfo = Route::select(
+                'id',
+                'route_user_id',
+                'created_at',
+                'route_title',
+                'route_distance',
+                'route_time',
+                'route_like',
+                'route_num_of_try_count',
+                'route_start_point_address',
+                'route_end_point_address',
+                'route_image')
+                ->whereIn('id', $arr)
+                ->orderBy('created_at', 'DESC')
+                ->get();
         }
 
         return $routeInfo;

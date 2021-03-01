@@ -46,12 +46,14 @@ class RouteController extends Controller
         $user = Auth::guard('api')->user();
         $route_user_id = $user->getAttribute('id');
 
-        $routeValue = $this->route->routeListValue(1, $route_user_id);
-        $routePath = $this->route->routeListValue(1, $route_user_id)->first();
+        $routeValue = $this->route->routeListValue(4, $route_user_id);
+        //
+        $routePath = $this->route->routeListValue(4, $route_user_id)->first();
+        $routeMongo = $this->mongoRouteShow($routePath->id);
 
         $response_data = [
             'routes' => $routeValue,
-            'route-path' => $routePath
+            'route_path' => $routeMongo
         ];
 
         return $this->responseJson(
