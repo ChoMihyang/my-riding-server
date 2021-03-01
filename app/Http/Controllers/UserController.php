@@ -120,11 +120,23 @@ class UserController extends Controller
         $year = $requestedData['year'];
         $week = $requestedData['week'];
 
-        $result = $this->stats->getDashboardStats($user_id, $year, $week);
+        // 해당 연도-주차의 통계
+        $stat = $this->stats->getDashboardStats($user_id, $year, $week);
+
+        // 해당 연도-주차의 시작일과 마지막일
+        $getDate = $this->stats->get_start_end_date_of_week($year, $week);
+
+        $returnData = [
+            'year' => $year,
+            'week' => $week,
+            'startDate' => $getDate[0],
+            'endDate' => $getDate[1],
+            'values' => $stat
+        ];
 
         return $this->responseJson(
             $year . "년 " . $week . "주차의 " . self::PRINT_STATS_OF_ANOTHER_WEEK_SUCCESS,
-            $result,
+            $returnData,
             200);
     }
 

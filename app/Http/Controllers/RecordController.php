@@ -363,6 +363,7 @@ class RecordController extends Controller
         }
         // 최근 라이딩 날짜 업데이트
         $this->user->updateLatestRidingDate($rec_user_id, date('Y-m-d'));
+        // 사용자 점수 계산 후 업데이트
 
 
         if ($rec_route_id) {
@@ -370,23 +371,23 @@ class RecordController extends Controller
             $this->tryCount($rec_route_id);
         }
 
+
         // 통계 레코드 생성을 성공한 경우 배지 달성 여부 판단
         // 배지 타입 : 100 - 거리, 200 - 시간, 300 - 최고 속도, 400 - 점수, 500 - 랭킹, 600 - 연속
-
         // TODO 달성 여부 판단 메서드 BadgeController 이동
-        if ($statResult) {
-
-            $badgeController = app('App\Http\Controllers\BadgeController');
-
-            // 통계 테이블 조회 -> 기준 필드 값 반환
-            $user_info = $this->stats->select_stats_badge($rec_user_id);
-
-            $sum_of_distance = $user_info->sum('distance');
-            $sum_of_time = $user_info->sum('time');
-            $max_of_speed = $user_info->max('max_speed');
-
+//        if ($statResult) {
+//
+//            $badgeController = app('App\Http\Controllers\BadgeController');
+//
+////         통계 테이블 조회 -> 기준 필드 값 반환
+//            $user_info = $this->stats->select_stats_badge($rec_user_id);
+//
+//            $sum_of_distance = $user_info->sum('distance');
+//            $sum_of_time = $user_info->sum('time');
+//            $max_of_speed = $user_info->max('max_speed');
+//
 //            $badge_result = $badgeController->checkBadge($sum_of_distance, $sum_of_time, $max_of_speed);
-        }
+//        }
 
 
         return $this->responseJson(
@@ -401,7 +402,8 @@ class RecordController extends Controller
      *
      * @param int $rec_route_id
      */
-    public function tryCount(
+    public
+    function tryCount(
         int $rec_route_id
     )
     {
@@ -415,8 +417,9 @@ class RecordController extends Controller
         $this->route->tryUserCheck($rec_route_id);
     }
 
-    // 라이딩 기록 몽고로 보내기
-    public function mongoRecordSave(Request $request, int $recordId)
+// 라이딩 기록 몽고로 보내기
+    public
+    function mongoRecordSave(Request $request, int $recordId)
     {
         $response_data = $request->input('records');
 
@@ -427,16 +430,18 @@ class RecordController extends Controller
         return $response->json();
     }
 
-    // 라이딩 기록 몽고에서 조회
-    public function mongoRecordShow(int $recordId)
+// 라이딩 기록 몽고에서 조회
+    public
+    function mongoRecordShow(int $recordId)
     {
         $response = \Illuminate\Support\Facades\Http::get("http://13.209.75.193:3000/api/record/$recordId");
 
         return $response->json();
     }
 
-    // 라이딩 일지 제목 수정
-    public function recordModify(Record $record, Request $request)
+// 라이딩 일지 제목 수정
+    public
+    function recordModify(Record $record, Request $request)
     {
         // TODO title 벨리데이션
 
@@ -451,8 +456,9 @@ class RecordController extends Controller
             200);
     }
 
-    // 라이딩 기록 삭제
-    public function recordDelete(Record $record)
+// 라이딩 기록 삭제
+    public
+    function recordDelete(Record $record)
     {
         // 삭제 요청 받은 기록 레코드의 ID
         $record_id = $record['id'];
@@ -471,8 +477,9 @@ class RecordController extends Controller
         );
     }
 
-    // app 기록 상세 페이지
-    public function recordAppDetailPage(Record $record): JsonResponse
+// app 기록 상세 페이지
+    public
+    function recordAppDetailPage(Record $record): JsonResponse
     {
         $record_id = $record['id'];
 

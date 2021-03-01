@@ -94,7 +94,7 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
     Route::get('/badge', 'BadgeController@viewDetailBadge')->name('[배지] 배지 상세보기');
 });
 
-Route::get('/appStatsTest', 'StatsController@test');
+Route::get('/dashboardtest', 'StatsController@test');
 // 몽고 경로 테스트 중..
 Route::get("/test/post/record", "RecordController@mongoRecordSave")->name("라이딩 기록 몽고로 데이터 전송");
 Route::get("/test/get/record/{id}", "RecordController@mongoRecordShow")->name("라이딩 기록 몽고에서 조회");
@@ -106,3 +106,4 @@ Route::get("/test/get/route/{routeId}", "RouteController@mongoRouteShow")->name(
 
 // 경로 이미지 조회 테스트
 Route::get("/test/img/{route}", "RouteController@loadRouteImage")->name("이미지로드 테스트");
+
