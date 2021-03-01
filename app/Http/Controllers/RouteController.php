@@ -536,6 +536,6 @@ class RouteController extends Controller
         $url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${key}";
         $response = \Http::get($url);
 
-        return $this->responseJson("성공", $response, 200);
+        return $this->responseJson("성공", $response->json(), 200);
     }
 }
