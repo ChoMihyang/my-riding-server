@@ -268,9 +268,9 @@ class RecordController extends Controller
         $rec_user_id = $user->getAttribute('id');
 
         //        $data = file_get_contents('php://input');
-        $_POST = json_decode(file_get_contents('php://input'), true);
+        //        $_POST = json_decode(file_get_contents('php://input'), true);
 
-        $mongoValue = $_POST["records"];
+        $mongoValue = json_decode($record, true);
         //        return $this->responseJson("ddd", gettype($_POST), 200);
 
 
