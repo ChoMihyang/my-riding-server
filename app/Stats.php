@@ -43,7 +43,7 @@ class Stats extends Model
             ->where('stat_user_id', $user_id)
             ->where('stat_year', $today_year)
             ->where('stat_week', $today_week)
-            ->orderBy('stat_day')
+            ->orderBy('stat_date')
             ->get();
 
         return $returnData;
@@ -133,9 +133,51 @@ class Stats extends Model
         return $returnData;
     }
 
-    // 특정 주차의 통계 조회
-    public function select_stats_by_week()
+    // 주차별 시작일과 마지막일
+    public function get_start_end_date_of_week(int $year, int $week)
     {
+        // 현재 날짜
+        $today_date = date('Y-m-d');
+        // 현재 연도
+        $today_year = date('Y', strtotime($today_date));
+        // 올해의 경우
+        if ($year == $today_year) {
+            // 현재 날짜의 요일
+            $today_day = date('w', strtotime($today_date));
+            // 현재 날짜의 주차
+            $today_week = date('W', strtotime($today_date));
+            // 현재 주차의 시작일
+            $today_start_date = date('Y-m-d', strtotime($today_date . "-" . $today_day . "days + 1day"));
+            // 현재 주차 - 요청 주차의 날짜 차이
+            $week_difference = ($today_week - $week) * 7;
+            // 현재 날짜로부터 n일 전으로 이동
+            $start_of_requestedDate = date('Y-m-d', strtotime($today_start_date . "-" . $week_difference . "days"));
+            $end_of_requestedDate = date('Y-m-d', strtotime($start_of_requestedDate . "+6days"));
+        } else {
+            // 이전 연도의 경우
+            $last_date = $year . "-12-31";
+            // YYYY-12-31 의 주차
+            do {
+                $last_date_week = date('W', strtotime($last_date));
+                // 말일이 01주차로 넘어가는 경우 1주일 전의 날짜로 계산
+                if ($last_date_week === '01') $last_date = $year . "-12-24";
+                else                          break;
+            } while (true);
+
+            // YYYY-12-31 의 요일
+            // 요일이 0(일요일)일 경우 웹의 월요일 ~ 일요일 기준 출력을 고려하여 7로 변경
+            $last_day = date('w', strtotime($last_date));
+            if ($last_day == 0) $last_day = 7;
+            // YYYY-12-31 의 주차의 시작일
+            $last_start_date = date('Y-m-d', strtotime($last_date . "-" . $last_day . "days + 1day"));
+            // YYYY-12-31 로부터 요청 주차의 날짜 차이
+            $last_week_difference = ($last_date_week - $week) * 7;
+            // YYYY-12-31 로부터 n일 전으로 이동
+            $start_of_requestedDate = date('Y-m-d', strtotime($last_start_date . "-" . $last_week_difference . "days"));
+            $end_of_requestedDate = date('Y-m-d', strtotime($start_of_requestedDate . "+6days"));
+        }
+
+        return [$start_of_requestedDate, $end_of_requestedDate];
     }
 
     // 통계 저장
