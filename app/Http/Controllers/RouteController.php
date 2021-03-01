@@ -533,7 +533,7 @@ class RouteController extends Controller
         $key = $request->input("api_key");
 
 
-        $url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${key}";
+        $url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${key}&language=ko";
         $response = \Http::get($url);
 
         return $this->responseJson("성공", $response->json(), 200);
