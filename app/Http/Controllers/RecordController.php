@@ -211,32 +211,52 @@ class RecordController extends Controller
 
         $resultData = $this->record->select_records_of_day($user_id, $year, $month, $day);
 
+        if ($resultData->isEmpty()) {
+            return $this->responseAppJson(
+                "일지 기록이 없습니다.",
+                "homeValue",[],
+                200
+            );
+        }
+
         $count = $resultData->count();
 
-
-        // TODO 홈 화면 보류
         $arr = array();
         // 조회한 경로 번호 뽑아냄
         for ($i = 0; $i < $count; $i++) {
             $arr[$i] = $resultData[$i]->id;
         }
 
-        // 배열 번호 뽑아냄
-        $pickRecordId = $request->record_id;
-        $indexRange = array();
-        $num = 0;
-//        $recordMongo = $this->mongoRecordShow($pickRecordId);
-//        dd($recordMongo['data'][0]['records']);
+        if (($request->record_id)) {
+            // 배열 번호 뽑아냄
+            $pickRecordId = $request->record_id;
+            $indexRange = array();
+            $num = 0;
 
-        for ($k = 0; $k < $count; $k++) {
-            $indexRange[$k] = $num++;
+            for ($k = 0; $k < $count; $k++) {
+                $indexRange[$k] = $num++;
 
-            if ($arr[$indexRange[$k]] == $pickRecordId) {
-                // 몽고 데이터 조회
-                $recordMongo = $this->mongoRecordShow($pickRecordId);
-                $mongo = $recordMongo['data'][0]['records'];
+                if ($arr[$indexRange[$k]] == $pickRecordId) {
+                    // 몽고 데이터 조회
+                    $recordMongo = $this->mongoRecordShow($pickRecordId);
+                    $mongo = $recordMongo['data'][0]['records'];
+                }
             }
+
+            $response_data = [
+                "TodayValue" => $arr,
+                "mysqlValue" => $resultData,
+                "mongoValue" => $mongo
+            ];
+            return $this->responseAppJson(
+                self::SELECT_BY_DAY_SUCCESS,
+                "homeValue",
+                $response_data,
+                200);
         }
+        $latestValue = $resultData->first();
+        $recordMongo = $this->mongoRecordShow($latestValue->id);
+        $mongo = $recordMongo['data'][0]['records'];
 
         $response_data = [
             "TodayValue" => $arr,
@@ -262,7 +282,6 @@ class RecordController extends Controller
     {
 
         $record = $request->input('records');
-//        return $this->responseJson("myMessage", json_decode($record, true),200);
         $user = Auth::guard('api')->user();
         // 유저 아이디 값
         $rec_user_id = $user->getAttribute('id');
@@ -272,7 +291,6 @@ class RecordController extends Controller
 
         $mongoValue = json_decode($record, true);
         //        return $this->responseJson("ddd", gettype($_POST), 200);
-
 
 
         $validator = Validator::make($request->all(), [
@@ -442,13 +460,9 @@ class RecordController extends Controller
     public
     function mongoRecordSave(array $response_data, int $recordId)
     {
-//        $response_data = $request->input('records');
-//        dd($response_data);
-
         $response = \Illuminate\Support\Facades\Http::post("http://13.209.75.193:3000/api/record/$recordId", [
             "records" => $response_data
         ]);
-//        dd($response);
 
         return $response;
     }
