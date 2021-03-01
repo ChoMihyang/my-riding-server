@@ -46,15 +46,40 @@ class RouteController extends Controller
         $user = Auth::guard('api')->user();
         $route_user_id = $user->getAttribute('id');
 
-
         $routeValue = $this->route->routeListValue(1, $route_user_id);
+        $routePath = $this->route->routeListValue(1, $route_user_id)->first();
+
         $response_data = [
-            'routes' => $routeValue
+            'routes' => $routeValue,
+            'route-path' => $routePath
         ];
 
         return $this->responseJson(
             self::ROUTELISTVIEW_SUCCESS,
             $response_data,
+            200
+        );
+    }
+
+    /**
+     * [WEB] 경로 목록 조회 - 몽고 데이터 조회용
+     *
+     * @param Route $id
+     * @return JsonResponse
+     */
+    public function routeListViewMongo(Route $id)
+    {
+        $route_id = $id->id;
+
+        $user = Auth::guard('api')->user();
+        $route_user_id = $user->getAttribute('id');
+
+        // 몽고 데이터 조회
+        $routeMongo = $this->mongoRouteShow($route_id);
+
+        return $this->responseJson(
+            self::ROUTELISTVIEW_SUCCESS,
+            $routeMongo['data'],
             200
         );
     }
@@ -144,7 +169,7 @@ class RouteController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'route_title' => 'required|string|min:3|alpha_num|unique:routes',
-            'route_image.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'route_image.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:5000',
         ]);
 
         if ($validator->fails()) {
