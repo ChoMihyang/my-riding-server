@@ -22,6 +22,7 @@ class UserController extends Controller
     private const PRINT_USER_PROFILE_SUCCESS = "사용자 정보, 통계, 알림 조회를 성공하였습니다.";
     private const PRINT_USER_RANK_SUCCESS = "사용자 랭킹 조회를 성공하였습니다.";
     private const PRINT_USER_RANK_DETAIL_SUCCESS = "사용자 상세 랭킹 조회를 성공하였습니다.";
+    private const PRINT_NOTIFICATION_CHECK_SUCCESS = "대시보드 알림 확인을 성공하였습니다.";
 
     // 모델 객체 생성
     public function __construct()
@@ -114,9 +115,16 @@ class UserController extends Controller
         $user_id = Auth::guard('api')->user()->getAttribute('id');
 
         $this->notifications->checkNotification($user_id, $notification);
+
+        // TODO 반환값 추가
+        return $this->responseJson(
+            self::PRINT_NOTIFICATION_CHECK_SUCCESS,
+            [],
+            200
+        );
     }
 
-    // 전체 랭킹 출력 (진행중)
+    // 전체 랭킹 출력
     public function viewUserRank()
     {
         $rank_of_all_users = $this->user->getUserRank();
@@ -155,6 +163,5 @@ class UserController extends Controller
             'stat',
             $result,
             200);
-
     }
 }

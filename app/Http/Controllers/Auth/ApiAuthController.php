@@ -248,7 +248,7 @@ class ApiAuthController extends Controller
         );
     }
 
-    // 프로필 정보 모바일.. (수정중)
+    // 앱 회원 정보(프로필, 통계, 배지) 조회
     public function profileMobile(): JsonResponse
     {
         $user = Auth::guard('api')->user();
@@ -278,7 +278,7 @@ class ApiAuthController extends Controller
         );
 
         // 배지 보유 현황
-        $profile_badge = $this->badge->showBadge($user_id)->pluck('type');
+        $profile_badge = $this->badge->showBadge($user_id);
 
         return $this->responseAppJson(
             self::USER_PROFILE,

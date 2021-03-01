@@ -19,7 +19,12 @@ class Badge extends Model
      */
     public function showBadge(int $user_id)
     {
-        $returnData = self::select('badge_type as type')
+        $param = [
+            'badge_type as type',
+            'badge_name as name'
+        ];
+
+        $returnData = self::select($param)
             ->where('badge_user_id', $user_id)
             ->get();
 

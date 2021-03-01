@@ -7,6 +7,27 @@ use Illuminate\Support\Facades\Auth;
 
 class BadgeController extends Controller
 {
+    private $badge;
+    public const PRINT_DETAIL_BADGE_SUCCESS = "배지 상세보기 출력을 성공하였습니다.";
+
+    public function __construct()
+    {
+        $this->badge = new Badge();
+    }
+
+    // [APP] 배지 상세보기 화면
+    public function viewDetailBadge()
+    {
+        $user_id = Auth::guard('api')->user()->getAttribute('id');
+
+        $user_badge = $this->badge->showBadge($user_id);
+
+        return $this->responseAppJson(
+            self::PRINT_DETAIL_BADGE_SUCCESS,
+            'badge', $user_badge,
+            200
+        );
+    }
 //    protected $badge;
 //
 //    public function __construct()
