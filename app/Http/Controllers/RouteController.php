@@ -190,7 +190,7 @@ class RouteController extends Controller
         $route_user_id = $user->getAttribute('id');
 
         // 경로 이미지 추가
-        $name = Str::slug($route_user_id).'_'.($request->input('route_title')).'_img';
+        $name = Str::slug($route_user_id) . '_' . ($request->input('route_title')) . '_img';
 
         $folder = '/uploads/images/';
 
@@ -221,8 +221,25 @@ class RouteController extends Controller
         $routeSavePoints = $this->route->RouteSaveCheck($route_user_id, $route_title);
         $saveRouteId = $routeSavePoints[0]['id'];
 
+        $point = $request->input('points');
+        if (gettype($point[0]) === "string") {
+            foreach ($point as $key => $value) {
+                $point[$key] = json_decode($value);
+            }
+        }
+
+
         // 몽고에 경로 데이터 저장 완료, 조회 완료
-        $savaRouteMongo = $this->mongoRouteSave($request, $saveRouteId);
+        $savaRouteMongo = $this->mongoRouteSave($point, $saveRouteId);
+
+        if ($savaRouteMongo->status() !== 201) {
+            return $this->responseJson(
+                self::ROUTESAVE_FAIL,
+                [],
+                420
+            );
+        }
+
 
 //        if ($savaRouteMongo["message"] == "잘못된 요청 값입니다.") {
 //
@@ -467,15 +484,17 @@ class RouteController extends Controller
     }
 
     // 경로 정보 저장
-    public function mongoRouteSave(Request $request, int $routeId)
+    public function mongoRouteSave(array $response_data, int $routeId)
     {
-        $response_data = $request->input('points');
+//        $response_data = $request->input('points');
 
         $response = \Illuminate\Support\Facades\Http::post("http://13.209.75.193:3000/api/route/$routeId", [
             "points" => $response_data
         ]);
 
-        return $response->json();
+        return $response;
+
+//        return $response->json();
     }
 
     // 경로 정보 삭제
