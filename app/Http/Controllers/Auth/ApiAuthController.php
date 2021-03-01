@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Stats;
+use App\Badge;
+use App\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +21,7 @@ class ApiAuthController extends Controller
 {
     private $user;
     private $stat;
+    private $badge;
     private const SIGNUP_FAIL = '회원가입에 실패하셨습니다.';
     private const SIGNUP_SUCCESS = '회원가입에 성공하셨습니다.';
     private const LOGIN_FAIL_AC = '유저 아이디가 일치하지 않습니다.';
@@ -40,6 +42,7 @@ class ApiAuthController extends Controller
     {
         $this->user = new User();
         $this->stat = new Stats();
+        $this->badge = new Badge();
     }
 
     /**
@@ -274,7 +277,8 @@ class ApiAuthController extends Controller
             $last_date_range
         );
 
-        // TODO 배지 현황 넣기
+        // 배지 보유 현황
+        $profile_badge = $this->badge->showBadge($user_id)->pluck('type');
 
         return $this->responseAppJson(
             self::USER_PROFILE,
@@ -285,7 +289,7 @@ class ApiAuthController extends Controller
                 'user_picture' => $user_picture,
                 'user_score_of_riding' => $user_score_of_riding,
                 'stat' => $profile_stat,
-                'badge' => 0
+                'badge' => $profile_badge
             ],
             200
         );
