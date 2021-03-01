@@ -262,23 +262,17 @@ class RecordController extends Controller
     {
 
         $record = $request->input('records');
-
+//        return $this->responseJson("myMessage", json_decode($record, true),200);
         $user = Auth::guard('api')->user();
         // 유저 아이디 값
         $rec_user_id = $user->getAttribute('id');
 
         //        $data = file_get_contents('php://input');
         $_POST = json_decode(file_get_contents('php://input'), true);
+
         $mongoValue = $_POST["records"];
         //        return $this->responseJson("ddd", gettype($_POST), 200);
 
-//        $record = $request->input('records');
-//        if (gettype($record[0]) === "string") {
-//            foreach ($record as $key => $value) {
-//                $record[$key] = json_decode($value);
-//            }
-//        }
-//        dd($_POST);
 
 
         $validator = Validator::make($request->all(), [
