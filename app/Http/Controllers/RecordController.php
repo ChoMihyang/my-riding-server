@@ -239,6 +239,7 @@ class RecordController extends Controller
         }
 
         $response_data = [
+            "TodayValue" => $arr,
             "mysqlValue" => $resultData,
             "mongoValue" => $mongo
         ];
@@ -262,19 +263,23 @@ class RecordController extends Controller
 
         $record = $request->input('records');
 
-        $kk = array($record);
-
-
-        if (gettype($record[0]) === "string") {
-            foreach ($record as $key => $value) {
-                $record[$key] = json_encode($value);
-            }
-        }
-        dd($record);
-
         $user = Auth::guard('api')->user();
         // 유저 아이디 값
         $rec_user_id = $user->getAttribute('id');
+
+        //        $data = file_get_contents('php://input');
+        $_POST = json_decode(file_get_contents('php://input'), true);
+        $mongoValue = $_POST["records"];
+        //        return $this->responseJson("ddd", gettype($_POST), 200);
+
+//        $record = $request->input('records');
+//        if (gettype($record[0]) === "string") {
+//            foreach ($record as $key => $value) {
+//                $record[$key] = json_decode($value);
+//            }
+//        }
+//        dd($_POST);
+
 
         $validator = Validator::make($request->all(), [
             'rec_title' => 'required|string|min:3|max:30|regex:/^[\w\Wㄱ-ㅎㅏ-ㅣ가-힣]{3,30}$/|unique:records'
@@ -324,15 +329,20 @@ class RecordController extends Controller
 
             // 3. 몽고에 데이터 저장 후 값 뽑기
             // 몽고에 기록 데이터 저장 완료, 조회 완료
-//            $record = $request->input('records');
-//            if (gettype($record[0]) === "string") {
-//                foreach ($record as $key => $value) {
-//                    $record[$key] = json_decode($value);
-//                }
-//            }
 
-            return $this->responseJson("message", $request->input('records'), 422);
-            $saveRecordMongo = $this->mongoRecordSave($request, $saveRecordId);
+
+            // return $this->responseJson("message", $request->input('records'), 422);
+            $saveRecordMongo = $this->mongoRecordSave($mongoValue, $saveRecordId);
+
+            if ($saveRecordMongo->status() !== 201) {
+                return $this->responseJson(
+                    self::SAVE_RECORD_FAIL,
+                    [],
+                    420
+                );
+            }
+
+
             DB::commit();
         } catch (Exception $exception) {
             DB::rollBack();
@@ -436,13 +446,15 @@ class RecordController extends Controller
 
 // 라이딩 기록 몽고로 보내기
     public
-    function mongoRecordSave(Request $request, int $recordId)
+    function mongoRecordSave(array $response_data, int $recordId)
     {
-        $response_data = $request->input('records');
+//        $response_data = $request->input('records');
+//        dd($response_data);
 
         $response = \Illuminate\Support\Facades\Http::post("http://13.209.75.193:3000/api/record/$recordId", [
             "records" => $response_data
         ]);
+//        dd($response);
 
         return $response;
     }
