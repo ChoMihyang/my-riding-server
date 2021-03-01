@@ -212,26 +212,23 @@ class RecordController extends Controller
         $resultData = $this->record->select_records_of_day($user_id, $year, $month, $day);
 
         $count = $resultData->count();
+        $latestRecord = $resultData->first();
+
 
         // TODO 홈 화면 보류
-//        $mysqlValue = $resultData->toArray();
-//        dd($resultData);
-//
-//        $arr = array();
-//        // 경로 번호 뽑아냄
-//        for ($i = 0; $i < $count; $i++) {
-//            $arr[$i] = $resultData[$i]['title'];
-//        }
-//        // 경로 아이디 찾기 -> 배열로 넣기
-//        $recCheck = array();
-//        $recId = array();
-//        for ($k = 0; $k < $count; $k++) {
-//            // 경로 아이디 뽑기
-//            $recCheck[$k] = (Record::where('rec_title',$arr[$k])->get());
-//            $recId[$k] = $recCheck[$k][0]['id'];
-//        }
-//        dd($recId);
-//
+        $arr = array();
+        // 조회한 경로 번호 뽑아냄
+        for ($i = 0; $i < $count; $i++) {
+            $arr[$i] = $resultData[$i]->id;
+        }
+
+        // 배열 번호 를 받아와서 resultData 에 넣어야됨
+        $pickRecordId = $request->record_id;
+
+        dd($resultData[]);
+
+
+
 //        $mongoValueDiv = array();
 //        for ($t = 0; $t < $count; $count++) {
 //            $mongoValueDiv = $this->mongoRecordShow($recId[$t]);
@@ -250,7 +247,7 @@ class RecordController extends Controller
         return $this->responseAppJson(
             self::SELECT_BY_DAY_SUCCESS,
             "mysqlValue",
-            $resultData,
+            $latestRecord,
             200);
     }
 
@@ -315,6 +312,13 @@ class RecordController extends Controller
 
             // 3. 몽고에 데이터 저장 후 값 뽑기
             // 몽고에 기록 데이터 저장 완료, 조회 완료
+            $record = $request->input('records');
+            if (gettype($record[0]) === "string") {
+                foreach ($record as $key => $value) {
+                    $record[$key] = json_decode($value);
+                }
+            }
+
             $saveRecordMongo = $this->mongoRecordSave($request, $saveRecordId);
             DB::commit();
         } catch (Exception $exception) {
@@ -477,9 +481,8 @@ class RecordController extends Controller
         );
     }
 
-// app 기록 상세 페이지
-    public
-    function recordAppDetailPage(Record $record): JsonResponse
+    // app 기록 상세 페이지
+    public function recordAppDetailPage(Record $record): JsonResponse
     {
         $record_id = $record['id'];
 

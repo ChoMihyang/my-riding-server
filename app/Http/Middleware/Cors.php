@@ -17,7 +17,7 @@ class Cors
     {
         return $next($request)
             ->header('Access-Control-Allow-Origin', '*')
-            ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+            ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS')
             ->header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, X-Token-Auth, Authorization');
         // 애플리케이션에서 내보내는 모든 응답에 적절한 헤더들을 추가하는 역할을 담당
         // 어떤 url을 허용할 것인지에 대한 헤더
