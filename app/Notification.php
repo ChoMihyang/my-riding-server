@@ -19,6 +19,7 @@ class Notification extends Model
     )
     {
         $param = [
+            'id',
             'noti_type as type',
             'noti_msg as msg',
             'noti_url as url',

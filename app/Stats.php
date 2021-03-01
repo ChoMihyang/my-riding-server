@@ -43,7 +43,7 @@ class Stats extends Model
             ->where('stat_user_id', $user_id)
             ->where('stat_year', $today_year)
             ->where('stat_week', $today_week)
-            ->orderBy('stat_day')
+            ->orderBy('stat_date')
             ->get();
 
         return $returnData;
