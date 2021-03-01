@@ -211,11 +211,47 @@ class RecordController extends Controller
 
         $resultData = $this->record->select_records_of_day($user_id, $year, $month, $day);
 
+        $count = $resultData->count();
+
+        // TODO 홈 화면 보류
+//        $mysqlValue = $resultData->toArray();
+//        dd($resultData);
+//
+//        $arr = array();
+//        // 경로 번호 뽑아냄
+//        for ($i = 0; $i < $count; $i++) {
+//            $arr[$i] = $resultData[$i]['title'];
+//        }
+//        // 경로 아이디 찾기 -> 배열로 넣기
+//        $recCheck = array();
+//        $recId = array();
+//        for ($k = 0; $k < $count; $k++) {
+//            // 경로 아이디 뽑기
+//            $recCheck[$k] = (Record::where('rec_title',$arr[$k])->get());
+//            $recId[$k] = $recCheck[$k][0]['id'];
+//        }
+//        dd($recId);
+//
+//        $mongoValueDiv = array();
+//        for ($t = 0; $t < $count; $count++) {
+//            $mongoValueDiv = $this->mongoRecordShow($recId[$t]);
+//        }
+//        dd($mongoValueDiv);
+//
+        // 몽고 데이터 조회
+//        $recordMongo = $this->mongoRecordShow($record_id);
+//        $mongo = $recordMongo['data'][0]['records'];
+//
+//        for ($i = 0; $i < $count; $i++) {
+//
+//        }
+//        dd($kk);
+
         return $this->responseAppJson(
             self::SELECT_BY_DAY_SUCCESS,
-            "userRecord",
+            "mysqlValue",
             $resultData,
-            201);
+            200);
     }
 
     /**
@@ -435,7 +471,7 @@ class RecordController extends Controller
         );
     }
 
-    // app 경로 상세 페이지
+    // app 기록 상세 페이지
     public function recordAppDetailPage(Record $record): JsonResponse
     {
         $record_id = $record['id'];

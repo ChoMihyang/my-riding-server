@@ -73,7 +73,7 @@ class User extends Authenticatable
             $data = Storage::get('public/' . $user_img);
             $type = pathinfo('storage/' . $user_img, PATHINFO_EXTENSION);
 
-            $user_info['picture'] = 'image/' . $type . ';base64,' . base64_encode($data);
+            $user_info['picture'] = 'data:image/' . $type . ';base64,' . base64_encode($data);
         }
 
         $latest_riding_date = $user_info['last_riding'];

@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -45,15 +46,42 @@ class RouteController extends Controller
         $user = Auth::guard('api')->user();
         $route_user_id = $user->getAttribute('id');
 
+        $routeValue = $this->route->routeListValue(4, $route_user_id);
+        //
+        $routePath = $this->route->routeListValue(4, $route_user_id)->first();
+        $routeMongo = $this->mongoRouteShow($routePath->id);
 
-        $routeValue = $this->route->routeListValue(1, $route_user_id);
         $response_data = [
-            'routes' => $routeValue
+            'routes' => $routeValue,
+            'route_path' => $routeMongo
         ];
 
         return $this->responseJson(
             self::ROUTELISTVIEW_SUCCESS,
             $response_data,
+            200
+        );
+    }
+
+    /**
+     * [WEB] 경로 목록 조회 - 몽고 데이터 조회용
+     *
+     * @param Route $id
+     * @return JsonResponse
+     */
+    public function routeListViewMongo(Route $id)
+    {
+        $route_id = $id->id;
+
+        $user = Auth::guard('api')->user();
+        $route_user_id = $user->getAttribute('id');
+
+        // 몽고 데이터 조회
+        $routeMongo = $this->mongoRouteShow($route_id);
+
+        return $this->responseJson(
+            self::ROUTELISTVIEW_SUCCESS,
+            $routeMongo['data'],
             200
         );
     }
@@ -143,6 +171,7 @@ class RouteController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'route_title' => 'required|string|min:3|alpha_num|unique:routes',
+            'route_image.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:5000',
         ]);
 
         if ($validator->fails()) {
@@ -324,7 +353,17 @@ class RouteController extends Controller
 
             $routeValue = Route::orderBy($pick)->get();
         }
+        // 경로 이미지 출력
+        $route_img = array();
+        for ($i = 0; $i < $routeValue->count(); $i++) {
+            $route_img = $routeValue[$i]['route_image'];
+            if (!($route_img == "null")) {
+                $data = Storage::get('public/' . $route_img);
+                $type = pathinfo('storage/' . $route_img, PATHINFO_EXTENSION);
 
+                $routeValue[$i]['route_image'] = 'data:image/' . $type . ';base64,' . base64_encode($data);
+            }
+        }
         $response_data = $routeValue;
 
         return $this->responseAppJson(
@@ -406,12 +445,14 @@ class RouteController extends Controller
 
         // 경로 종류별로 들어온 route_id
         $routeValue = $this->route->routeDetailValue($route_id, $route_like_user);
+        $routeMongoValue = $this->mongoRouteShow($route_id);
+        $mongo = $routeMongoValue['data'][0]['points'];
 
-        $responseData = $routeValue;
+        $responseData = ['routeValue' => $routeValue, 'routeMongoValue' => $mongo];
 
         return $this->responseAppJson(
             self::ROUTEDETAILVIEW_SUCCESS,
-            "routes",
+            'routes',
             $responseData,
             200
         );
@@ -443,16 +484,5 @@ class RouteController extends Controller
         $response = \Illuminate\Support\Facades\Http::delete("http://13.209.75.193:3000/api/route/$routeId");
 
         return $response->json();
-    }
-
-    // TODO 경로 이미지 조회
-    public function loadRouteImage(Route $route): string
-    {
-        $routeImg = $route['route_image'];
-        if ($routeImg == "null") {
-            return "null";
-        }
-
-        return $loadImg = $this->getBase64Img($routeImg);
     }
 }
