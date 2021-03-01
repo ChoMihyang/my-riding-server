@@ -114,7 +114,7 @@ class UserController extends Controller
         // TODO 연도 범위?
         $requestedData = $request->validate([
             'year' => 'required | numeric | ',
-            'week' => 'required | numeric | min:1 | max:53'
+            'week' => 'required | numeric | min:0 | max:54'
         ]);
 
         $year = $requestedData['year'];
