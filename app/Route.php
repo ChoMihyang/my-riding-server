@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Storage;
 
 class Route extends Model
@@ -214,7 +215,7 @@ class Route extends Model
     /**
      * User  <-> Route 모델 다대다 관계 선언
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function user()
     {
@@ -224,7 +225,7 @@ class Route extends Model
     /**
      * Route <-> RouteLike 모델 일대다 관계 선언
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function routelike()
     {

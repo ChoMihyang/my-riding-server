@@ -464,6 +464,7 @@ class RouteController extends Controller
         $routeValue = $this->route->routeDetailValue($route_id, $route_like_user);
         $routeMongoValue = $this->mongoRouteShow($route_id);
         $mongo = $routeMongoValue['data'][0]['points'];
+        dd($mongo);
 
         $responseData = ['routeValue' => $routeValue, 'routeMongoValue' => $mongo];
 

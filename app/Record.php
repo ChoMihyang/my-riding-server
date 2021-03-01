@@ -61,6 +61,7 @@ class Record extends Model
         $ridingDate = $year . '-' . $month . '-' . $day;
 
         $param = [
+            'records.id as id',
             'stats.stat_date as date',
             'rec_title as title',
             'rec_time as time',
