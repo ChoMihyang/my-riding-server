@@ -19,6 +19,7 @@ class Notification extends Model
     )
     {
         $param = [
+            'id',
             'noti_type as type',
             'noti_msg as msg',
             'noti_url as url',
@@ -50,7 +51,7 @@ class Notification extends Model
         $notification = Notification::where('noti_user_id', $user_id)
             ->find($record_id);
 
-        $notification->noti_check = false;
+        $notification->noti_check = true;
         $notification->updated_at = date('Y-m-d');
         $notification->save();
     }

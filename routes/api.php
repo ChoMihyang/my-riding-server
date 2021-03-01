@@ -41,7 +41,7 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
              */
             Route::get("/", "UserController@dashboard")->name("[대시보드] 통계 조회");
             Route::patch("/notification/check/{notification}", "UserController@notificationCheck")->name("[대시보드] 알림 확인");
-//    Route::get("/notification/{id}", "NotificationController@notiPageMove")->name("[대시보드] 해당 알림 페이지 이동");
+            Route::get("/stat", "UserController@moveWeekOfStat")->name("[대시보드] 통계 요약 주차 이동");
         });
 
         // <<-- 라이딩 일지 관리-->>
@@ -91,9 +91,10 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
 
     Route::get('/rank', 'UserController@viewUserRank')->name('[랭킹] 사용자 랭킹 출력');
     Route::get('/rank/{rank_id}', 'UserController@viewUserDetailRank')->name('[랭킹] 사용자 랭킹 상세 정보');
+    Route::get('/badge', 'BadgeController@viewDetailBadge')->name('[배지] 배지 상세보기');
 });
 
-Route::get('/appStatsTest', 'StatsController@test');
+Route::get('/dashboardtest', 'StatsController@test');
 // 몽고 경로 테스트 중..
 Route::get("/test/post/record", "RecordController@mongoRecordSave")->name("라이딩 기록 몽고로 데이터 전송");
 Route::get("/test/get/record/{id}", "RecordController@mongoRecordShow")->name("라이딩 기록 몽고에서 조회");
@@ -105,3 +106,4 @@ Route::get("/test/get/route/{routeId}", "RouteController@mongoRouteShow")->name(
 
 // 경로 이미지 조회 테스트
 Route::get("/test/img/{route}", "RouteController@loadRouteImage")->name("이미지로드 테스트");
+

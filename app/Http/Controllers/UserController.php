@@ -20,8 +20,10 @@ class UserController extends Controller
     private $notifications;
 
     private const PRINT_USER_PROFILE_SUCCESS = "사용자 정보, 통계, 알림 조회를 성공하였습니다.";
+    private const PRINT_STATS_OF_ANOTHER_WEEK_SUCCESS = "통계 정보 조회를 성공하였습니다.";
     private const PRINT_USER_RANK_SUCCESS = "사용자 랭킹 조회를 성공하였습니다.";
     private const PRINT_USER_RANK_DETAIL_SUCCESS = "사용자 상세 랭킹 조회를 성공하였습니다.";
+    private const PRINT_NOTIFICATION_CHECK_SUCCESS = "대시보드 알림 확인을 성공하였습니다.";
 
     // 모델 객체 생성
     public function __construct()
@@ -74,8 +76,6 @@ class UserController extends Controller
         // 통계 -->>
 
         // <<-- 알림 : 읽지 않은 알림-->>
-
-        // TODO 알림 페이지 URL 전송 API
         $user_noti = $this->notifications->getDashboardNoti($user_id);
 
         $dateData = [
@@ -106,17 +106,59 @@ class UserController extends Controller
         );
     }
 
+    // 대시보드 주차 이동 시 통계 가져오기
+    public function moveWeekOfStat(Request $request)
+    {
+        $user_id = Auth::guard('api')->user()->getAttribute('id');
+        // 주차 validation
+        // TODO 연도 범위?
+        $requestedData = $request->validate([
+            'year' => 'required | numeric | ',
+            'week' => 'required | numeric | min:1 | max:53'
+        ]);
+
+        $year = $requestedData['year'];
+        $week = $requestedData['week'];
+
+        // 해당 연도-주차의 통계
+        $stat = $this->stats->getDashboardStats($user_id, $year, $week);
+
+        // 해당 연도-주차의 시작일과 마지막일
+        $getDate = $this->stats->get_start_end_date_of_week($year, $week);
+
+        $returnData = [
+            'year' => $year,
+            'week' => $week,
+            'startDate' => $getDate[0],
+            'endDate' => $getDate[1],
+            'values' => $stat
+        ];
+
+        return $this->responseJson(
+            $year . "년 " . $week . "주차의 " . self::PRINT_STATS_OF_ANOTHER_WEEK_SUCCESS,
+            $returnData,
+            200);
+    }
+
     // 알림 확인 버튼 클릭 시
-    //1. noti_check 필드 값 -> 0으로 업데이트
+    //1. noti_check 필드 값 -> 1으로 업데이트
     //2.updated_at 필드 값-> 확인 날짜 데이터 삽입
     public function notificationCheck(Notification $notification)
     {
+        $noti_id = $notification['id'];
+        dd($noti_id);
         $user_id = Auth::guard('api')->user()->getAttribute('id');
 
         $this->notifications->checkNotification($user_id, $notification);
+
+        return $this->responseJson(
+            self::PRINT_NOTIFICATION_CHECK_SUCCESS,
+            [],
+            200
+        );
     }
 
-    // 전체 랭킹 출력 (진행중)
+    // 전체 랭킹 출력
     public function viewUserRank()
     {
         $rank_of_all_users = $this->user->getUserRank();
@@ -155,6 +197,5 @@ class UserController extends Controller
             'stat',
             $result,
             200);
-
     }
 }
