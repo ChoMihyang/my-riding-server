@@ -96,7 +96,7 @@ class Controller extends BaseController
         $data = Storage::get('public/' . $img_name);
         $type = pathinfo('storage/' . $img_name, PATHINFO_EXTENSION);
 
-        return 'image/' . $type . ';base64,' . base64_encode($data);
+        return 'data:image/' . $type . ';base64,' . base64_encode($data);
     }
 
     /**
