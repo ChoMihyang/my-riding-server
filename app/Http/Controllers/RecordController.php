@@ -222,10 +222,16 @@ class RecordController extends Controller
             $arr[$i] = $resultData[$i]->id;
         }
 
+//        foreach ($point as $key => $value) {
+//            $point[$key] = json_decode($value);
+//        }
+
         // 배열 번호 를 받아와서 resultData 에 넣어야됨
         $pickRecordId = $request->record_id;
 
-        dd($resultData[]);
+//        dd($arr);
+//
+//        dd($resultData[]);
 
 
 
@@ -312,13 +318,14 @@ class RecordController extends Controller
 
             // 3. 몽고에 데이터 저장 후 값 뽑기
             // 몽고에 기록 데이터 저장 완료, 조회 완료
-            $record = $request->input('records');
-            if (gettype($record[0]) === "string") {
-                foreach ($record as $key => $value) {
-                    $record[$key] = json_decode($value);
-                }
-            }
+//            $record = $request->input('records');
+//            if (gettype($record[0]) === "string") {
+//                foreach ($record as $key => $value) {
+//                    $record[$key] = json_decode($value);
+//                }
+//            }
 
+            return $this->responseJson("message", "mongoData", $request->input('records'), 422);
             $saveRecordMongo = $this->mongoRecordSave($request, $saveRecordId);
             DB::commit();
         } catch (Exception $exception) {
@@ -431,7 +438,7 @@ class RecordController extends Controller
             "records" => $response_data
         ]);
 
-        return $response->json();
+        return $response;
     }
 
 // 라이딩 기록 몽고에서 조회
