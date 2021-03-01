@@ -19,7 +19,7 @@ class Route extends Model
     /**
      * [라이딩 경로] 라이딩 경로 조회 (조건)
      *
-     * $count = 1 : [web] 모든 경로 조회
+     * $count = 1 : [web] 모든 목록 조회 (생성, 좋아요 누른 경로만)
      * $count = 2 : [app] 좋아요 순 정렬, 경로 5개 출력
      * $count = 3 : [app] 나의 경로 최신순 정렬 경로 5개 출력
      * @return mixed
@@ -60,10 +60,11 @@ class Route extends Model
                 ->whereIn('id', $arr)
                 ->orderBy('created_at', 'DESC')
                 ->get();
+//            dd($routeInfo->count());
 
             // 경로 이미지 출력
             $route_img = array();
-            for ($i = 0; $i < $calValue->count(); $i++) {
+            for ($i = 0; $i < $routeInfo->count(); $i++) {
                 if (!($route_img == "null")) {
                     $route_img = $routeInfo[$i]->route_image;
                     $data = Storage::get('public/' . $route_img);
