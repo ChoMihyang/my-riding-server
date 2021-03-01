@@ -75,8 +75,6 @@ class UserController extends Controller
         // 통계 -->>
 
         // <<-- 알림 : 읽지 않은 알림-->>
-
-        // TODO 알림 페이지 URL 전송 API
         $user_noti = $this->notifications->getDashboardNoti($user_id);
 
         $dateData = [
