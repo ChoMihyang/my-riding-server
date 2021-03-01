@@ -212,7 +212,6 @@ class RecordController extends Controller
         $resultData = $this->record->select_records_of_day($user_id, $year, $month, $day);
 
         $count = $resultData->count();
-        $latestRecord = $resultData->first();
 
 
         // TODO 홈 화면 보류
@@ -222,38 +221,32 @@ class RecordController extends Controller
             $arr[$i] = $resultData[$i]->id;
         }
 
-//        foreach ($point as $key => $value) {
-//            $point[$key] = json_decode($value);
-//        }
-
-        // 배열 번호 를 받아와서 resultData 에 넣어야됨
+        // 배열 번호 뽑아냄
         $pickRecordId = $request->record_id;
+        $indexRange = array();
+        $num = 0;
+//        $recordMongo = $this->mongoRecordShow($pickRecordId);
+//        dd($recordMongo['data'][0]['records']);
 
-//        dd($arr);
-//
-//        dd($resultData[]);
+        for ($k = 0; $k < $count; $k++) {
+            $indexRange[$k] = $num++;
 
+            if ($arr[$indexRange[$k]] == $pickRecordId) {
+                // 몽고 데이터 조회
+                $recordMongo = $this->mongoRecordShow($pickRecordId);
+                $mongo = $recordMongo['data'][0]['records'];
+            }
+        }
 
-
-//        $mongoValueDiv = array();
-//        for ($t = 0; $t < $count; $count++) {
-//            $mongoValueDiv = $this->mongoRecordShow($recId[$t]);
-//        }
-//        dd($mongoValueDiv);
-//
-        // 몽고 데이터 조회
-//        $recordMongo = $this->mongoRecordShow($record_id);
-//        $mongo = $recordMongo['data'][0]['records'];
-//
-//        for ($i = 0; $i < $count; $i++) {
-//
-//        }
-//        dd($kk);
+        $response_data = [
+            "mysqlValue" => $resultData,
+            "mongoValue" => $mongo
+        ];
 
         return $this->responseAppJson(
             self::SELECT_BY_DAY_SUCCESS,
-            "mysqlValue",
-            $latestRecord,
+            "homeValue",
+            $response_data,
             200);
     }
 
@@ -266,6 +259,19 @@ class RecordController extends Controller
      */
     public function recordSave(Request $request): JsonResponse
     {
+
+        $record = $request->input('records');
+
+        $kk = array($record);
+
+
+        if (gettype($record[0]) === "string") {
+            foreach ($record as $key => $value) {
+                $record[$key] = json_encode($value);
+            }
+        }
+        dd($record);
+
         $user = Auth::guard('api')->user();
         // 유저 아이디 값
         $rec_user_id = $user->getAttribute('id');
@@ -325,7 +331,7 @@ class RecordController extends Controller
 //                }
 //            }
 
-            return $this->responseJson("message", "mongoData", $request->input('records'), 422);
+            return $this->responseJson("message", $request->input('records'), 422);
             $saveRecordMongo = $this->mongoRecordSave($request, $saveRecordId);
             DB::commit();
         } catch (Exception $exception) {
