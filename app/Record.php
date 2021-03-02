@@ -61,26 +61,39 @@ class Record extends Model
     {
         $ridingDate = $year . '-' . $month . '-' . $day;
 
-        $param = [
-            'records.id as id',
-            'stats.stat_date as date',
-            'rec_title as title',
-            'rec_time as time',
-            'rec_distance as distance',
-            'rec_avg_speed as avg_speed',
-            'rec_max_speed as max_speed',
-            'rec_start_point_address as start_point',
-            'rec_end_point_address as end_point'
+        $selectedColumns = [
+            'id', 'rec_title', 'rec_time', 'rec_distance', 'rec_avg_speed', 'rec_max_speed', 'rec_start_point_address', 'rec_end_point_address'
         ];
 
-        $resultData = Record::select($param)
-            ->join('stats', 'records.created_at', 'stats.stat_date')
-//            ->join('stats', DB::raw("date('records.created_at')"), 'stats.stat_date')
-            ->distinct()
-            ->where('rec_user_id', $user_id)
-            ->where('stats.stat_date', $ridingDate)
-            ->get();
+        $resultData = self::select($selectedColumns)
+            -> whereDate('created_at', $ridingDate)
+            -> where('rec_user_id', $user_id)
+            -> get();
+
+        return $resultData;
 //        dd($resultData);
+//        $param = [
+//            'records.id as id',
+//            'stats.stat_date as date',
+//            'rec_title as title',
+//            'rec_time as time',
+//            'rec_distance as distance',
+//            'rec_avg_speed as avg_speed',
+//            'rec_max_speed as max_speed',
+//            'rec_start_point_address as start_point',
+//            'rec_end_point_address as end_point'
+//        ];
+//
+//        $resultData = Record::
+//        //select($param)
+////            ->join('stats', 'records.created_at', 'stats.stat_date')
+////            ->join('stats', DB::raw("date('records.created_at')"), 'stats.stat_date')
+////            ->distinct()
+//            where('rec_user_id', $user_id)
+//            ->where('stats.stat_date', $ridingDate)
+//            ->get();
+//        dd($resultData);
+////        dd($resultData);
 
         return $resultData;
     }
