@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Http\Client\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
 
@@ -74,10 +75,12 @@ class Record extends Model
 
         $resultData = Record::select($param)
             ->join('stats', 'records.created_at', 'stats.stat_date')
+//            ->join('stats', DB::raw("date('records.created_at')"), 'stats.stat_date')
             ->distinct()
             ->where('rec_user_id', $user_id)
             ->where('stats.stat_date', $ridingDate)
             ->get();
+//        dd($resultData);
 
         return $resultData;
     }
