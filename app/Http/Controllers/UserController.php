@@ -114,7 +114,7 @@ class UserController extends Controller
         // TODO 연도 범위?
         $requestedData = $request->validate([
             'year' => 'required | numeric | ',
-            'week' => 'required | numeric | min:1 | max:53'
+            'week' => 'required | numeric | min:0 | max:54'
         ]);
 
         $year = $requestedData['year'];
@@ -145,8 +145,7 @@ class UserController extends Controller
     //2.updated_at 필드 값-> 확인 날짜 데이터 삽입
     public function notificationCheck(Notification $notification)
     {
-        $noti_id = $notification['id'];
-        dd($noti_id);
+//        $noti_id = $notification['id'];
         $user_id = Auth::guard('api')->user()->getAttribute('id');
 
         $this->notifications->checkNotification($user_id, $notification);

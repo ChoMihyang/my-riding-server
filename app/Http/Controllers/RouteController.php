@@ -505,4 +505,37 @@ class RouteController extends Controller
 
         return $response->json();
     }
+
+    public function getAddress(Request $request)
+    {
+        $rules = [
+            "lat" => "required|numeric",
+            "lng" => "required|numeric",
+            "api_key" => "required|string"
+        ];
+
+        $validator = \Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            $response_data = [
+                'error' => $validator->errors(),
+            ];
+
+            return $this->responseJson(
+                "유효하지 않은 요청입니다.",
+                $response_data,
+                422
+            );
+        }
+
+        $lat = $request->input("lat");
+        $lng = $request->input("lng");
+        $key = $request->input("api_key");
+
+
+        $url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${key}&language=ko";
+        $response = \Http::get($url);
+
+        return $this->responseJson("성공", $response->json(), 200);
+    }
 }
