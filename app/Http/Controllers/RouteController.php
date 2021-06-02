@@ -9,7 +9,6 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -479,7 +478,7 @@ class RouteController extends Controller
     // 경로 정보 조회
     public function mongoRouteShow(int $routeId)
     {
-        $response = \Illuminate\Support\Facades\Http::get("http://13.209.75.193:3000/api/route/$routeId");
+        $response = \Illuminate\Support\Facades\Http::get("http://localhost:3000/api/route/$routeId");
 
         return $response->json();
     }
@@ -489,7 +488,7 @@ class RouteController extends Controller
     {
 //        $response_data = $request->input('points');
 
-        $response = \Illuminate\Support\Facades\Http::post("http://13.209.75.193:3000/api/route/$routeId", [
+        $response = \Illuminate\Support\Facades\Http::post("http://localhost:3000/api/route/$routeId", [
             "points" => $response_data
         ]);
 
@@ -501,7 +500,7 @@ class RouteController extends Controller
     // 경로 정보 삭제
     public function mongoRouteDelete(int $routeId)
     {
-        $response = \Illuminate\Support\Facades\Http::delete("http://13.209.75.193:3000/api/route/$routeId");
+        $response = \Illuminate\Support\Facades\Http::delete("http://localhost:3000/api/route/$routeId");
 
         return $response->json();
     }
