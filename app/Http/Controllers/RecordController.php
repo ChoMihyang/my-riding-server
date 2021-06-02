@@ -210,7 +210,7 @@ class RecordController extends Controller
         $day = $requested_data['day'];
 
         $resultData = $this->record->select_records_of_day($user_id, $year, $month, $day);
-
+//        dd($resultData);
         if ($resultData->isEmpty()) {
             return $this->responseAppJson(
                 "일지 기록이 없습니다.",
@@ -242,6 +242,7 @@ class RecordController extends Controller
                     $mongo = $recordMongo['data'][0]['records'];
                 }
             }
+//            dd($mongo);
 
             $response_data = [
                 "TodayValue" => $arr,
@@ -460,7 +461,7 @@ class RecordController extends Controller
     public
     function mongoRecordSave(array $response_data, int $recordId)
     {
-        $response = \Illuminate\Support\Facades\Http::post("http://13.209.75.193:3000/api/record/$recordId", [
+        $response = \Illuminate\Support\Facades\Http::post("http://localhost:3000/api/record/$recordId", [
             "records" => $response_data
         ]);
 
@@ -471,7 +472,7 @@ class RecordController extends Controller
     public
     function mongoRecordShow(int $recordId)
     {
-        $response = \Illuminate\Support\Facades\Http::get("http://13.209.75.193:3000/api/record/$recordId");
+        $response = \Illuminate\Support\Facades\Http::get("http://localhost:3000/api/record/$recordId");
 
         return $response->json();
     }
