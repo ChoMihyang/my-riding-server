@@ -139,16 +139,13 @@ class UserController extends Controller
             $returnData,
             200);
     }
-
+    
     // 알림 확인 버튼 클릭 시
     //1. noti_check 필드 값 -> 1으로 업데이트
     //2.updated_at 필드 값-> 확인 날짜 데이터 삽입
     public function notificationCheck(Notification $notification)
     {
-<<<<<<< HEAD
-=======
 //        $noti_id = $notification['id'];
->>>>>>> 7618777167adbb3a2cdfa01f33b49f300d3f7dcc
         $user_id = Auth::guard('api')->user()->getAttribute('id');
 
         $this->notifications->checkNotification($user_id, $notification);
