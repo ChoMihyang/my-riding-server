@@ -24,6 +24,7 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
     });
 
     Route::group(['middleware' => ['usertoken']], function () {
+        Route::get("/address", "RouteController@getAddress")->name("[라이딩 경로] 주소 요청");
         Route::prefix("auth")->group(function () {
             Route::get("/load/img", "Auth\ApiAuthController@loadImage")->name("[사용자] 이미지 로드");
             Route::patch('/update/password', 'Auth\ApiAuthController@passwordUpdate')->name('[사용자] 프로필 비밀번호 변경');

@@ -210,44 +210,65 @@ class RecordController extends Controller
         $day = $requested_data['day'];
 
         $resultData = $this->record->select_records_of_day($user_id, $year, $month, $day);
+//        dd($resultData);
+        if ($resultData->isEmpty()) {
+            return $this->responseAppJson(
+                "일지 기록이 없습니다.",
+                "homeValue", [],
+                200
+            );
+        }
 
         $count = $resultData->count();
-        $latestRecord = $resultData->first();
 
-
-        // TODO 홈 화면 보류
         $arr = array();
         // 조회한 경로 번호 뽑아냄
         for ($i = 0; $i < $count; $i++) {
             $arr[$i] = $resultData[$i]->id;
         }
 
-        // 배열 번호 를 받아와서 resultData 에 넣어야됨
-        $pickRecordId = $request->record_id;
+        if (($request->record_id)) {
+            // 배열 번호 뽑아냄
+            $pickRecordId = $request->record_id;
+            $indexRange = array();
+            $num = 0;
 
-        dd($resultData[]);
+            for ($k = 0; $k < $count; $k++) {
+                $indexRange[$k] = $num++;
 
+                if ($arr[$indexRange[$k]] == $pickRecordId) {
+                    // 몽고 데이터 조회
+                    $recordMongo = $this->mongoRecordShow($pickRecordId);
+                    $mongo = $recordMongo['data'][0]['records'];
+                }
+            }
+//            dd($mongo);
 
+            $response_data = [
+                "TodayValue" => $arr,
+                "mysqlValue" => $resultData,
+                "mongoValue" => $mongo
+            ];
+            return $this->responseAppJson(
+                self::SELECT_BY_DAY_SUCCESS,
+                "homeValue",
+                $response_data,
+                200);
+        }
+        $latestValue = $resultData->first();
+        $recordMongo = $this->mongoRecordShow($latestValue->id);
+        $mongo = $recordMongo['data'][0]['records'];
 
-//        $mongoValueDiv = array();
-//        for ($t = 0; $t < $count; $count++) {
-//            $mongoValueDiv = $this->mongoRecordShow($recId[$t]);
-//        }
-//        dd($mongoValueDiv);
-//
-        // 몽고 데이터 조회
-//        $recordMongo = $this->mongoRecordShow($record_id);
-//        $mongo = $recordMongo['data'][0]['records'];
-//
-//        for ($i = 0; $i < $count; $i++) {
-//
-//        }
-//        dd($kk);
+        $response_data = [
+            "TodayValue" => $arr,
+            "mysqlValue" => $resultData,
+            "mongoValue" => $mongo
+        ];
 
         return $this->responseAppJson(
             self::SELECT_BY_DAY_SUCCESS,
-            "mysqlValue",
-            $latestRecord,
+            "homeValue",
+            $response_data,
             200);
     }
 
@@ -260,9 +281,18 @@ class RecordController extends Controller
      */
     public function recordSave(Request $request): JsonResponse
     {
+
+        $record = $request->input('records');
         $user = Auth::guard('api')->user();
         // 유저 아이디 값
         $rec_user_id = $user->getAttribute('id');
+
+        //        $data = file_get_contents('php://input');
+        //        $_POST = json_decode(file_get_contents('php://input'), true);
+
+        $mongoValue = json_decode($record, true);
+        //        return $this->responseJson("ddd", gettype($_POST), 200);
+
 
         $validator = Validator::make($request->all(), [
             'rec_title' => 'required|string|min:3|max:30|regex:/^[\w\Wㄱ-ㅎㅏ-ㅣ가-힣]{3,30}$/|unique:records'
@@ -312,14 +342,20 @@ class RecordController extends Controller
 
             // 3. 몽고에 데이터 저장 후 값 뽑기
             // 몽고에 기록 데이터 저장 완료, 조회 완료
-            $record = $request->input('records');
-            if (gettype($record[0]) === "string") {
-                foreach ($record as $key => $value) {
-                    $record[$key] = json_decode($value);
-                }
+
+
+            // return $this->responseJson("message", $request->input('records'), 422);
+            $saveRecordMongo = $this->mongoRecordSave($mongoValue, $saveRecordId);
+
+            if ($saveRecordMongo->status() !== 201) {
+                return $this->responseJson(
+                    self::SAVE_RECORD_FAIL,
+                    [],
+                    420
+                );
             }
 
-            $saveRecordMongo = $this->mongoRecordSave($request, $saveRecordId);
+
             DB::commit();
         } catch (Exception $exception) {
             DB::rollBack();
@@ -423,22 +459,20 @@ class RecordController extends Controller
 
 // 라이딩 기록 몽고로 보내기
     public
-    function mongoRecordSave(Request $request, int $recordId)
+    function mongoRecordSave(array $response_data, int $recordId)
     {
-        $response_data = $request->input('records');
-
-        $response = \Illuminate\Support\Facades\Http::post("http://13.209.75.193:3000/api/record/$recordId", [
+        $response = \Illuminate\Support\Facades\Http::post("http://127.0.0.1:3000/api/record/$recordId", [
             "records" => $response_data
         ]);
 
-        return $response->json();
+        return $response;
     }
 
 // 라이딩 기록 몽고에서 조회
     public
     function mongoRecordShow(int $recordId)
     {
-        $response = \Illuminate\Support\Facades\Http::get("http://13.209.75.193:3000/api/record/$recordId");
+        $response = \Illuminate\Support\Facades\Http::get("http://127.0.0.1:3000/api/record/$recordId");
 
         return $response->json();
     }
