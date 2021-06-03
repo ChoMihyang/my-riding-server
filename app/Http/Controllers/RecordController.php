@@ -461,7 +461,7 @@ class RecordController extends Controller
     public
     function mongoRecordSave(array $response_data, int $recordId)
     {
-        $response = \Illuminate\Support\Facades\Http::post("http://127.0.0.1:3000/api/record/$recordId", [
+        $response = \Illuminate\Support\Facades\Http::post("http://54.145.82.27:3000/api/record/$recordId", [
             "records" => $response_data
         ]);
 
@@ -472,7 +472,7 @@ class RecordController extends Controller
     public
     function mongoRecordShow(int $recordId)
     {
-        $response = \Illuminate\Support\Facades\Http::get("http://127.0.0.1:3000/api/record/$recordId");
+        $response = \Illuminate\Support\Facades\Http::get("http://54.145.82.27:3000/api/record/$recordId");
 
         return $response->json();
     }
