@@ -478,7 +478,7 @@ class RouteController extends Controller
     // 경로 정보 조회
     public function mongoRouteShow(int $routeId)
     {
-        $response = \Illuminate\Support\Facades\Http::get("http://127.0.0.1:3000/api/route/$routeId");
+        $response = \Illuminate\Support\Facades\Http::get("http://54.145.82.27:3000/api/route/$routeId");
 
         return $response->json();
     }
@@ -488,7 +488,7 @@ class RouteController extends Controller
     {
 //        $response_data = $request->input('points');
 
-        $response = \Illuminate\Support\Facades\Http::post("http://127.0.0.1:3000/api/route/$routeId", [
+        $response = \Illuminate\Support\Facades\Http::post("http://54.145.82.27:3000/api/route/$routeId", [
             "points" => $response_data
         ]);
 
@@ -500,7 +500,7 @@ class RouteController extends Controller
     // 경로 정보 삭제
     public function mongoRouteDelete(int $routeId)
     {
-        $response = \Illuminate\Support\Facades\Http::delete("http://127.0.0.1:3000/api/route/$routeId");
+        $response = \Illuminate\Support\Facades\Http::delete("http://54.145.82.27:3000/api/route/$routeId");
 
         return $response->json();
     }

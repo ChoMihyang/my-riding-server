@@ -3,9 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 use Illuminate\Http\Client\Response;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
 
@@ -166,7 +165,7 @@ class Record extends Model
     {
         // 해당 레코드 id 값 조회 후 삭제
         // 몽고 DB 삭제 요청
-        $response = Http::delete("http://13.209.75.193:3000/api/record/$record_id");
+        $response = Http::delete("http://54.145.82.27:3000/api/record/$record_id");
 
         return $response->json();
     }
