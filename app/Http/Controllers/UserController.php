@@ -113,7 +113,7 @@ class UserController extends Controller
         // 주차 validation
         // TODO 연도 범위?
         $requestedData = $request->validate([
-            'year' => 'required | numeric | ',
+            'year' => 'required | numeric',
             'week' => 'required | numeric | min:0 | max:54'
         ]);
 
@@ -161,11 +161,12 @@ class UserController extends Controller
     public function viewUserRank()
     {
         $rank_of_all_users = $this->user->getUserRank();
+        $user_picture = $this->loadImage();
 
         return $this->responseAppJson(
             self::PRINT_USER_RANK_SUCCESS,
             "ranks",
-            $rank_of_all_users,
+            [$rank_of_all_users, $user_picture],
             200
         );
     }

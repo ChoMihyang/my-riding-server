@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -141,7 +142,6 @@ class User extends Authenticatable
         $param = [
             'users.id',
             'user_nickname as nickname',
-            'user_picture as picture',
             'user_score_of_riding as score'
         ];
 

@@ -210,7 +210,7 @@ class RecordController extends Controller
         $day = $requested_data['day'];
 
         $resultData = $this->record->select_records_of_day($user_id, $year, $month, $day);
-//        dd($resultData);
+
         if ($resultData->isEmpty()) {
             return $this->responseAppJson(
                 "일지 기록이 없습니다.",

@@ -257,6 +257,7 @@ class ApiAuthController extends Controller
         $user_nickname = $user->getAttribute('user_nickname');
         $user_picture = $this->loadImage();
         $user_score_of_riding = $user->getAttribute('user_score_of_riding');
+        $user_num_of_riding = $user->getAttribute('user_num_of_riding');
 
         // 이번주의 시작일
         $today_date = date('Y-m-d');
@@ -288,6 +289,7 @@ class ApiAuthController extends Controller
                 'user_nickname' => $user_nickname,
                 'user_picture' => $user_picture,
                 'user_score_of_riding' => $user_score_of_riding,
+                'user_num_of_riding' => $user_num_of_riding,
                 'stat' => $profile_stat,
                 'badge' => $profile_badge
             ],
