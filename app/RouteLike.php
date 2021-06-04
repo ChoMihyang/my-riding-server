@@ -85,6 +85,7 @@ class RouteLike extends Model
     {
         $likeCheck = self::where('route_like_user', $route_like_user)
             ->where('route_like_obj', $route_id)
-            ->get();
+            ->get()
+            ->count();
     }
 }

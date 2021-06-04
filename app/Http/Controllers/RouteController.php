@@ -466,7 +466,13 @@ class RouteController extends Controller
         $routeLikeCheck = $this->routeLike->likeCheck($route_id, $route_like_user);
         $mongo = $routeMongoValue['data'][0]['points'];
 
-        $responseData = ['routeValue' => $routeValue, 'routeMongoValue' => $mongo];
+        if ($routeLikeCheck == 1) {
+            $routeLikeValue = 1;
+            $responseData = ['routeValue' => $routeValue, 'routeMongoValue' => $mongo, 'routeLikeValue' => $routeLikeValue];
+        } else {
+            $routeLikeValue = 0;
+            $responseData = ['routeValue' => $routeValue, 'routeMongoValue' => $mongo, 'routeLikeValue' => $routeLikeValue];
+        }
 
         return $this->responseAppJson(
             self::ROUTEDETAILVIEW_SUCCESS,
