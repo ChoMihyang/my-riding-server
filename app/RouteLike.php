@@ -87,5 +87,6 @@ class RouteLike extends Model
             ->where('route_like_obj', $route_id)
             ->get()
             ->count();
+        return $likeCheck;
     }
 }
