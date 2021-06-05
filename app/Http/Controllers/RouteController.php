@@ -411,9 +411,10 @@ class RouteController extends Controller
         // 레코드 갯수 조회후 갯수 업데이트a
         $this->route->likeAlter($route_like_obj, $likeCount);
 
-        return $this->responseJson(
+        return $this->responseAppJson(
             "좋아요 생성",
-            [],
+            'likeCount',
+            $likeCount,
             201
         );
     }
@@ -438,9 +439,10 @@ class RouteController extends Controller
         // 레코드 갯수 조회후 갯수 업데이트
         $this->route->likeAlter($route_like_obj, $likeCount);
 
-        return $this->responseJson(
+        return $this->responseAppJson(
             "좋아요 삭제",
-            [],
+            'likeCount',
+            $likeCount,
             201
         );
     }
