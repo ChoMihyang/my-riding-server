@@ -76,4 +76,17 @@ class RouteLike extends Model
         }
         return self::where('id', $pickId)->delete();
     }
+
+    // 현재 좋아요 체크 유무
+    public function likeCheck(
+        int $route_id,
+        int $route_like_user
+    )
+    {
+        $likeCheck = self::where('route_like_user', $route_like_user)
+            ->where('route_like_obj', $route_id)
+            ->get()
+            ->count();
+        return $likeCheck;
+    }
 }

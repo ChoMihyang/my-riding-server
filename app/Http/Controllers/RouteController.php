@@ -411,9 +411,10 @@ class RouteController extends Controller
         // 레코드 갯수 조회후 갯수 업데이트a
         $this->route->likeAlter($route_like_obj, $likeCount);
 
-        return $this->responseJson(
+        return $this->responseAppJson(
             "좋아요 생성",
-            [],
+            'likeCount',
+            $likeCount,
             201
         );
     }
@@ -438,9 +439,10 @@ class RouteController extends Controller
         // 레코드 갯수 조회후 갯수 업데이트
         $this->route->likeAlter($route_like_obj, $likeCount);
 
-        return $this->responseJson(
+        return $this->responseAppJson(
             "좋아요 삭제",
-            [],
+            'likeCount',
+            $likeCount,
             201
         );
     }
@@ -462,9 +464,16 @@ class RouteController extends Controller
         // 경로 종류별로 들어온 route_id
         $routeValue = $this->route->routeDetailValue($route_id, $route_like_user);
         $routeMongoValue = $this->mongoRouteShow($route_id);
+        // TODO 좋아요 누른 상태 확인해야함
+        $routeLikeCheck = $this->routeLike->likeCheck($route_id, $route_like_user);
         $mongo = $routeMongoValue['data'][0]['points'];
 
-        $responseData = ['routeValue' => $routeValue, 'routeMongoValue' => $mongo];
+        if ($routeLikeCheck == 1) {
+            $routeLikeValue = 1;
+        } else {
+            $routeLikeValue = 0;
+        }
+        $responseData = ['routeValue' => $routeValue, 'routeMongoValue' => $mongo, 'routeLikeValue' => $routeLikeValue];
 
         return $this->responseAppJson(
             self::ROUTEDETAILVIEW_SUCCESS,
