@@ -139,7 +139,8 @@ class User extends Authenticatable
     // 사용자 랭킹 (10순위) id 조회
     public function getUserRank()
     {
-        $returnData = User::select('id')
+        $param = ['id', 'user_nickname', 'user_score_of_riding'];
+        $returnData = User::select($param)
             ->orderByDesc('user_score_of_riding')
             ->take(10)
             ->get();

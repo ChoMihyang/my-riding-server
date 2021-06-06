@@ -160,19 +160,29 @@ class UserController extends Controller
     // 전체 랭킹 출력
     public function viewUserRank()
     {
-        // 랭킹 10위까지 사용자 id 조회
-        $rank_users_id = $this->user->getUserRank()->toArray();
+        // 랭킹 10위 조회
+        $rank_users = $this->user->getUserRank();
 
-        // 사용자 id로 프로필 사진, 닉네임, 점수 획득
-        $user_nickname =
+        // id 순회하며 프로필 사진, 닉네임, 점수 획득
+        $return = [];
+        foreach ($rank_users as $value) {
+            $user_id = $value->id;
+            $user_nickname = $value->user_nickname;
+            $user_score = $value->user_score_of_riding;
+            $user_picture = "보류";
 
-        // 데이터 반환
-        $user_picture = $this->loadImage();
+            $return[] = [
+                'id' => $user_id,
+                'nickname' => $user_nickname,
+                'score' => $user_score,
+                'picture' => $user_picture
+            ];
+        }
 
         return $this->responseAppJson(
             self::PRINT_USER_RANK_SUCCESS,
             "ranks",
-            $rank_of_all_users,
+            $return,
             200
         );
     }
