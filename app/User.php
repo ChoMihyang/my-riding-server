@@ -136,16 +136,10 @@ class User extends Authenticatable
         return $this->belongsToMany(Record::class, 'rec_user_id');
     }
 
-    // 사용자 랭킹 정보 (10순위)
+    // 사용자 랭킹 (10순위) id 조회
     public function getUserRank()
     {
-        $param = [
-            'users.id',
-            'user_nickname as nickname',
-            'user_score_of_riding as score'
-        ];
-
-        $returnData = User::select($param)
+        $returnData = User::select('id')
             ->orderByDesc('user_score_of_riding')
             ->take(10)
             ->get();

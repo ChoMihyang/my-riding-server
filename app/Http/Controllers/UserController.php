@@ -160,13 +160,19 @@ class UserController extends Controller
     // 전체 랭킹 출력
     public function viewUserRank()
     {
-        $rank_of_all_users = $this->user->getUserRank();
+        // 랭킹 10위까지 사용자 id 조회
+        $rank_users_id = $this->user->getUserRank()->toArray();
+
+        // 사용자 id로 프로필 사진, 닉네임, 점수 획득
+        $user_nickname =
+
+        // 데이터 반환
         $user_picture = $this->loadImage();
 
         return $this->responseAppJson(
             self::PRINT_USER_RANK_SUCCESS,
             "ranks",
-            [$rank_of_all_users, $user_picture],
+            $rank_of_all_users,
             200
         );
     }
