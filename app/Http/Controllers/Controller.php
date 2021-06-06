@@ -16,13 +16,6 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    protected $member;
-
-//    public function __construct()
-//    {
-//        $this->member = new Member();
-//    }
-
     public static function makeResponseJson($msg, $statusCode, $data = null): JsonResponse
     {
         return response()->json([
@@ -81,6 +74,7 @@ class Controller extends BaseController
      */
     public function loadImage(): string
     {
+
         $user = Auth::guard('api')->user();
 
         $user_img = $user->getAttribute('user_picture');

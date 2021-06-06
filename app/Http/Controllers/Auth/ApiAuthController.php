@@ -271,28 +271,60 @@ class ApiAuthController extends Controller
         // 91일 전 날짜
         $start_date_range = date('Y-m-d', strtotime($today_start_date . "-91days"));
 
-        // stats 모델에서 날짜 범위에 해당하는 통계 조회하기
+        // stats 모델에서 날짜 범위에 해당하는 주차 조회
         $profile_stat = $this->stat->select_profile_stat(
             $user_id,
             $start_date_range,
             $last_date_range
         );
 
+        // 이번주 주차
+        $today_week = date('W', strtotime($today_date));
+
+        // 기록이 저장되지 않은 주차일 경우
+        // 거리, 시간, 평균 속도, 최고 속도를 0으로 설정
+        $returnRecord = [];
+        for ($i = $today_week; $i > $today_week - 12; $i--) {
+            for ($key = 0; $key < count($profile_stat); $key++) {
+                if ($profile_stat[$key]->week == $i) {
+                    $returnRecord[] = [
+                        "year" => $profile_stat[$key]->year,
+                        "week" => $profile_stat[$key]->week,
+                        "distance" => $profile_stat[$key]->distance,
+                        "time" => $profile_stat[$key]->time,
+                        "avg_speed" => $profile_stat[$key]->avg_speed,
+                        "max_speed" => $profile_stat[$key]->max_speed
+                    ];
+                    $i--;
+                } else {
+                    $returnRecord[] = [
+                        "year" => $profile_stat[$key]->year,
+                        "week" => $i,
+                        "distance" => 0,
+                        "time" => 0,
+                        "avg_speed" => 0,
+                        "max_speed" => 0
+                    ];
+                    break;
+                }
+                if ($key == count($profile_stat) - 1) {
+                    $i++;
+                }
+            }
+        }
         // 배지 보유 현황
         $profile_badge = $this->badge->showBadge($user_id);
 
         return $this->responseAppJson(
             self::USER_PROFILE,
             'profile',
-            [
-                'id' => $user_id,
+            ['id' => $user_id,
                 'user_nickname' => $user_nickname,
                 'user_picture' => $user_picture,
                 'user_score_of_riding' => $user_score_of_riding,
                 'user_num_of_riding' => $user_num_of_riding,
-                'stat' => $profile_stat,
-                'badge' => $profile_badge
-            ],
+                'stat' => $returnRecord,
+                'badge' => $profile_badge],
             200
         );
     }
@@ -303,7 +335,8 @@ class ApiAuthController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function profileImageChange(Request $request): JsonResponse
+    public
+    function profileImageChange(Request $request): JsonResponse
     {
         // 1. 유저 사진 파일 validation 체크
         $user = Auth::guard('api')->user();
@@ -363,7 +396,8 @@ class ApiAuthController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function passwordUpdate(Request $request): JsonResponse
+    public
+    function passwordUpdate(Request $request): JsonResponse
     {
         $user = Auth::guard('api')->user();
 
