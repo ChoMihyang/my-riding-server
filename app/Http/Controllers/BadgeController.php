@@ -31,23 +31,24 @@ class BadgeController extends Controller
 
 
 //  <<-- 배지 기록 수치별 코드 상수화
+    // 거리
     const _DISTANCE_30 = 101;
     const _DISTANCE_50 = 102;
     const _DISTANCE_100 = 103;
     const _DISTANCE_150 = 104;
     const _DISTANCE_300 = 105;
-
+    // 시간
     const _TIME_5 = 201;
     const _TIME_10 = 202;
     const _TIME_20 = 203;
     const _TIME_30 = 204;
     const _TIME_50 = 205;
-
+    // 속도
     const _MAXSPEED_15 = 301;
     const _MAXSPEED_20 = 302;
     const _MAXSPEED_25 = 303;
     const _MAXSPEED_30 = 304;
-
+    // 점수
     const _SCORE_1000 = 401;
     const _SCORE_5000 = 402;
     const _SCORE_10000 = 403;
@@ -155,10 +156,6 @@ class BadgeController extends Controller
             $badge_type_code[] = 300;
         }
 
-        dd($user_id,
-            $badge_type_code[],
-            $badge_value_code[],
-            $badge_result[]);
 
         $this->badge->makeBadge(
             $user_id,
