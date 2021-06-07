@@ -160,6 +160,15 @@ class UserController extends Controller
     // 전체 랭킹 출력
     public function viewUserRank()
     {
+//        $user = Auth::guard('api')->user();
+
+//        $user_img = $user->getAttribute('user_picture');
+//        if ($user_img == "null") {
+//            return "null";
+//        }
+//
+//        $loadImg = $this->getBase64Img($user_img);
+//        dd($loadImg);
         // 랭킹 10위 조회
         $rank_users = $this->user->getUserRank();
 
@@ -169,7 +178,7 @@ class UserController extends Controller
             $user_id = $value->id;
             $user_nickname = $value->user_nickname;
             $user_score = $value->user_score_of_riding;
-            $user_picture = "보류";
+            $user_picture = $this->loadImage($user_id);
 
             $return[] = [
                 'id' => $user_id,

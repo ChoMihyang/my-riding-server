@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Database\Eloquent;
 
 class User extends Authenticatable
 {
@@ -146,6 +147,16 @@ class User extends Authenticatable
             ->get();
 
         return $returnData;
+    }
+
+    public function getUserPicture(int $user_id)
+    {
+
+        $user = User::find($user_id);
+        $user_picture = $user->getAttribute('user_picture');
+        $loadImg = Controller::getBase64Img($user_picture);
+
+        dd($loadImg);
     }
 
     // 최근 라이딩 업데이트
