@@ -189,7 +189,7 @@ class Stats extends Model
         int $rec_time,
         float $rec_avg_speed,
         float $rec_max_speed,
-        String $today_year
+        string $today_year
     )
     {
         Stats::create([
@@ -317,4 +317,50 @@ class Stats extends Model
     {
         return $date->format('Y-m-d H:i:s');
     }
+
+    // stat_distance 합계
+    public function sumDistance(
+        int $user_id
+    )
+    {
+        return self::where('stat_user_id', $user_id)->
+        sum('stat_distance');
+    }
+
+    // stat_time 합계
+    public function sumTime(
+        int $user_id
+    )
+    {
+        return self::where('stat_user_id', $user_id)->
+        sum('stat_time');
+    }
+
+    // sumAvgSpeed 평균값
+    public function sumAvgSpeed(
+        int $user_id
+    )
+    {
+        $sumOfAvg = self::where('stat_user_id', $user_id)->
+        sum('stat_avg_speed');
+
+        $count = self::where('stat_user_id', $user_id)->
+        get()->
+        count();
+
+        return $sumOfAvg / $count;
+    }
+
+    // sumMaxSpeed 최대값
+    public function sumMaxSpeed(
+        int $user_id
+    )
+    {
+        return self::select('stat_max_speed')->
+        where('stat_user_id', $user_id)->
+        orderBy('stat_max_speed', 'DESC')->
+        get()->
+        take(1);
+    }
+
 }
