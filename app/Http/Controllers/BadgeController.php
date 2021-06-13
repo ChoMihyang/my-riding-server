@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Badge;
 use App\Stats;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class BadgeController extends Controller
@@ -71,7 +70,7 @@ class BadgeController extends Controller
 
     // badge 생성 전 (거리, 시간, 평균 속도, 최고 속도 체크)
     // distance badge 생성
-    public function badgeTest(Request $request)
+    public function badgeDistance()
     {
         $user = Auth::guard('api')->user();
         $stat_user = $user->getAttribute('id');
@@ -114,7 +113,7 @@ class BadgeController extends Controller
     }
 
     // time badge 생성
-    public function badgeTime(Request $request)
+    public function badgeTime()
     {
         $user = Auth::guard('api')->user();
         $stat_user = $user->getAttribute('id');
@@ -158,7 +157,7 @@ class BadgeController extends Controller
     }
 
     // max speed badge 생성
-    public function badgeSpeed(Request $request)
+    public function badgeSpeed()
     {
         $user = Auth::guard('api')->user();
         $stat_user = $user->getAttribute('id');
