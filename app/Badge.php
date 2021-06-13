@@ -35,14 +35,12 @@ class Badge extends Model
     public function makeBadge(
         int $user_id,
         int $badge_type_code,
-        int $badge_value_code,
         string $badge_name
     )
     {
         self::create([
             'badge_user_id' => $user_id,
             'badge_type' => $badge_type_code,
-            'badge_value' => $badge_value_code,
             'badge_name' => $badge_name
         ]);
     }
