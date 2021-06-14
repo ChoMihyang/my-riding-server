@@ -93,6 +93,7 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
     Route::get('/rank', 'UserController@viewUserRank')->name('[랭킹] 사용자 랭킹 출력');
     Route::get('/rank/{rank_id}', 'UserController@viewUserDetailRank')->name('[랭킹] 사용자 랭킹 상세 정보');
     Route::get('/badge', 'BadgeController@viewDetailBadge')->name('[배지] 배지 상세보기');
+    Route::get('/testBadge', 'BadgeController@badgeSpeed')->name('배치 테스트');
 });
 
 Route::get('/dashboardtest', 'StatsController@test');

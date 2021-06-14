@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Badge;
 use App\Record;
 use App\Route;
 use App\Stats;
@@ -19,6 +20,7 @@ class RecordController extends Controller
     private $stats;
     private $record;
     private $route;
+    private $badge;
 
     private const SELECT_BY_YEAR_SUCCESS = '년도 통계 조회를 성공하였습니다.';
     private const SELECT_BY_DAY_DETAIL_SUCCESS = '라이딩 일지 상세 정보 조회를 성공하였습니다.';
@@ -34,6 +36,7 @@ class RecordController extends Controller
         $this->stats = new Stats();
         $this->record = new Record();
         $this->route = new Route();
+        $this->badge = new Badge();
     }
 
     // [web] 연도별 라이딩 통계
@@ -214,7 +217,7 @@ class RecordController extends Controller
         if ($resultData->isEmpty()) {
             return $this->responseAppJson(
                 "일지 기록이 없습니다.",
-                "homeValue", [],
+                "homeValue", null,
                 200
             );
         }
@@ -413,22 +416,14 @@ class RecordController extends Controller
 
 
         // 통계 레코드 생성을 성공한 경우 배지 달성 여부 판단
-        // 배지 타입 : 100 - 거리, 200 - 시간, 300 - 최고 속도, 400 - 점수, 500 - 랭킹, 600 - 연속
+        // 배지 타입 : 100 - 거리, 200 - 시간, 300 - 최고 속도
         // TODO 달성 여부 판단 메서드 BadgeController 이동
-//        if ($statResult) {
-//
-//            $badgeController = app('App\Http\Controllers\BadgeController');
-//
-////         통계 테이블 조회 -> 기준 필드 값 반환
-//            $user_info = $this->stats->select_stats_badge($rec_user_id);
-//
-//            $sum_of_distance = $user_info->sum('distance');
-//            $sum_of_time = $user_info->sum('time');
-//            $max_of_speed = $user_info->max('max_speed');
-//
-//            $badge_result = $badgeController->checkBadge($sum_of_distance, $sum_of_time, $max_of_speed);
-//        }
 
+        // 배지 생성
+        $badgeController = new BadgeController();
+        $badgeController->badgeDistance();
+        $badgeController->badgeTime();
+        $badgeController->badgeSpeed();
 
         return $this->responseJson(
             self::SAVE_RECORD_SUCCESS,
