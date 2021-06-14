@@ -217,7 +217,7 @@ class RecordController extends Controller
         if ($resultData->isEmpty()) {
             return $this->responseAppJson(
                 "일지 기록이 없습니다.",
-                "homeValue", [],
+                "homeValue", null,
                 200
             );
         }
