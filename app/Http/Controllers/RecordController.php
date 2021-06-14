@@ -284,11 +284,17 @@ class RecordController extends Controller
      */
     public function recordSave(Request $request): JsonResponse
     {
+        // 유저 아이디 값
+        $rec_user_id = Auth::guard('api')->user()->getAttribute('id');
+
+        // 점수 계산
+        $distance = $request->input('rec_distance');
+        $time = $request->input('rec_time');
+        $max_speed = $request->input('rec_max_speed');
+        $riding_score = $this->scoreCheck($rec_user_id, $distance, $time, $max_speed);
 
         $record = $request->input('records');
-        $user = Auth::guard('api')->user();
-        // 유저 아이디 값
-        $rec_user_id = $user->getAttribute('id');
+
 
         //        $data = file_get_contents('php://input');
         //        $_POST = json_decode(file_get_contents('php://input'), true);
@@ -321,11 +327,14 @@ class RecordController extends Controller
         $rec_title = $request->input('rec_title');
         $rec_distance = $request->input('rec_distance');
         $rec_time = $request->input('rec_time');
-        $rec_score = 0;
+        $rec_score = $riding_score;
         $rec_start_point_address = $request->input('rec_start_point_address');
         $rec_end_point_address = $request->input('rec_end_point_address');
         $rec_avg_speed = $request->input('rec_avg_speed');
         $rec_max_speed = $request->input('rec_max_speed');
+
+        // Users 테이블 점수 필드 업데이트
+        $this->user->scoreUpdate($rec_user_id, $rec_score);
 
         DB::beginTransaction();
         try {
@@ -349,14 +358,14 @@ class RecordController extends Controller
 
             // return $this->responseJson("message", $request->input('records'), 422);
             $saveRecordMongo = $this->mongoRecordSave($mongoValue, $saveRecordId);
-
-            if ($saveRecordMongo->status() !== 201) {
-                return $this->responseJson(
-                    self::SAVE_RECORD_FAIL,
-                    [],
-                    420
-                );
-            }
+//
+//            if ($saveRecordMongo->status() !== 201) {
+//                return $this->responseJson(
+//                    self::SAVE_RECORD_FAIL,
+//                    [],
+//                    420
+//                );
+//            }
 
 
             DB::commit();
@@ -406,14 +415,12 @@ class RecordController extends Controller
         }
         // 최근 라이딩 날짜 업데이트
         $this->user->updateLatestRidingDate($rec_user_id, date('Y-m-d'));
-        // 사용자 점수 계산 후 업데이트
 
 
         if ($rec_route_id) {
             // 만들어진 경로로 주행 한 경우에만
             $this->tryCount($rec_route_id);
         }
-
 
         // 통계 레코드 생성을 성공한 경우 배지 달성 여부 판단
         // 배지 타입 : 100 - 거리, 200 - 시간, 300 - 최고 속도
@@ -431,6 +438,57 @@ class RecordController extends Controller
             201
         );
     }
+
+    // <<------ 사용자 점수 계산 테스트
+    public function scoreCheck($user_id, $distance, $time, $max_speed)
+    {
+        // 기본 점수 설정
+        $sum_of_score = 10;
+
+        // 사용자의 기록 <거리, 시간, 최고 속도> 중 최고값 조회
+        // 기록이 없을 경우 false 반환
+        $returnUserData = $this->record->userScoreCheck($user_id);
+        $returnAllData = $this->record->allScoreCheck($user_id);
+
+        // 기록이 있을 경우 점수 계산
+        // 자신의 최고기록을 갱신할 경우 +50점
+        // 모든 사용자의 기록 중 최고기록을 갱신할 경우 +100점
+        if ($returnUserData) {
+            // 사용자의 최고 기록 저장
+            $existed_distance = $returnUserData['rec_distance'];
+            $existed_time = $returnUserData['rec_time'];
+            $existed_max_speed = $returnUserData['rec_max_speed'];
+
+            if ($existed_distance < $distance) {
+                $sum_of_score += 50;
+            }
+            if ($existed_time > $time) {
+                $sum_of_score += 50;
+            }
+            if ($existed_max_speed < $max_speed) {
+                $sum_of_score += 50;
+            }
+        }
+        if ($returnAllData) {
+            // 모든 사용자의 기록이 있을 경우 : 최고 기록 저장
+            $existed_distance_all = $returnAllData['rec_distance'];
+            $existed_time_all = $returnAllData['rec_time'];
+            $existed_max_speed_all = $returnAllData['rec_max_speed'];
+
+            if ($existed_distance_all < $distance) {
+                $sum_of_score += 100;
+            }
+            if ($existed_time_all > $time) {
+                $sum_of_score += 100;
+            }
+            if ($existed_max_speed_all < $max_speed) {
+                $sum_of_score += 100;
+            }
+        }
+        // 획득한 점수 -> records 테이블 삽입 및 Users 테이블 업데이트
+        return $sum_of_score;
+    }
+
 
     /**
      * routes - record 의 시도 횟수 맞추기
@@ -511,7 +569,8 @@ class RecordController extends Controller
     }
 
     // app 기록 상세 페이지
-    public function recordAppDetailPage(Record $record): JsonResponse
+    public
+    function recordAppDetailPage(Record $record): JsonResponse
     {
         $record_id = $record['id'];
 

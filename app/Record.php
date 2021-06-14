@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
 
@@ -17,6 +18,46 @@ class Record extends Model
         'rec_avg_speed', 'rec_max_speed', 'created_at'
     ];
 
+
+    // 기록 레코드 저장 전 점수 계산
+    public function userScoreCheck(int $user_id)
+    {
+        $param = [
+            DB::raw('max(rec_distance) as rec_distance'),
+            DB::raw('min(rec_time) as rec_time'),
+            DB::raw('max(rec_max_speed) as rec_max_speed')
+        ];
+        // 해당 사용자의 기록 중 <거리, 시간, 최고속도>의 최고값 조회
+        $returnData = Record::select($param)
+            ->where('rec_user_id', $user_id)
+            ->get()
+            ->first();
+        // 해당 사용자의 기록이 없을 경우 false 반환
+        if ($returnData['rec_distance'] == null) {
+            return false;
+        }
+        return $returnData;
+    }
+
+    // 모든 기록
+    public function allScoreCheck(int $user_id)
+    {
+        $param = [
+            DB::raw('max(rec_distance) as rec_distance'),
+            DB::raw('min(rec_time) as rec_time'),
+            DB::raw('max(rec_max_speed) as rec_max_speed')
+        ];
+        // 모든 사용자의 기록 중 <거리, 시간, 최고속도>의 최고값 조회
+        $returnData = Record::select($param)
+            ->where('rec_user_id', '<>', $user_id)
+            ->get()
+            ->first();
+        // 모든 사용자의 기록이 없을 경우 false 반환
+        if ($returnData['rec_distance'] == null) {
+            return false;
+        }
+        return $returnData;
+    }
 
     /**
      * 올해의 누적 거리, 시간, 평균 속도 구하기
@@ -65,9 +106,9 @@ class Record extends Model
         ];
 
         $resultData = self::select($selectedColumns)
-            -> whereDate('created_at', $ridingDate)
-            -> where('rec_user_id', $user_id)
-            -> get();
+            ->whereDate('created_at', $ridingDate)
+            ->where('rec_user_id', $user_id)
+            ->get();
 
         return $resultData;
 //        dd($resultData);

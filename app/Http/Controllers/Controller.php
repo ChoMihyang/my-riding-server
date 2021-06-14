@@ -92,8 +92,7 @@ class Controller extends BaseController
         return $loadImg = $this->getBase64Img($user_img);
     }
 
-    public
-    function getBase64Img($img_name): string
+    public function getBase64Img($img_name): string
     {
         $data = Storage::get('public/' . $img_name);
         $type = pathinfo('storage/' . $img_name, PATHINFO_EXTENSION);
@@ -106,8 +105,7 @@ class Controller extends BaseController
      *
      * @param String $url
      */
-    public
-    function deleteImage(String $url)
+    public function deleteImage(String $url)
     {
         Storage::delete($url);
     }
