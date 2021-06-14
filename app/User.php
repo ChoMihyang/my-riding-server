@@ -137,6 +137,18 @@ class User extends Authenticatable
         return $this->belongsToMany(Record::class, 'rec_user_id');
     }
 
+    // Users 테이블 점수 업데이트
+    public function scoreUpdate(int $user_id, int $score)
+    {
+        $user = User::find($user_id);
+        // 기존 점수
+        $existed_score = $user->user_score_of_riding;
+        $score += $existed_score;
+        // 점수 필드 업데이트
+        $user->user_score_of_riding = $score;
+        $user->save();
+    }
+
     // 사용자 랭킹 (10순위) 조회
     public function getUserRank()
     {

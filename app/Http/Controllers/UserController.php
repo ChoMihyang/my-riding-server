@@ -139,7 +139,7 @@ class UserController extends Controller
             $returnData,
             200);
     }
-
+    
     // 알림 확인 버튼 클릭 시
     //1. noti_check 필드 값 -> 1으로 업데이트
     //2.updated_at 필드 값-> 확인 날짜 데이터 삽입

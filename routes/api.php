@@ -61,6 +61,8 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
             Route::patch("/{record}", "RecordController@recordModify")->name("[라이딩 일지] 이름 수정");
             Route::delete("/{record}", "RecordController@recordDelete")->name("[라이딩 일지] 기록 삭제");
             Route::post("/", "RecordController@recordSave")->name("[라이딩 일지] 라이딩 기록 저장");
+            // 테스트
+            Route::post("/score", "RecordController@scoreCheck")->name("[테스트] 점수 계산");
         });
 
         // <<-- 라이딩 경로 관리-->>
