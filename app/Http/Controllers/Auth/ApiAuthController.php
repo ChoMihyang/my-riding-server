@@ -248,7 +248,7 @@ class ApiAuthController extends Controller
         );
     }
 
-    // 앱 회원 정보(프로필, 통계, 배지) 조회
+    // [APP] 회원 정보(프로필, 통계, 배지) 조회
     public function profileMobile(): JsonResponse
     {
         $user = Auth::guard('api')->user();
@@ -335,8 +335,7 @@ class ApiAuthController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public
-    function profileImageChange(Request $request): JsonResponse
+    public function profileImageChange(Request $request): JsonResponse
     {
         // 1. 유저 사진 파일 validation 체크
         $user = Auth::guard('api')->user();
