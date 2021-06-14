@@ -82,24 +82,23 @@ class BadgeController extends Controller
         $distance_value = null;
         if ($sum_distance >= 300) {
             $distance_value .= "300km";
-//            $badge_value_code = self::_DISTANCE_300;
+            $badge_type_code = self::_DISTANCE_300;
         } elseif ($sum_distance >= 150) {
             $distance_value .= "150km";
-//            $badge_value_code = self::_DISTANCE_150;
+            $badge_type_code = self::_DISTANCE_150;
         } elseif ($sum_distance >= 100) {
             $distance_value .= "100km";
-//            $badge_value_code = self::_DISTANCE_100;
+            $badge_type_code = self::_DISTANCE_100;
         } elseif ($sum_distance >= 50) {
             $distance_value .= "50km";
-//            $badge_value_code = self::_DISTANCE_50;
+            $badge_type_code = self::_DISTANCE_50;
         } elseif ($sum_distance >= 30) {
             $distance_value .= "30km";
-//            $badge_value_code = self::_DISTANCE_30;
+            $badge_type_code = self::_DISTANCE_30;
         }
 
         if ($distance_value > 0) {
             $badge_name = $this->badgeMsg($distance_value);
-            $badge_type_code = 100;
         }
 
         $this->badge->makeBadge($stat_user, $badge_type_code, $badge_name);
@@ -125,24 +124,23 @@ class BadgeController extends Controller
         $time_value = null;
         if ($sum_time >= 50) {
             $time_value .= "50시간";
-//            $time_badge_value_code = self::_TIME_50;
+            $badge_type_code = self::_TIME_50;
         } elseif ($sum_time >= 30) {
             $time_value .= "30시간";
-//            $time_badge_value_code = self::_TIME_30;
+            $badge_type_code = self::_TIME_30;
         } elseif ($sum_time >= 20) {
             $time_value .= "20시간";
-//            $time_badge_value_code = self::_TIME_20;
+            $badge_type_code = self::_TIME_20;
         } elseif ($sum_time >= 10) {
             $time_value .= "10시간";
-//            $time_badge_value_code = self::_TIME_10;
+            $badge_type_code = self::_TIME_10;
         } elseif ($sum_time >= 5) {
             $time_value .= "5시간";
-//            $time_badge_value_code = self::_TIME_5;
+            $badge_type_code = self::_TIME_5;
         }
 
         if ($time_value > 0) {
             $badge_name = $this->badgeMsg($time_value);
-            $badge_type_code = 200;
         }
 
         $this->badge->makeBadge($stat_user, $badge_type_code, $badge_name);
@@ -173,21 +171,20 @@ class BadgeController extends Controller
         $max_speed_value = null;
         if ($sum_max_speed_value >= 30) {
             $max_speed_value .= "30km";
-            //           $max_speed_badge_value_code = self::_MAXSPEED_30;
+            $badge_type_code = self::_MAXSPEED_30;
         } elseif ($sum_max_speed_value >= 25) {
             $max_speed_value .= "25km";
-//            $max_speed_badge_value_code = self::_MAXSPEED_25;
+            $badge_type_code = self::_MAXSPEED_25;
         } elseif ($sum_max_speed_value >= 20) {
             $max_speed_value .= "20km";
-//            $max_speed_badge_value_code = self::_MAXSPEED_20;
+            $badge_type_code = self::_MAXSPEED_20;
         } elseif ($sum_max_speed_value >= 15) {
             $max_speed_value .= "15km";
-//            $max_speed_badge_value_code = self::_MAXSPEED_15;
+            $badge_type_code = self::_MAXSPEED_15;
         }
 
         if ($max_speed_value > 0) {
             $badge_name = $this->badgeMsg($max_speed_value);
-            $badge_type_code = 300;
         }
 
         $this->badge->makeBadge($stat_user, $badge_type_code, $badge_name);
