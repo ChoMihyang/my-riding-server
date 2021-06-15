@@ -22,6 +22,7 @@ class UserController extends Controller
     private const PRINT_USER_PROFILE_SUCCESS = "사용자 정보, 통계, 알림 조회를 성공하였습니다.";
     private const PRINT_STATS_OF_ANOTHER_WEEK_SUCCESS = "통계 정보 조회를 성공하였습니다.";
     private const PRINT_USER_RANK_SUCCESS = "사용자 랭킹 조회를 성공하였습니다.";
+    private const PRINT_USER_RANK_PICTURE_SUCCESS = "사용자 랭킹 사진 조회를 성공하였습니다.";
     private const PRINT_USER_RANK_DETAIL_SUCCESS = "사용자 상세 랭킹 조회를 성공하였습니다.";
     private const PRINT_NOTIFICATION_CHECK_SUCCESS = "대시보드 알림 확인을 성공하였습니다.";
 
@@ -169,19 +170,42 @@ class UserController extends Controller
             $user_id = $value->id;
             $user_nickname = $value->user_nickname;
             $user_score = $value->user_score_of_riding;
-            $user_picture = "보류";
 
             $return[] = [
                 'id' => $user_id,
                 'nickname' => $user_nickname,
                 'score' => $user_score,
-                'picture' => $user_picture
             ];
         }
 
         return $this->responseAppJson(
             self::PRINT_USER_RANK_SUCCESS,
             "ranks",
+            $return,
+            200
+        );
+    }
+
+    // 사용자 랭킹 프로필 사진 가져오기
+    public function getUserPicture()
+    {
+        // 랭킹 10위 조회
+        $rank_users = $this->user->getUserRank();
+
+        $return = [];
+        foreach ($rank_users as $value) {
+            $user_id = $value->id;
+            $user_picture = $this->loadImage($user_id);
+
+            $return[] = [
+                'id' => $user_id,
+                'picture' => $user_picture
+            ];
+        }
+
+        return $this->responseAppJson(
+            self::PRINT_USER_RANK_PICTURE_SUCCESS,
+            'rank_picture',
             $return,
             200
         );

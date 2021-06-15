@@ -10,7 +10,9 @@ use Illuminate\Routing\Controller as BaseController;
 use \Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use phpDocumentor\Reflection\Types\Null_;
 use PhpParser\Node\Scalar\String_;
+use App\User;
 
 class Controller extends BaseController
 {
@@ -70,13 +72,18 @@ class Controller extends BaseController
     /**
      * 사용자 이미지 불러오기
      *
+     * @param int|null $user_id
      * @return string
      */
-    public function loadImage(): string
+    public function loadImage(
+        int $user_id = null
+    ): string
     {
-
-        $user = Auth::guard('api')->user();
-
+        if ($user_id != null) {
+            $user = User::find($user_id);
+        } else {
+            $user = Auth::guard('api')->user();
+        }
         $user_img = $user->getAttribute('user_picture');
         if ($user_img == "null") {
             return "null";
@@ -111,7 +118,8 @@ class Controller extends BaseController
      * @param string $folderName
      * @return string
      */
-    public function getImage(
+    public
+    function getImage(
         UploadedFile $uploadedFile,
         string $imgFileName,
         string $folderName
