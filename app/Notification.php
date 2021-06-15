@@ -49,7 +49,6 @@ class Notification extends Model
         // 배지 획득 알림 메시지
         $badge_noti_msg = '새로운 기록을 갱신하였습니다.';
 
-        $type = 1003;
         if ($type == 1002) {
             $noti_msg = $riding_noti_msg;
         } elseif ($type == 1003) {
