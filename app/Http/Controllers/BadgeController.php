@@ -3,12 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Badge;
+use App\Notification;
 use App\Stats;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\File\Exception\NoFileException;
 
 class BadgeController extends Controller
 {
     private $badge;
+    private $state;
+    private $notification;
+
     private const PRINT_DETAIL_BADGE_SUCCESS = "배지 상세보기 출력을 성공하였습니다.";
     private const SAVE_DISTANCE_VALUE = '거리 뱃지 저장에 성공하였습니다.';
     private const SAVE_TIME_VALUE = '시간 뱃지 저장에 성공하였습니다.';
@@ -19,6 +24,7 @@ class BadgeController extends Controller
     {
         $this->badge = new Badge();
         $this->state = new Stats();
+        $this->notification = new Notification();
     }
 
     // [APP] 배지 상세보기 화면
@@ -100,8 +106,10 @@ class BadgeController extends Controller
         if ($distance_value > 0) {
             $badge_name = $this->badgeMsg($distance_value);
         }
-
+        // Badge 테이블 레코드 생성
         $this->badge->makeBadge($stat_user, $badge_type_code, $badge_name);
+        // Notification 테이블 레코드 생성
+        $this->notification->insertNotification($stat_user, 1003);
 
         return $this->responseAppJson(
             self::SAVE_DISTANCE_VALUE,
@@ -142,8 +150,10 @@ class BadgeController extends Controller
         if ($time_value > 0) {
             $badge_name = $this->badgeMsg($time_value);
         }
-
+        // Badge 테이블 레코드 생성
         $this->badge->makeBadge($stat_user, $badge_type_code, $badge_name);
+        // Notification 테이블 레코드 생성
+        $this->notification->insertNotification($stat_user, 1003);
 
         return $this->responseAppJson(
             self::SAVE_TIME_VALUE,
@@ -186,8 +196,10 @@ class BadgeController extends Controller
         if ($max_speed_value > 0) {
             $badge_name = $this->badgeMsg($max_speed_value);
         }
-
+        // Badge 테이블 레코드 생성
         $this->badge->makeBadge($stat_user, $badge_type_code, $badge_name);
+        // Notification 테이블 레코드 생성
+        $this->notification->insertNotification($stat_user, 1003);
 
         return $this->responseAppJson(
             self::SAVE_MAX_SPEED_VALUE,

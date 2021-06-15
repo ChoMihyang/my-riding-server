@@ -35,6 +35,37 @@ class Notification extends Model
         return $user_noti;
     }
 
+    // 주행 완료 시 알림 생성
+    public function insertNotification(
+        int $user_id,
+        int $type
+    )
+    {
+        $riding_year = date('Y');
+        $riding_month = date('m');
+        $riding_date = date('d');
+        // 주행 완료 알림 메시지
+        $riding_noti_msg = $riding_year . '년 ' . $riding_month . '월 ' . $riding_date . '일 라이딩이 완료되었습니다.';
+        // 배지 획득 알림 메시지
+        $badge_noti_msg = '새로운 기록을 갱신하였습니다.';
+
+        $type = 1003;
+        if ($type == 1002) {
+            $noti_msg = $riding_noti_msg;
+        } elseif ($type == 1003) {
+            $noti_msg = $badge_noti_msg;
+        }
+
+        Notification::insert([
+            'noti_user_id' => $user_id,
+            'noti_type' => $type,
+            'noti_msg' => $noti_msg,
+            'noti_url' => '없음',
+            'noti_check' => false,
+            'created_at' => now()
+        ]);
+    }
+
     /**
      * 알림 확인 시 알림 테이블 업데이트
      *
