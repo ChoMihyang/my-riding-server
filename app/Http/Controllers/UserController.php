@@ -205,7 +205,7 @@ class UserController extends Controller
 
         return $this->responseAppJson(
             self::PRINT_USER_RANK_PICTURE_SUCCESS,
-            'rank_picture',
+            'ranks',
             $return,
             200
         );

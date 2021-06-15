@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Badge;
+use App\Notification;
 use App\Record;
 use App\Route;
 use App\Stats;
@@ -21,6 +22,7 @@ class RecordController extends Controller
     private $record;
     private $route;
     private $badge;
+    private $notification;
 
     private const SELECT_BY_YEAR_SUCCESS = '년도 통계 조회를 성공하였습니다.';
     private const SELECT_BY_DAY_DETAIL_SUCCESS = '라이딩 일지 상세 정보 조회를 성공하였습니다.';
@@ -37,6 +39,7 @@ class RecordController extends Controller
         $this->record = new Record();
         $this->route = new Route();
         $this->badge = new Badge();
+        $this->notification = new Notification();
     }
 
     // [web] 연도별 라이딩 통계
@@ -299,7 +302,7 @@ class RecordController extends Controller
         //        $data = file_get_contents('php://input');
         //        $_POST = json_decode(file_get_contents('php://input'), true);
 
-        $mongoValue = json_decode($record, true);
+//        $mongoValue = json_decode($record, true);
         //        return $this->responseJson("ddd", gettype($_POST), 200);
 
 
@@ -335,6 +338,9 @@ class RecordController extends Controller
 
         // Users 테이블 점수 필드 업데이트
         $this->user->scoreUpdate($rec_user_id, $rec_score);
+        // Notification 테이블 주행 완료 레코드 업데이트
+        $this->notification->insertNotification($rec_user_id, 1002);
+
 
         DB::beginTransaction();
         try {
@@ -357,7 +363,7 @@ class RecordController extends Controller
 
 
             // return $this->responseJson("message", $request->input('records'), 422);
-            $saveRecordMongo = $this->mongoRecordSave($mongoValue, $saveRecordId);
+//            $saveRecordMongo = $this->mongoRecordSave($mongoValue, $saveRecordId);
 //
 //            if ($saveRecordMongo->status() !== 201) {
 //                return $this->responseJson(
