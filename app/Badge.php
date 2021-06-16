@@ -44,4 +44,34 @@ class Badge extends Model
             'badge_name' => $badge_name
         ]);
     }
+
+    // 시간 배지 조회
+    public function checkTimeBadge(
+        int $user_id
+    )
+    {
+        return self::where('badge_user_id', $user_id)
+            ->where('badge_name', 'like', '%' . '시간' . '%')
+            ->get()->count();
+    }
+
+    // 거리 배지 조회
+    public function checkDisBadge(
+        int $user_id
+    )
+    {
+        return self::where('badge_user_id', $user_id)
+            ->where('badge_name', 'like', '%' . 'km달성' . '%')
+            ->get()->count();
+    }
+
+    // 최고속도 메달 조회
+    public function checkMaxSpeedBadge(
+        int $user_id
+    )
+    {
+        return self::where('badge_user_id', $user_id)
+            ->where('badge_name', 'like', '%' . '속도' . '%')
+            ->get()->count();
+    }
 }

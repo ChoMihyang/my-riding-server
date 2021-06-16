@@ -6,7 +6,6 @@ use App\Badge;
 use App\Notification;
 use App\Stats;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\File\Exception\NoFileException;
 
 class BadgeController extends Controller
 {
@@ -206,6 +205,24 @@ class BadgeController extends Controller
             'badgeSave',
             ['user' => $stat_user, 'badge_type' => $badge_type_code, 'badge_name' => $badge_name, 'sum_max_speed' => $sum_max_speed_value],
             201
+        );
+    }
+
+    // 프로필에서 배지 조회
+    public function badgeCheck()
+    {
+        $user = Auth::guard('api')->user();
+        $user_id = $user->getAttribute('id');
+
+        $timeBadge = $this->badge->checkTimeBadge($user_id);
+        $disBadge = $this->badge->checkDisBadge($user_id);
+        $maxSpeedBadge = $this->badge->checkMaxSpeedBadge($user_id);
+
+        return $this->responseAppJson(
+            '배지 조회 성공',
+            'badgeCheck',
+            ['TimeBadge' => $timeBadge, 'DisBadge' => $disBadge, 'MaxSpeedBadge' => $maxSpeedBadge],
+            200
         );
     }
 }
