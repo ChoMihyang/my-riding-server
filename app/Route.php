@@ -177,7 +177,7 @@ class Route extends Model
      * @param string $route_title
      * @param string $route_image
      * @param float $route_distance
-     * @param int $route_time
+     * @param float $route_time
      * @param float $route_avg_degree
      * @param float $route_max_altitude
      * @param float $route_min_altitude
@@ -190,7 +190,7 @@ class Route extends Model
         string $route_title,
         string $route_image,
         float $route_distance,
-        int $route_time,
+        float $route_time,
         float $route_avg_degree,
         float $route_max_altitude,
         float $route_min_altitude,

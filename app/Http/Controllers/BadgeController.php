@@ -6,7 +6,6 @@ use App\Badge;
 use App\Notification;
 use App\Stats;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\File\Exception\NoFileException;
 
 class BadgeController extends Controller
 {
@@ -44,22 +43,22 @@ class BadgeController extends Controller
 
 //  <<-- 배지 기록 수치별 코드 상수화
     // 거리
-    const _DISTANCE_30 = 101;
-    const _DISTANCE_50 = 102;
-    const _DISTANCE_100 = 103;
-    const _DISTANCE_150 = 104;
-    const _DISTANCE_300 = 105;
+    const _DISTANCE_30 = 101; // 30km
+    const _DISTANCE_50 = 102; // 50km
+    const _DISTANCE_100 = 103; // 100km
+    const _DISTANCE_150 = 104; // 150km
+    const _DISTANCE_300 = 105; // 300km
     // 시간
-    const _TIME_5 = 201;
-    const _TIME_10 = 202;
-    const _TIME_20 = 203;
-    const _TIME_30 = 204;
-    const _TIME_50 = 205;
+    const _TIME_5 = 201;  // 5시간
+    const _TIME_10 = 202; // 10시간
+    const _TIME_20 = 203; // 20시간
+    const _TIME_30 = 204; // 30시간
+    const _TIME_50 = 205; // 50시간
     // 속도
-    const _MAXSPEED_15 = 301;
-    const _MAXSPEED_20 = 302;
-    const _MAXSPEED_25 = 303;
-    const _MAXSPEED_30 = 304;
+    const _MAXSPEED_15 = 301; // 15km
+    const _MAXSPEED_20 = 302; // 20km
+    const _MAXSPEED_25 = 303; // 25km
+    const _MAXSPEED_30 = 304; // 30km
     // 점수
     const _SCORE_1000 = 401;
     const _SCORE_5000 = 402;
@@ -206,6 +205,24 @@ class BadgeController extends Controller
             'badgeSave',
             ['user' => $stat_user, 'badge_type' => $badge_type_code, 'badge_name' => $badge_name, 'sum_max_speed' => $sum_max_speed_value],
             201
+        );
+    }
+
+    // 프로필에서 배지 조회
+    public function badgeCheck()
+    {
+        $user = Auth::guard('api')->user();
+        $user_id = $user->getAttribute('id');
+
+        $timeBadge = $this->badge->checkTimeBadge($user_id);
+        $disBadge = $this->badge->checkDisBadge($user_id);
+        $maxSpeedBadge = $this->badge->checkMaxSpeedBadge($user_id);
+
+        return $this->responseAppJson(
+            '배지 조회 성공',
+            'badgeCheck',
+            ['TimeBadge' => $timeBadge, 'DisBadge' => $disBadge, 'MaxSpeedBadge' => $maxSpeedBadge],
+            200
         );
     }
 }

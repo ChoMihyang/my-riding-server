@@ -4,12 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Notification;
 use App\Record;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use App\User;
 use App\Stats;
+use App\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 
 class UserController extends Controller
