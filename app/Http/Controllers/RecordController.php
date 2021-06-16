@@ -421,7 +421,9 @@ class RecordController extends Controller
         }
         // 최근 라이딩 날짜 업데이트
         $this->user->updateLatestRidingDate($rec_user_id, date('Y-m-d'));
-
+        // 주행 횟수 업데이트
+        $recordCount = $this->record->RecordCount($rec_user_id);
+        $this->user->updateRecordCount($rec_user_id, $recordCount);
 
         if ($rec_route_id) {
             // 만들어진 경로로 주행 한 경우에만
