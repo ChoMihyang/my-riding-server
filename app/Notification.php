@@ -44,6 +44,8 @@ class Notification extends Model
         $riding_year = date('Y');
         $riding_month = date('m');
         $riding_date = date('d');
+
+        $noti_msg = '';
         // 주행 완료 알림 메시지
         $riding_noti_msg = $riding_year . '년 ' . $riding_month . '월 ' . $riding_date . '일 라이딩이 완료되었습니다.';
         // 배지 획득 알림 메시지
@@ -51,7 +53,7 @@ class Notification extends Model
 
         if ($type == 1002) {
             $noti_msg = $riding_noti_msg;
-        } elseif ($type == 1003) {
+        } else if ($type == 1003) {
             $noti_msg = $badge_noti_msg;
         }
 

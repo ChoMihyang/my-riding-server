@@ -155,7 +155,7 @@ class User extends Authenticatable
         $param = ['id', 'user_nickname', 'user_score_of_riding'];
         $returnData = User::select($param)
             ->orderByDesc('user_score_of_riding')
-            ->take(10)
+            ->take(2)
             ->get();
 
         return $returnData;

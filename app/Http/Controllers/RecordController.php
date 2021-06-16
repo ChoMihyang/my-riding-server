@@ -302,7 +302,7 @@ class RecordController extends Controller
         //        $data = file_get_contents('php://input');
         //        $_POST = json_decode(file_get_contents('php://input'), true);
 
-//        $mongoValue = json_decode($record, true);
+        $mongoValue = json_decode($record, true);
         //        return $this->responseJson("ddd", gettype($_POST), 200);
 
 
@@ -363,7 +363,7 @@ class RecordController extends Controller
 
 
             // return $this->responseJson("message", $request->input('records'), 422);
-//            $saveRecordMongo = $this->mongoRecordSave($mongoValue, $saveRecordId);
+            $saveRecordMongo = $this->mongoRecordSave($mongoValue, $saveRecordId);
 //
 //            if ($saveRecordMongo->status() !== 201) {
 //                return $this->responseJson(
