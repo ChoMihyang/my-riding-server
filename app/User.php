@@ -2,14 +2,11 @@
 
 namespace App;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\HasApiTokens;
-use Illuminate\Database\Eloquent;
 
 class User extends Authenticatable
 {
@@ -166,6 +163,14 @@ class User extends Authenticatable
     {
         $user = User::find($user_id);
         $user->date_of_latest_riding = $date;
+
+        $user->save();
+    }
+
+    public function updateRecordCount(int $user_id, int $record_count)
+    {
+        $user = User::find($user_id);
+        $user->user_num_of_riding = $record_count;
 
         $user->save();
     }
