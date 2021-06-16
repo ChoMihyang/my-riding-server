@@ -59,6 +59,7 @@ class BadgeController extends Controller
     const _MAXSPEED_20 = 302; // 20km
     const _MAXSPEED_25 = 303; // 25km
     const _MAXSPEED_30 = 304; // 30km
+    const _MAXSPEED_50 = 305; // 50km
     // 점수
     const _SCORE_1000 = 401;
     const _SCORE_5000 = 402;
@@ -178,7 +179,10 @@ class BadgeController extends Controller
 
         // 3. 최고속도 (300)
         $max_speed_value = null;
-        if ($sum_max_speed_value >= 30 && $checkSpeed == 3) {
+        if ($sum_max_speed_value >= 50 && $checkSpeed == 4) {
+            $max_speed_value .= "50km";
+            $badge_type_code = self::_MAXSPEED_50;
+        } elseif ($sum_max_speed_value >= 30 && $checkSpeed == 3) {
             $max_speed_value .= "30km";
             $badge_type_code = self::_MAXSPEED_30;
         } elseif ($sum_max_speed_value >= 25 && $checkSpeed == 2) {
@@ -218,11 +222,6 @@ class BadgeController extends Controller
         $disBadge = $this->badge->checkDisBadge($user_id);
         $maxSpeedBadge = $this->badge->checkMaxSpeedBadge($user_id);
 
-        return $this->responseAppJson(
-            '배지 조회 성공',
-            'badgeCheck',
-            ['TimeBadge' => $timeBadge, 'DisBadge' => $disBadge, 'MaxSpeedBadge' => $maxSpeedBadge],
-            200
-        );
+        return ['timeBadge' => $timeBadge, 'distanceBadge' => $disBadge, 'maxSpeedBadge' => $maxSpeedBadge];
     }
 }
