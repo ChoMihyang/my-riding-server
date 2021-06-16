@@ -302,7 +302,7 @@ class RecordController extends Controller
         //        $data = file_get_contents('php://input');
         //        $_POST = json_decode(file_get_contents('php://input'), true);
 
-        $mongoValue = json_decode($record, true);
+//        $mongoValue = json_decode($record, true);
         //        return $this->responseJson("ddd", gettype($_POST), 200);
 
 
@@ -336,7 +336,7 @@ class RecordController extends Controller
         $rec_avg_speed = $request->input('rec_avg_speed');
         $rec_max_speed = $request->input('rec_max_speed');
 
-        // Users 테이블 점수 필드 업데이트
+        // Users 테이블 점수 필드, 라이딩 횟수 업데이트
         $this->user->scoreUpdate($rec_user_id, $rec_score);
         // Notification 테이블 주행 완료 레코드 업데이트
         $this->notification->insertNotification($rec_user_id, 1002);
@@ -363,7 +363,7 @@ class RecordController extends Controller
 
 
             // return $this->responseJson("message", $request->input('records'), 422);
-            $saveRecordMongo = $this->mongoRecordSave($mongoValue, $saveRecordId);
+//            $saveRecordMongo = $this->mongoRecordSave($mongoValue, $saveRecordId);
 //
 //            if ($saveRecordMongo->status() !== 201) {
 //                return $this->responseJson(
