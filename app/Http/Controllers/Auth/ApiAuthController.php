@@ -2,20 +2,18 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Badge;
+use App\Http\Controllers\BadgeController;
 use App\Http\Controllers\Controller;
 use App\Stats;
-use App\Badge;
+use App\Traits\UploadTrait;
 use App\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use App\Traits\UploadTrait;
 
 class ApiAuthController extends Controller
 {
@@ -313,7 +311,8 @@ class ApiAuthController extends Controller
             }
         }
         // 배지 보유 현황
-        $profile_badge = $this->badge->showBadge($user_id);
+        $badge = new BadgeController();
+        $profile_badge = $badge->badgeCheck();
 
         return $this->responseAppJson(
             self::USER_PROFILE,
