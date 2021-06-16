@@ -89,34 +89,94 @@ class BadgeController extends Controller
         if ($sum_distance >= 300 && $checkDistance == 4) {
             $distance_value .= "300km";
             $badge_type_code = self::_DISTANCE_300;
+
+            if ($distance_value > 0) {
+                $badge_name = $this->badgeMsg($distance_value);
+            }
+            // Badge 테이블 레코드 생성
+            $this->badge->makeBadge($stat_user, $badge_type_code, $badge_name);
+            // Notification 테이블 레코드 생성
+            $this->notification->insertNotification($stat_user, 1003);
+
+            return $this->responseAppJson(
+                self::SAVE_DISTANCE_VALUE,
+                'badgeSave',
+                ['user' => $stat_user, 'badge_type' => $badge_type_code, 'badge_name' => $badge_name, 'sum_distance' => $sum_distance],
+                201
+            );
         } elseif ($sum_distance >= 150 && $checkDistance == 3) {
             $distance_value .= "150km";
             $badge_type_code = self::_DISTANCE_150;
+
+            if ($distance_value > 0) {
+                $badge_name = $this->badgeMsg($distance_value);
+            }
+            // Badge 테이블 레코드 생성
+            $this->badge->makeBadge($stat_user, $badge_type_code, $badge_name);
+            // Notification 테이블 레코드 생성
+            $this->notification->insertNotification($stat_user, 1003);
+
+            return $this->responseAppJson(
+                self::SAVE_DISTANCE_VALUE,
+                'badgeSave',
+                ['user' => $stat_user, 'badge_type' => $badge_type_code, 'badge_name' => $badge_name, 'sum_distance' => $sum_distance],
+                201
+            );
         } elseif ($sum_distance >= 100 && $checkDistance == 2) {
             $distance_value .= "100km";
             $badge_type_code = self::_DISTANCE_100;
+
+            if ($distance_value > 0) {
+                $badge_name = $this->badgeMsg($distance_value);
+            }
+            // Badge 테이블 레코드 생성
+            $this->badge->makeBadge($stat_user, $badge_type_code, $badge_name);
+            // Notification 테이블 레코드 생성
+            $this->notification->insertNotification($stat_user, 1003);
+
+            return $this->responseAppJson(
+                self::SAVE_DISTANCE_VALUE,
+                'badgeSave',
+                ['user' => $stat_user, 'badge_type' => $badge_type_code, 'badge_name' => $badge_name, 'sum_distance' => $sum_distance],
+                201
+            );
         } elseif ($sum_distance >= 50 && $checkDistance == 1) {
             $distance_value .= "50km";
             $badge_type_code = self::_DISTANCE_50;
+
+            if ($distance_value > 0) {
+                $badge_name = $this->badgeMsg($distance_value);
+            }
+            // Badge 테이블 레코드 생성
+            $this->badge->makeBadge($stat_user, $badge_type_code, $badge_name);
+            // Notification 테이블 레코드 생성
+            $this->notification->insertNotification($stat_user, 1003);
+
+            return $this->responseAppJson(
+                self::SAVE_DISTANCE_VALUE,
+                'badgeSave',
+                ['user' => $stat_user, 'badge_type' => $badge_type_code, 'badge_name' => $badge_name, 'sum_distance' => $sum_distance],
+                201
+            );
         } elseif ($sum_distance >= 30 && !$checkDistance) {
             $distance_value .= "30km";
             $badge_type_code = self::_DISTANCE_30;
-        }
 
-        if ($distance_value > 0) {
-            $badge_name = $this->badgeMsg($distance_value);
-        }
-        // Badge 테이블 레코드 생성
-        $this->badge->makeBadge($stat_user, $badge_type_code, $badge_name);
-        // Notification 테이블 레코드 생성
-        $this->notification->insertNotification($stat_user, 1003);
+            if ($distance_value > 0) {
+                $badge_name = $this->badgeMsg($distance_value);
+            }
+            // Badge 테이블 레코드 생성
+            $this->badge->makeBadge($stat_user, $badge_type_code, $badge_name);
+            // Notification 테이블 레코드 생성
+            $this->notification->insertNotification($stat_user, 1003);
 
-        return $this->responseAppJson(
-            self::SAVE_DISTANCE_VALUE,
-            'badgeSave',
-            ['user' => $stat_user, 'badge_type' => $badge_type_code, 'badge_name' => $badge_name, 'sum_distance' => $sum_distance],
-            201
-        );
+            return $this->responseAppJson(
+                self::SAVE_DISTANCE_VALUE,
+                'badgeSave',
+                ['user' => $stat_user, 'badge_type' => $badge_type_code, 'badge_name' => $badge_name, 'sum_distance' => $sum_distance],
+                201
+            );
+        }
     }
 
     // time badge 생성
@@ -133,34 +193,94 @@ class BadgeController extends Controller
         if ($sum_time >= 50 && $checkTime == 4) {
             $time_value .= "50시간";
             $badge_type_code = self::_TIME_50;
+
+            if ($time_value > 0) {
+                $badge_name = $this->badgeMsg($time_value);
+            }
+            // Badge 테이블 레코드 생성
+            $this->badge->makeBadge($stat_user, $badge_type_code, $badge_name);
+            // Notification 테이블 레코드 생성
+            $this->notification->insertNotification($stat_user, 1003);
+
+            return $this->responseAppJson(
+                self::SAVE_TIME_VALUE,
+                'badgeSave',
+                ['user' => $stat_user, 'badge_type' => $badge_type_code, 'badge_name' => $badge_name, 'sum_time' => $sum_time],
+                201
+            );
         } elseif ($sum_time >= 30 && $checkTime == 3) {
             $time_value .= "30시간";
             $badge_type_code = self::_TIME_30;
+
+            if ($time_value > 0) {
+                $badge_name = $this->badgeMsg($time_value);
+            }
+            // Badge 테이블 레코드 생성
+            $this->badge->makeBadge($stat_user, $badge_type_code, $badge_name);
+            // Notification 테이블 레코드 생성
+            $this->notification->insertNotification($stat_user, 1003);
+
+            return $this->responseAppJson(
+                self::SAVE_TIME_VALUE,
+                'badgeSave',
+                ['user' => $stat_user, 'badge_type' => $badge_type_code, 'badge_name' => $badge_name, 'sum_time' => $sum_time],
+                201
+            );
         } elseif ($sum_time >= 20 && $checkTime == 2) {
             $time_value .= "20시간";
             $badge_type_code = self::_TIME_20;
+
+            if ($time_value > 0) {
+                $badge_name = $this->badgeMsg($time_value);
+            }
+            // Badge 테이블 레코드 생성
+            $this->badge->makeBadge($stat_user, $badge_type_code, $badge_name);
+            // Notification 테이블 레코드 생성
+            $this->notification->insertNotification($stat_user, 1003);
+
+            return $this->responseAppJson(
+                self::SAVE_TIME_VALUE,
+                'badgeSave',
+                ['user' => $stat_user, 'badge_type' => $badge_type_code, 'badge_name' => $badge_name, 'sum_time' => $sum_time],
+                201
+            );
         } elseif ($sum_time >= 10 && $checkTime == 1) {
             $time_value .= "10시간";
             $badge_type_code = self::_TIME_10;
+
+            if ($time_value > 0) {
+                $badge_name = $this->badgeMsg($time_value);
+            }
+            // Badge 테이블 레코드 생성
+            $this->badge->makeBadge($stat_user, $badge_type_code, $badge_name);
+            // Notification 테이블 레코드 생성
+            $this->notification->insertNotification($stat_user, 1003);
+
+            return $this->responseAppJson(
+                self::SAVE_TIME_VALUE,
+                'badgeSave',
+                ['user' => $stat_user, 'badge_type' => $badge_type_code, 'badge_name' => $badge_name, 'sum_time' => $sum_time],
+                201
+            );
         } elseif ($sum_time >= 5 && !$checkTime) {
             $time_value .= "5시간";
             $badge_type_code = self::_TIME_5;
-        }
 
-        if ($time_value > 0) {
-            $badge_name = $this->badgeMsg($time_value);
-        }
-        // Badge 테이블 레코드 생성
-        $this->badge->makeBadge($stat_user, $badge_type_code, $badge_name);
-        // Notification 테이블 레코드 생성
-        $this->notification->insertNotification($stat_user, 1003);
+            if ($time_value > 0) {
+                $badge_name = $this->badgeMsg($time_value);
+            }
+            // Badge 테이블 레코드 생성
+            $this->badge->makeBadge($stat_user, $badge_type_code, $badge_name);
+            // Notification 테이블 레코드 생성
+            $this->notification->insertNotification($stat_user, 1003);
 
-        return $this->responseAppJson(
-            self::SAVE_TIME_VALUE,
-            'badgeSave',
-            ['user' => $stat_user, 'badge_type' => $badge_type_code, 'badge_name' => $badge_name, 'sum_time' => $sum_time],
-            201
-        );
+            return $this->responseAppJson(
+                self::SAVE_TIME_VALUE,
+                'badgeSave',
+                ['user' => $stat_user, 'badge_type' => $badge_type_code, 'badge_name' => $badge_name, 'sum_time' => $sum_time],
+                201
+            );
+        }
 
     }
 
@@ -182,34 +302,89 @@ class BadgeController extends Controller
         if ($sum_max_speed_value >= 50 && $checkSpeed == 4) {
             $max_speed_value .= "50km";
             $badge_type_code = self::_MAXSPEED_50;
+            if ($max_speed_value > 0) {
+                $badge_name = $this->badgeMsg($max_speed_value);
+            }
+            // Badge 테이블 레코드 생성
+            $this->badge->makeBadge($stat_user, $badge_type_code, $badge_name);
+            // Notification 테이블 레코드 생성
+            $this->notification->insertNotification($stat_user, 1003);
+
+            return $this->responseAppJson(
+                self::SAVE_MAX_SPEED_VALUE,
+                'badgeSave',
+                ['user' => $stat_user, 'badge_type' => $badge_type_code, 'badge_name' => $badge_name, 'sum_max_speed' => $sum_max_speed_value],
+                201
+            );
         } elseif ($sum_max_speed_value >= 30 && $checkSpeed == 3) {
             $max_speed_value .= "30km";
             $badge_type_code = self::_MAXSPEED_30;
+            if ($max_speed_value > 0) {
+                $badge_name = $this->badgeMsg($max_speed_value);
+            }
+            // Badge 테이블 레코드 생성
+            $this->badge->makeBadge($stat_user, $badge_type_code, $badge_name);
+            // Notification 테이블 레코드 생성
+            $this->notification->insertNotification($stat_user, 1003);
+
+            return $this->responseAppJson(
+                self::SAVE_MAX_SPEED_VALUE,
+                'badgeSave',
+                ['user' => $stat_user, 'badge_type' => $badge_type_code, 'badge_name' => $badge_name, 'sum_max_speed' => $sum_max_speed_value],
+                201
+            );
         } elseif ($sum_max_speed_value >= 25 && $checkSpeed == 2) {
             $max_speed_value .= "25km";
             $badge_type_code = self::_MAXSPEED_25;
+            if ($max_speed_value > 0) {
+                $badge_name = $this->badgeMsg($max_speed_value);
+            }
+            // Badge 테이블 레코드 생성
+            $this->badge->makeBadge($stat_user, $badge_type_code, $badge_name);
+            // Notification 테이블 레코드 생성
+            $this->notification->insertNotification($stat_user, 1003);
+
+            return $this->responseAppJson(
+                self::SAVE_MAX_SPEED_VALUE,
+                'badgeSave',
+                ['user' => $stat_user, 'badge_type' => $badge_type_code, 'badge_name' => $badge_name, 'sum_max_speed' => $sum_max_speed_value],
+                201
+            );
         } elseif ($sum_max_speed_value >= 20 && $checkSpeed == 1) {
             $max_speed_value .= "20km";
             $badge_type_code = self::_MAXSPEED_20;
+            if ($max_speed_value > 0) {
+                $badge_name = $this->badgeMsg($max_speed_value);
+            }
+            // Badge 테이블 레코드 생성
+            $this->badge->makeBadge($stat_user, $badge_type_code, $badge_name);
+            // Notification 테이블 레코드 생성
+            $this->notification->insertNotification($stat_user, 1003);
+
+            return $this->responseAppJson(
+                self::SAVE_MAX_SPEED_VALUE,
+                'badgeSave',
+                ['user' => $stat_user, 'badge_type' => $badge_type_code, 'badge_name' => $badge_name, 'sum_max_speed' => $sum_max_speed_value],
+                201
+            );
         } elseif ($sum_max_speed_value >= 15 && !$checkSpeed) {
             $max_speed_value .= "15km";
             $badge_type_code = self::_MAXSPEED_15;
-        }
+            if ($max_speed_value > 0) {
+                $badge_name = $this->badgeMsg($max_speed_value);
+            }
+            // Badge 테이블 레코드 생성
+            $this->badge->makeBadge($stat_user, $badge_type_code, $badge_name);
+            // Notification 테이블 레코드 생성
+            $this->notification->insertNotification($stat_user, 1003);
 
-        if ($max_speed_value > 0) {
-            $badge_name = $this->badgeMsg($max_speed_value);
+            return $this->responseAppJson(
+                self::SAVE_MAX_SPEED_VALUE,
+                'badgeSave',
+                ['user' => $stat_user, 'badge_type' => $badge_type_code, 'badge_name' => $badge_name, 'sum_max_speed' => $sum_max_speed_value],
+                201
+            );
         }
-        // Badge 테이블 레코드 생성
-        $this->badge->makeBadge($stat_user, $badge_type_code, $badge_name);
-        // Notification 테이블 레코드 생성
-        $this->notification->insertNotification($stat_user, 1003);
-
-        return $this->responseAppJson(
-            self::SAVE_MAX_SPEED_VALUE,
-            'badgeSave',
-            ['user' => $stat_user, 'badge_type' => $badge_type_code, 'badge_name' => $badge_name, 'sum_max_speed' => $sum_max_speed_value],
-            201
-        );
     }
 
     // 프로필에서 배지 조회
