@@ -452,4 +452,14 @@ class Record extends Model
             ->where('rec_title', $rec_title)
             ->get();
     }
+
+    // 주행 기록 카운트
+    public function RecordCount(int $rec_user_id)
+    {
+        $returnData = Record::where('rec_user_id', $rec_user_id)
+            ->get()
+            ->count();
+
+        return $returnData;
+    }
 }
