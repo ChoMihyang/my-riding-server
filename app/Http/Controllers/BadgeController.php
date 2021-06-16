@@ -82,22 +82,22 @@ class BadgeController extends Controller
 
         // distance 합계
         $sum_distance = $this->state->sumDistance($stat_user);
-
+        $checkDistance = $this->badge->checkDisBadge($stat_user);
         // 1. 거리 (100)
         $distance_value = null;
-        if ($sum_distance >= 300) {
+        if ($sum_distance >= 300 && $checkDistance == 4) {
             $distance_value .= "300km";
             $badge_type_code = self::_DISTANCE_300;
-        } elseif ($sum_distance >= 150) {
+        } elseif ($sum_distance >= 150 && $checkDistance == 3) {
             $distance_value .= "150km";
             $badge_type_code = self::_DISTANCE_150;
-        } elseif ($sum_distance >= 100) {
+        } elseif ($sum_distance >= 100 && $checkDistance == 2) {
             $distance_value .= "100km";
             $badge_type_code = self::_DISTANCE_100;
-        } elseif ($sum_distance >= 50) {
+        } elseif ($sum_distance >= 50 && $checkDistance == 1) {
             $distance_value .= "50km";
             $badge_type_code = self::_DISTANCE_50;
-        } elseif ($sum_distance >= 30) {
+        } elseif ($sum_distance >= 30 && !$checkDistance) {
             $distance_value .= "30km";
             $badge_type_code = self::_DISTANCE_30;
         }
@@ -126,22 +126,22 @@ class BadgeController extends Controller
 
         // time 합계
         $sum_time = $this->state->sumTime($stat_user);
-
+        $checkTime = $this->badge->checkTimeBadge($stat_user);
         // 2. 시간 (200)
         $time_value = null;
-        if ($sum_time >= 50) {
+        if ($sum_time >= 50 && $checkTime == 4) {
             $time_value .= "50시간";
             $badge_type_code = self::_TIME_50;
-        } elseif ($sum_time >= 30) {
+        } elseif ($sum_time >= 30 && $checkTime == 3) {
             $time_value .= "30시간";
             $badge_type_code = self::_TIME_30;
-        } elseif ($sum_time >= 20) {
+        } elseif ($sum_time >= 20 && $checkTime == 2) {
             $time_value .= "20시간";
             $badge_type_code = self::_TIME_20;
-        } elseif ($sum_time >= 10) {
+        } elseif ($sum_time >= 10 && $checkTime == 1) {
             $time_value .= "10시간";
             $badge_type_code = self::_TIME_10;
-        } elseif ($sum_time >= 5) {
+        } elseif ($sum_time >= 5 && !$checkTime) {
             $time_value .= "5시간";
             $badge_type_code = self::_TIME_5;
         }
@@ -172,22 +172,22 @@ class BadgeController extends Controller
         // max_speed 최대값
         $sum_max_speed = $this->state->sumMaxSpeed($stat_user);
         $sum_max_speed_value = $sum_max_speed[0]['stat_max_speed'];
-
+        $checkSpeed = $this->badge->checkMaxSpeedBadge($stat_user);
 //        // avg_speed 평균값
 //        $sum_avg_speed = $this->state->sumAvgSpeed($stat_user);
 
         // 3. 최고속도 (300)
         $max_speed_value = null;
-        if ($sum_max_speed_value >= 30) {
+        if ($sum_max_speed_value >= 30 && $checkSpeed == 3) {
             $max_speed_value .= "30km";
             $badge_type_code = self::_MAXSPEED_30;
-        } elseif ($sum_max_speed_value >= 25) {
+        } elseif ($sum_max_speed_value >= 25 && $checkSpeed == 2) {
             $max_speed_value .= "25km";
             $badge_type_code = self::_MAXSPEED_25;
-        } elseif ($sum_max_speed_value >= 20) {
+        } elseif ($sum_max_speed_value >= 20 && $checkSpeed == 1) {
             $max_speed_value .= "20km";
             $badge_type_code = self::_MAXSPEED_20;
-        } elseif ($sum_max_speed_value >= 15) {
+        } elseif ($sum_max_speed_value >= 15 && !$checkSpeed) {
             $max_speed_value .= "15km";
             $badge_type_code = self::_MAXSPEED_15;
         }
