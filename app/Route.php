@@ -329,7 +329,7 @@ class Route extends Model
                 )
                 ->where('routes.id', $route_id)
 //                ->where('routes.route_user_id', $route_like_user)
-                ->where('route_likes.route_like_obj', $route_id)
+//                ->where('route_likes.route_like_obj', $route_id)
                 ->get();
 
             // 경로 이미지 출력
@@ -344,7 +344,7 @@ class Route extends Model
             return $routeInfo;
         }
         $routeInfo = Route::where('id', $route_id)
-            ->where('route_user_id', $route_like_user)
+//            ->where('route_user_id', $route_like_user)
             ->get();
 
         // 경로 이미지 출력
