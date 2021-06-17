@@ -328,7 +328,7 @@ class Route extends Model
                     'route_likes.route_like_user'
                 )
                 ->where('routes.id', $route_id)
-                ->where('routes.route_user_id', $route_like_user)
+//                ->where('routes.route_user_id', $route_like_user)
                 ->where('route_likes.route_like_obj', $route_id)
                 ->get();
 
