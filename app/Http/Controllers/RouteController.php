@@ -169,7 +169,7 @@ class RouteController extends Controller
     public function routeSave(Request $request, Record $record): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'route_title' => 'required|string|min:3|alpha_num|unique:routes',
+//            'route_title' => 'required|string|min:3|alpha_num|unique:routes',
             'route_image.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:5000',
         ]);
 
