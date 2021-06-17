@@ -359,7 +359,7 @@ class RouteController extends Controller
 
             $pick = $this->route->sortSearchCount($count);
 
-            $routeValue = $wordValue->orderBy($pick)->get();
+            $routeValue = $wordValue->orderBy($pick,'DESC')->get();
         }
         // 검색 안하면 바로 사용자 입력 방법으로 정렬
 
@@ -367,7 +367,7 @@ class RouteController extends Controller
             // TODO 검색부분 수정해야됨
             $pick = $this->route->sortSearchCount($count);
 
-            $routeValue = Route::orderBy($pick)->get();
+            $routeValue = Route::orderBy($pick,'DESC')->get();
         }
         // 경로 이미지 출력
         $route_img = array();
