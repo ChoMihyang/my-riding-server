@@ -313,7 +313,7 @@ class Route extends Model
             ->get();
 
         // 좋아요 없을 때
-        if (!($routeLike->isEmpty())) {
+        if (($routeLike->isEmpty())) {
             $routeInfo = Route::join('route_likes', 'route_likes.route_like_user', '=', 'routes.route_user_id')
                 ->select('routes.id',
                     'routes.route_user_id',
@@ -331,7 +331,15 @@ class Route extends Model
                 ->where('routes.route_user_id', $route_like_user)
                 ->where('route_likes.route_like_obj', $route_id)
                 ->get();
-            // TODO 이미지 추가해야됨!!!
+
+            // 경로 이미지 출력
+            $route_img = $routeInfo[0]->route_image;
+            if (!($route_img == "null")) {
+                $data = Storage::get('public/' . $route_img);
+                $type = pathinfo('storage/' . $route_img, PATHINFO_EXTENSION);
+
+                $routeInfo[0]['route_image'] = 'data:image/' . $type . ';base64,' . base64_encode($data);
+            }
 
             return $routeInfo;
         }
