@@ -108,6 +108,7 @@ class Record extends Model
         $resultData = self::select($selectedColumns)
             ->whereDate('created_at', $ridingDate)
             ->where('rec_user_id', $user_id)
+            ->orderBy('created_at', 'DESC')
             ->get();
 
         return $resultData;
