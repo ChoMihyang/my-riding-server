@@ -294,7 +294,7 @@ class ApiAuthController extends Controller
                         "max_speed" => $profile_stat[$key]->max_speed
                     ];
                     $i--;
-                } else {
+                } else if (count($profile_stat) == 0) {
                     $returnRecord[] = [
                         "year" => $profile_stat[$key]->year,
                         "week" => $i,
