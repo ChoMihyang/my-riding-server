@@ -257,56 +257,75 @@ class ApiAuthController extends Controller
         $user_score_of_riding = $user->getAttribute('user_score_of_riding');
         $user_num_of_riding = $user->getAttribute('user_num_of_riding');
 
-        // 이번주의 시작일
+        // 오늘 날짜
         $today_date = date('Y-m-d');
-
+        // 오늘 요일
         $temp_day = date('w', strtotime($today_date));
         $today_day = $temp_day == 0 ? 6 : $temp_day - 1;
-
+        // 이번 주의 시작일
         $today_start_date = date('Y-m-d', strtotime($today_date . "-" . $today_day . "days"));
-        $last_date_range = date('Y-m-d', strtotime($today_start_date . "-1day"));
+        $last_date_range = date('Y-m-d', strtotime($today_start_date . "+6day"));
 
         // 91일 전 날짜
         $start_date_range = date('Y-m-d', strtotime($today_start_date . "-91days"));
-
-        // stats 모델에서 날짜 범위에 해당하는 주차 조회
+        // stats 테이블에서 날짜 범위에 해당하는 주차 조회
         $profile_stat = $this->stat->select_profile_stat(
             $user_id,
             $start_date_range,
             $last_date_range
         );
-
+        // 올해
+        $today_year = date('Y');
         // 이번주 주차
         $today_week = date('W', strtotime($today_date));
 
-        // 기록이 저장되지 않은 주차일 경우
-        // 거리, 시간, 평균 속도, 최고 속도를 0으로 설정
         $returnRecord = [];
-        for ($i = $today_week; $i > $today_week - 12; $i--) {
-            for ($key = 0; $key < count($profile_stat); $key++) {
-                if ($profile_stat[$key]->week == $i) {
-                    $returnRecord[] = [
-                        "year" => $profile_stat[$key]->year,
-                        "week" => $profile_stat[$key]->week,
-                        "distance" => $profile_stat[$key]->distance,
-                        "time" => $profile_stat[$key]->time,
-                        "avg_speed" => $profile_stat[$key]->avg_speed,
-                        "max_speed" => $profile_stat[$key]->max_speed
-                    ];
-                    $i--;
-                } else if (count($profile_stat) == 0) {
-                    $returnRecord[] = [
-                        "year" => $profile_stat[$key]->year,
-                        "week" => $i,
-                        "distance" => 0,
-                        "time" => 0,
-                        "avg_speed" => 0,
-                        "max_speed" => 0
-                    ];
-                    break;
-                }
-                if ($key == count($profile_stat) - 1) {
-                    $i++;
+        // 통계가 존재하지 않는 사용자(신규 유저)
+        // TODO : 현재 "year" -> 2021년으로 고정
+        if (count($profile_stat) == 0) {
+            for ($week = $today_week; $week > $today_week - 12; $week--) {
+                $returnRecord[] = [
+                    "year" => $today_year,
+                    "week" => $week,
+                    "distance" => 0,
+                    "time" => 0,
+                    "avg_speed" => 0,
+                    "max_speed" => 0
+                ];
+            }
+        } else {
+            // 통계가 존재하는 사용자
+            $temp = 0;
+            for ($week = $today_week; $week > $today_week - 12; $week--) {
+                for ($index = $temp; $index < count($profile_stat); $index++) {
+                    // 해당 주에 기록이 존재하는 경우
+                    if ($profile_stat[$index]->week == $week) {
+                        $returnRecord[] = [
+                            "year" => $profile_stat[$index]->year,
+                            "week" => $profile_stat[$index]->week,
+                            "distance" => $profile_stat[$index]->distance,
+                            "time" => $profile_stat[$index]->time,
+                            "avg_speed" => $profile_stat[$index]->avg_speed,
+                            "max_speed" => $profile_stat[$index]->max_speed
+                        ];
+                        $week--;
+                    } else {
+                        // 해당 주에 기록이 존재하지 않는 경우
+                        $returnRecord[] = [
+                            "year" => $profile_stat[$index]->year,
+                            "week" => $week,
+                            "distance" => 0,
+                            "time" => 0,
+                            "avg_speed" => 0,
+                            "max_speed" => 0
+                        ];
+                        $temp = $index;
+                        break;
+                    }
+                    // 기록이 있는 주차를 넘어갈 경우 인덱스 오류 처리
+                    if ($index == count($profile_stat) - 1) {
+                        $week++;
+                    }
                 }
             }
         }
